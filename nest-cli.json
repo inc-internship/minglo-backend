@@ -1,14 +1,14 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/mingo-blog/src",
+  "sourceRoot": "apps/minglo-blog/src",
   "compilerOptions": {
     "deleteOutDir": true,
     "webpack": true,
-    "tsConfigPath": "apps/mingo-blog/tsconfig.app.json"
+    "tsConfigPath": "apps/minglo-blog/tsconfig.app.json"
   },
   "monorepo": true,
-  "root": "apps/mingo-blog",
+  "root": "apps/minglo-blog",
   "projects": {
     "dynamic-config": {
       "type": "library",
@@ -28,13 +28,13 @@
         "tsConfigPath": "apps/micro-app/tsconfig.app.json"
       }
     },
-    "mingo-blog": {
+    "minglo-blog": {
       "type": "application",
-      "root": "apps/mingo-blog",
+      "root": "apps/minglo-blog",
       "entryFile": "main",
-      "sourceRoot": "apps/mingo-blog/src",
+      "sourceRoot": "apps/minglo-blog/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/mingo-blog/tsconfig.app.json"
+        "tsConfigPath": "apps/minglo-blog/tsconfig.app.json"
       }
     }
   }

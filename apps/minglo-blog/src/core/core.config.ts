@@ -15,7 +15,7 @@ export class CoreConfig {
   @IsNumber(
     {},
     {
-      message: 'Set env variable MINGO_PORT, example: 3000',
+      message: 'Set env variable MINGLO_PORT, example: 3000',
     },
   )
   port: number;
@@ -35,7 +35,7 @@ export class CoreConfig {
 
   constructor(private configService: ConfigService<any, true>) {
     this.env = this.configService.get('NODE_ENV');
-    this.port = Number(this.configService.get('MINGO_PORT'));
+    this.port = Number(this.configService.get('MINGLO_PORT'));
 
     // this.appSwagger = configValidationUtility.convertToBoolean(
     //   this.configService.get('APP_SWAGGER'),

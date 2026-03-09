@@ -1,5 +1,5 @@
 {
-  "name": "mingo-blog",
+  "name": "minglo-blog",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -10,15 +10,15 @@
     "format:prisma": "prisma format",
     "lint": "eslint \"{src,apps,test}/**/*.ts\" --fix",
     "test": "jest",
-    "build:mingo": "nest build mingo-blog",
-    "start:mingo": "nest start mingo-blog",
-    "start:mingo:dev": "cross-env NODE_ENV=development nest start mingo-blog --watch",
-    "start:mingo:debug": "cross-env NODE_ENV=development nest start mingo-blog --debug --watch",
-    "start:mingo:prod": "cross-env NODE_ENV=production node dist/apps/mingo-blog/main",
-    "test:mingo:watch": "cross-env NODE_ENV=test jest --project apps/mingo-blog --watch",
-    "test:mingo:cov": "cross-env NODE_ENV=test jest --project apps/mingo-blog --coverage",
-    "test:mingo:debug": "cross-env NODE_ENV=test node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand --project apps/mingo-blog",
-    "test:mingo:e2e": "cross-env NODE_ENV=test jest --config apps/mingo-blog/test/jest-e2e.json"
+    "build:minglo": "nest build minglo-blog",
+    "start:minglo": "nest start minglo-blog",
+    "start:minglo:dev": "cross-env NODE_ENV=development nest start minglo-blog --watch",
+    "start:minglo:debug": "cross-env NODE_ENV=development nest start minglo-blog --debug --watch",
+    "start:minglo:prod": "cross-env NODE_ENV=production node dist/apps/minglo-blog/main",
+    "test:minglo:watch": "cross-env NODE_ENV=test jest --project apps/minglo-blog --watch",
+    "test:minglo:cov": "cross-env NODE_ENV=test jest --project apps/minglo-blog --coverage",
+    "test:minglo:debug": "cross-env NODE_ENV=test node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand --project apps/minglo-blog",
+    "test:minglo:e2e": "cross-env NODE_ENV=test jest --config apps/minglo-blog/test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

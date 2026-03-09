@@ -1,13 +1,13 @@
 import { Global, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CoreConfig } from './core.config';
-import { MingoDataBaseConfig } from '../database/database.config';
+import { MingloDataBaseConfig } from '../database/database.config';
 
 //глобальный модуль для провайдеров и модулей необходимых во всех частях приложения (например LoggerService, CqrsModule, etc...)
 @Global()
 @Module({
   imports: [CqrsModule],
-  providers: [CoreConfig, MingoDataBaseConfig],
+  providers: [CoreConfig, MingloDataBaseConfig],
   exports: [CoreConfig, CqrsModule],
 })
 export class CoreModule {}

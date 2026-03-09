@@ -6,9 +6,10 @@ import { UserModule } from './modules/user/user.module';
 import { PostModule } from './modules/post/post.module';
 import { MingloTestModule } from './modules/testing/testing.module';
 import { MingloTestController } from './modules/testing/api/testing.controller';
+import { ExceptionsModule } from '@app/exceptions';
 
 @Module({
-  imports: [DynamicConfigModule, CoreModule, UserModule, PostModule],
+  imports: [DynamicConfigModule, CoreModule, ExceptionsModule, UserModule, PostModule],
   controllers: [],
   providers: [],
   exports: [],

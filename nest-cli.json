@@ -19,6 +19,15 @@
         "tsConfigPath": "libs/dynamic-config/tsconfig.lib.json"
       }
     },
+    "exceptions": {
+      "type": "library",
+      "root": "libs/exceptions",
+      "entryFile": "index",
+      "sourceRoot": "libs/exceptions/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/exceptions/tsconfig.lib.json"
+      }
+    },
     "micro-app": {
       "type": "application",
       "root": "apps/micro-app",

@@ -27,6 +27,12 @@
       ],
       "@app/dynamic-config/*": [
         "libs/dynamic-config/src/*"
+      ],
+      "@app/setup": [
+        "libs/setup/src"
+      ],
+      "@app/setup/*": [
+        "libs/setup/src/*"
       ]
     }
   }

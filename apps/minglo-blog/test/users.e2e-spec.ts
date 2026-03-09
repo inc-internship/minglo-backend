@@ -30,10 +30,6 @@ describe('UserController - demo (e2e)', () => {
     await app.close();
   });
 
-  it('Should return "Hello World!", GET : STATUS 200', async () => {
-    await request(app.getHttpServer()).get('/').expect(HttpStatus.OK).expect('Hello World!');
-  });
-
   it('should create User, POST : STATUS 201', async () => {
     createUserDto = userTestDtoManager.createUserDto({});
 

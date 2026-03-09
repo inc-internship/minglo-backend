@@ -32,6 +32,7 @@
     "@nestjs/cqrs": "^11.0.3",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.2.6",
     "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "^7.4.2",
     "class-transformer": "^0.5.1",
@@ -90,7 +91,8 @@
       "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
-      "^@app/dynamic-config(|/.*)$": "<rootDir>/libs/dynamic-config/src/$1"
+      "^@app/dynamic-config(|/.*)$": "<rootDir>/libs/dynamic-config/src/$1",
+      "^@app/setup(|/.*)$": "<rootDir>/libs/setup/src/$1"
     }
   }
 }

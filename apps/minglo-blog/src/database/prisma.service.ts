@@ -6,7 +6,7 @@ import { PrismaClient } from '../../prisma/generated/prisma/client';
 export class PrismaService extends PrismaClient {
   constructor() {
     const adapter = new PrismaPg({
-      connectionString: process.env.MINGLO_DATABASE_URL as string,
+      connectionString: process.env.MINGLO_DB_URL as string,
     });
     super({ adapter });
   }

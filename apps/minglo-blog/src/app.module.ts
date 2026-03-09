@@ -6,6 +6,8 @@ import { CoreModule } from './core/core.module';
 import { CoreConfig } from './core/core.config';
 import { UserModule } from './modules/user/user.module';
 import { PostModule } from './modules/post/post.module';
+import { MingloTestModule } from './modules/testing/testing.module';
+import { MingloTestController } from './modules/testing/api/testing.controller';
 
 @Module({
   imports: [DynamicConfigModule, CoreModule, UserModule, PostModule],
@@ -17,8 +19,8 @@ export class AppModule {
   static async forRoot(coreConfig: CoreConfig): Promise<DynamicModule> {
     return {
       module: AppModule,
-      imports: [],
-      //todo: добавить testingModule imports: [...(coreConfig.appTestingModule ? [TestingModule] : [])],
+      imports: [...(coreConfig.testingModule ? [MingloTestModule] : [])],
+      controllers: [...(coreConfig.testingModule ? [MingloTestController] : [])],
     };
   }
 }

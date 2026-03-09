@@ -25,12 +25,11 @@ export class CoreConfig {
   })
   testingModule: boolean;
 
-  //todo: add swagger
-  // @IsBoolean({
-  //   message:
-  //     'Set Env variable APP_SWAGGER to enable/disable Swagger, example: true, available values: true, false',
-  // })
-  // appSwagger: boolean;
+  @IsBoolean({
+    message:
+      'Set Env variable MINGLO_SWAGGER to enable/disable Swagger, example: true, available values: true, false',
+  })
+  swagger: boolean;
 
   constructor(private configService: ConfigService<any, true>) {
     this.env = this.configService.get('NODE_ENV');
@@ -39,9 +38,9 @@ export class CoreConfig {
       this.configService.get('MINGLO_TESTING_MODULE'),
     ) as boolean;
 
-    // this.appSwagger = configValidationUtility.convertToBoolean(
-    //   this.configService.get('APP_SWAGGER'),
-    // ) as boolean;
+    this.swagger = configValidationUtility.convertToBoolean(
+      this.configService.get('MINGLO_SWAGGER'),
+    ) as boolean;
 
     configValidationUtility.validateConfig(this);
   }

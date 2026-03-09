@@ -36,6 +36,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/minglo-blog/tsconfig.app.json"
       }
+    },
+    "setup": {
+      "type": "library",
+      "root": "libs/setup",
+      "entryFile": "index",
+      "sourceRoot": "libs/setup/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/setup/tsconfig.lib.json"
+      }
     }
   }
 }

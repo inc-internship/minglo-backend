@@ -1,6 +1,4 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { DynamicConfigModule } from '@app/dynamic-config';
 import { CoreModule } from './core/core.module';
 import { CoreConfig } from './core/core.config';
@@ -11,10 +9,10 @@ import { MingloTestController } from './modules/testing/api/testing.controller';
 
 @Module({
   imports: [DynamicConfigModule, CoreModule, UserModule, PostModule],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
+  exports: [],
 })
-// export class AppModule {}
 export class AppModule {
   static async forRoot(coreConfig: CoreConfig): Promise<DynamicModule> {
     return {

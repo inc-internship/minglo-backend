@@ -1,15 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { initAppModule } from './init-app-module';
 import { CoreConfig } from './core/core.config';
-
-// async function bootstrap() {
-//   const app = await NestFactory.create(AppModule);
-//   await app.listen(process.env.PORT ?? 3000);
-// }
+import { appSetup } from './setup/app.setup';
 
 async function bootstrap() {
   const DynamicAppModule = await initAppModule();
-  // создаём на основе донастроенного модуля наше приложение
   const app = await NestFactory.create(DynamicAppModule);
 
   // todo: Trust Proxy
@@ -20,7 +15,7 @@ async function bootstrap() {
   // app.use(cookieParser());
 
   const coreConfig = app.get<CoreConfig>(CoreConfig);
-  // appSetup(app, coreConfig.appSwagger);
+  appSetup(app, coreConfig.swagger);
 
   //todo: enableCors ?
   // app.enableCors({

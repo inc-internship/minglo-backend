@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { IsEnum, IsNumber } from 'class-validator';
 import { configValidationUtility, Environments } from '@app/dynamic-config';
 
-//todo: продолжить тут!
 @Injectable()
 export class CoreConfig {
   @IsEnum(Environments, {

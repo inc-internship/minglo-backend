@@ -4,9 +4,11 @@ import { AppService } from './app.service';
 import { DynamicConfigModule } from '@app/dynamic-config';
 import { CoreModule } from './core/core.module';
 import { CoreConfig } from './core/core.config';
+import { UserModule } from './modules/user/user.module';
+import { PostModule } from './modules/post/post.module';
 
 @Module({
-  imports: [DynamicConfigModule, CoreModule],
+  imports: [DynamicConfigModule, CoreModule, UserModule, PostModule],
   controllers: [AppController],
   providers: [AppService],
 })

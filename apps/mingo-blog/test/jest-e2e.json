@@ -5,5 +5,9 @@
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "@app/dynamic-config/(.*)": "<rootDir>/../../../libs/dynamic-config/src/$1",
+    "@app/dynamic-config": "<rootDir>/../../../libs/dynamic-config/src"
   }
 }

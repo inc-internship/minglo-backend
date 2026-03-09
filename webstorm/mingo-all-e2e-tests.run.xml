@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="mingo-all-e2e-tests" type="JavaScriptTestRunnerJest">
+    <node-interpreter value="project" />
+    <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+    <working-dir value="$PROJECT_DIR$" />
+    <jest-options value="--config apps/mingo-blog/test/jest-e2e.json --runInBand" />
+    <envs>
+      <env name="NODE_ENV" value="test" />
+      <env name="NODE_OPTIONS" value="--experimental-vm-modules" />
+    </envs>
+    <scope-kind value="ALL" />
+    <method v="2" />
+  </configuration>
+</component>

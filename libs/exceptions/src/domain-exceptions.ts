@@ -1,10 +1,12 @@
 import { DomainExceptionCode } from './domain-exception-codes.enum';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class Extension {
-  constructor(
-    public message: string,
-    public field: string,
-  ) {}
+  @ApiProperty()
+  field: string;
+
+  @ApiProperty()
+  message: string;
 }
 
 export class DomainException extends Error {

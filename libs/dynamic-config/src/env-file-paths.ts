@@ -5,7 +5,6 @@ if (!process.env.NODE_ENV) {
   throw new Error('NODE_ENV is required');
 }
 
-//todo: add `envFilePaths` to Prisma config.
 export const envFilePaths = [
   process.env.ENV_FILE_PATH?.trim() || '',
   join(process.cwd(), `env`, `.env.${process.env.NODE_ENV}.local`),

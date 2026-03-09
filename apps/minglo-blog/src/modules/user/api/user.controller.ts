@@ -13,6 +13,7 @@ import { UserService } from '../application/services/user.service';
 import { UpdateUserInputDto } from './input-dto/update-user.input-dto';
 import { CreateUserInputDto } from './input-dto/create-user.input-dto';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ErrorResponseBody } from '@app/exceptions';
 
 @Controller('users')
 export class UserController {
@@ -29,6 +30,7 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: 'Validation error',
+    type: ErrorResponseBody,
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,

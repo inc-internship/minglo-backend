@@ -5,6 +5,6 @@ import { pipesSetup } from './pipes.setup';
 
 export function appSetup(app: INestApplication, isSwaggerEnabled: boolean) {
   globalPrefixSetup(app);
-  swaggerSetup(app, isSwaggerEnabled);
   pipesSetup(app);
+  swaggerSetup(app, isSwaggerEnabled);
 }

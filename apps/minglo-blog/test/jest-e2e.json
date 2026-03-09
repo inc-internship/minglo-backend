@@ -8,6 +8,7 @@
   },
   "moduleNameMapper": {
     "@app/dynamic-config/(.*)": "<rootDir>/../../../libs/dynamic-config/src/$1",
-    "@app/dynamic-config": "<rootDir>/../../../libs/dynamic-config/src"
+    "@app/dynamic-config": "<rootDir>/../../../libs/dynamic-config/src",
+    "^(\\.{1,2}/.*)\\.js$": "$1"
   }
 }

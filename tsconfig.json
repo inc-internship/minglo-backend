@@ -39,6 +39,12 @@
       ],
       "@app/setup/*": [
         "libs/setup/src/*"
+      ],
+      "@app/utils": [
+        "libs/utils/src"
+      ],
+      "@app/utils/*": [
+        "libs/utils/src/*"
       ]
     }
   }

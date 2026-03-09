@@ -10,7 +10,9 @@ import {
   Put,
 } from '@nestjs/common';
 import { UserService } from '../application/services/user.service';
-import { type User } from '../../../../prisma/generated/prisma/client';
+import { UpdateUserInputDto } from './input-dto/update-user.input-dto';
+import { CreateUserInputDto } from './input-dto/create-user.input-dto';
+import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('users')
 export class UserController {
@@ -18,7 +20,21 @@ export class UserController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() user: User) {
+  @ApiOperation({ summary: 'Create user' })
+  @ApiBody({ type: CreateUserInputDto })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'User successfully created',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Validation error',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Not Found',
+  })
+  async create(@Body() user: CreateUserInputDto) {
     return this.userService.createUser(user);
   }
 
@@ -34,7 +50,7 @@ export class UserController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async update(@Param('id') id: string, @Body() user: User) {
+  async update(@Param('id') id: string, @Body() user: UpdateUserInputDto) {
     return this.userService.updateUser({
       where: { publicId: id },
       data: { ...user },

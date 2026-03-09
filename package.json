@@ -93,7 +93,8 @@
     "moduleNameMapper": {
       "^@app/dynamic-config(|/.*)$": "<rootDir>/libs/dynamic-config/src/$1",
       "^@app/exceptions(|/.*)$": "<rootDir>/libs/exceptions/src/$1",
-      "^@app/setup(|/.*)$": "<rootDir>/libs/setup/src/$1"
+      "^@app/setup(|/.*)$": "<rootDir>/libs/setup/src/$1",
+      "^@app/utils(|/.*)$": "<rootDir>/libs/utils/src/$1"
     }
   }
 }

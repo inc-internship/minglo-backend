@@ -38,4 +38,10 @@ RUN pnpm run build:${SERVICE}
 
 EXPOSE ${PORT}
 
-CMD pnpm run 'start:minglo-blog:prod'
+# Migrate BD + run app
+RUN chmod +x ./apps/minglo-blog/docker-entrypoint.sh
+
+EXPOSE ${PORT}
+
+ENTRYPOINT ["./apps/minglo-blog/docker-entrypoint.sh"]
+

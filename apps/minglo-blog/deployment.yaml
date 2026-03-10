@@ -45,11 +45,6 @@ spec:
                  secretKeyRef:
                    name: minglo-backend-production-config-secret
                    key: MINGLO_TRUST_PROXY
-             - name: NODE_ENV
-               valueFrom:
-                 secretKeyRef:
-                   name: minglo-backend-production-config-secret
-                   key: NODE_ENV
              - name: MINGLO_CORS
                valueFrom:
                  secretKeyRef:

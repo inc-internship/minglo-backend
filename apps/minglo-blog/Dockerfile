@@ -36,4 +36,4 @@ RUN pnpm run build:${SERVICE}
 
 EXPOSE ${PORT}
 
-CMD pnpm run 'start:minglo-blog'
+CMD pnpm run 'start:minglo-blog:prod'

@@ -5,7 +5,8 @@
   "compilerOptions": {
     "deleteOutDir": true,
     "webpack": true,
-    "tsConfigPath": "apps/minglo-blog/tsconfig.app.json"
+    "tsConfigPath": "apps/minglo-blog/tsconfig.app.json",
+    "assets": [{ "include": "**/env/*", "watchAssets": true }]
   },
   "monorepo": true,
   "root": "apps/minglo-blog",

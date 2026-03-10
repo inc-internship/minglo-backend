@@ -28,45 +28,45 @@ spec:
              - name: MINGLO_DB_URL
                valueFrom:
                  secretKeyRef:
-                   name: minglo-backend-production-config-secret
+                   name: minglo-core-backend-production-config-secret
                    key: MINGLO_DB_URL
              - name: MINGLO_TESTING_MODULE
                valueFrom:
                  secretKeyRef:
-                   name: minglo-backend-production-config-secret
+                   name: minglo-core-backend-production-config-secret
                    key: MINGLO_TESTING_MODULE
              - name: MINGLO_SWAGGER
                valueFrom:
                  secretKeyRef:
-                   name: minglo-backend-production-config-secret
+                   name: minglo-core-backend-production-config-secret
                    key: MINGLO_SWAGGER
              - name: MINGLO_TRUST_PROXY
                valueFrom:
                  secretKeyRef:
-                   name: minglo-backend-production-config-secret
+                   name: minglo-core-backend-production-config-secret
                    key: MINGLO_TRUST_PROXY
              - name: MINGLO_CORS
                valueFrom:
                  secretKeyRef:
-                   name: minglo-backend-production-config-secret
+                   name: minglo-core-backend-production-config-secret
                    key: MINGLO_CORS
              - name: MINGLO_CORS_ORIGINS
                valueFrom:
                  secretKeyRef:
-                   name: minglo-backend-production-config-secret
+                   name: minglo-core-backend-production-config-secret
                    key: MINGLO_CORS_ORIGINS
              - name: MINGLO_CORS_CREDENTIALS
                valueFrom:
                  secretKeyRef:
-                   name: minglo-backend-production-config-secret
+                   name: minglo-core-backend-production-config-secret
                    key: MINGLO_CORS_CREDENTIALS
              - name: MINGLO_COOKIE_PARSER
                valueFrom:
                  secretKeyRef:
-                   name: minglo-backend-production-config-secret
+                   name: minglo-core-backend-production-config-secret
                    key: MINGLO_COOKIE_PARSER
              - name: MINGLO_PORT
                valueFrom:
                  secretKeyRef:
-                   name: minglo-backend-production-config-secret
+                   name: minglo-core-backend-production-config-secret
                    key: MINGLO_PORT

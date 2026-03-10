@@ -20,16 +20,15 @@ WORKDIR /home/node/dist/${SERVICE}
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 
-
-
 COPY --chown=node package*.json ./
 
 RUN pnpm install
-# Устанавливаем Prisma client
-RUN pnpm run prisma:minglo-blog:generate:prod
 
 # Bundle app source code
 COPY --chown=node . .
+
+# Устанавливаем Prisma client
+RUN pnpm run prisma:minglo-blog:generate:prod
 
 RUN pnpm run build:${SERVICE}
 

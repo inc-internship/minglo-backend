@@ -20,10 +20,12 @@
     "test:minglo-blog:debug": "cross-env NODE_ENV=test node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand --project apps/minglo-blog",
     "test:minglo-blog:e2e": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --config apps/minglo-blog/test/jest-e2e.json --runInBand",
     "migrate:minglo-blog:dev": "cross-env NODE_ENV=development prisma migrate dev --config apps/minglo-blog/prisma.config.ts",
+    "migrate:minglo-blog:test": "cross-env NODE_ENV=test prisma migrate dev --config apps/minglo-blog/prisma.config.ts",
     "migrate:minglo-blog:deploy": "cross-env NODE_ENV=production prisma migrate deploy --config apps/minglo-blog/prisma.config.ts",
     "migrate:minglo-blog:reset": "cross-env NODE_ENV=development prisma migrate reset --config apps/minglo-blog/prisma.config.ts",
     "migrate:minglo-blog:status": "cross-env NODE_ENV=development prisma migrate status --config apps/minglo-blog/prisma.config.ts",
     "prisma:minglo-blog:generate": "cross-env NODE_ENV=development prisma generate --config apps/minglo-blog/prisma.config.ts",
+    "prisma:minglo-blog:generate-test": "cross-env NODE_ENV=test prisma generate --config apps/minglo-blog/prisma.config.ts",
     "prisma:minglo-blog:generate:prod": "cross-env NODE_ENV=production prisma generate --config apps/minglo-blog/prisma.config.ts"
   },
   "dependencies": {

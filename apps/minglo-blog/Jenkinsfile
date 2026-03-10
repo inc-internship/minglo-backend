@@ -33,6 +33,7 @@ pipeline {
 //                 }
 //             }
 //         }
+//                        yarn test:e2e
         stage('e2e tests') {
             steps {
                 script {
@@ -40,7 +41,18 @@ pipeline {
                        export NVM_DIR="$HOME/.nvm"
                        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
                        nvm use --lts
-                       yarn test:e2e
+
+                       #Устанавливаем зависимости (если ещё не установлены)
+                       yarn install
+
+                       #Миграция БД для тестовой среды
+                       yarn migrate:minglo-blog:test
+
+                       #Генерация Prisma Client
+                       yarn prisma:minglo-blog:generate-test
+
+                       #Запуск e2e тестов
+                       yarn test:minglo-blog:e2e
                     '''
                 }
             }

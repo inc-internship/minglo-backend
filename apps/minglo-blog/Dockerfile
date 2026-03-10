@@ -34,13 +34,10 @@ RUN pnpm run prisma:minglo-blog:generate:prod
 
 RUN pnpm run build:${SERVICE}
 
-# Bind to all network interfaces so that it can be mapped to the host OS
-
-EXPOSE ${PORT}
-
 # Migrate BD + run app
 RUN chmod +x ./apps/minglo-blog/docker-entrypoint.sh
 
+# Bind to all network interfaces so that it can be mapped to the host OS
 EXPOSE ${PORT}
 
 ENTRYPOINT ["./apps/minglo-blog/docker-entrypoint.sh"]

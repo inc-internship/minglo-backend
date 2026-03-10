@@ -20,8 +20,6 @@ WORKDIR /home/node/dist/${SERVICE}
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 
-
-
 COPY --chown=node package*.json ./
 
 RUN pnpm install
@@ -35,7 +33,8 @@ RUN pnpm run prisma:minglo-blog:generate:prod
 RUN pnpm run build:${SERVICE}
 
 # Migrate BD + run app
-RUN chmod +x ./apps/minglo-blog/docker-entrypoint.sh
+RUN sed -i 's/\r$//' ./apps/minglo-blog/docker-entrypoint.sh && \
+      chmod +x ./apps/minglo-blog/docker-entrypoint.sh
 
 # Bind to all network interfaces so that it can be mapped to the host OS
 EXPOSE ${PORT}

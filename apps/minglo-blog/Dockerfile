@@ -6,6 +6,9 @@ ENV SERVICE=$service
 ENV PORT=$port
 # Set to a non-root built-in user `node`
 
+# включаем corepack и pnpm
+RUN corepack enable
+
 USER node
 
 # Create app directory (with user `node`)

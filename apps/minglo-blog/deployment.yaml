@@ -60,6 +60,11 @@ spec:
                  secretKeyRef:
                    name: minglo-backend-production-config-secret
                    key: MINGLO_CORS_CREDENTIALS
+             - name: MINGLO_COOKIE_PARSER
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-backend-production-config-secret
+                   key: MINGLO_COOKIE_PARSER
              - name: MINGLO_PORT
                valueFrom:
                  secretKeyRef:

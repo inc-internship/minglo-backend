@@ -30,33 +30,33 @@ export class CoreConfig {
   })
   swagger: boolean;
 
-  // @IsBoolean({
-  //   message: 'Set environment variable MINGLO_TRUST_PROXY (boolean), example: true',
-  // })
-  // trustProxy: boolean;
-  //
-  // @IsBoolean({
-  //   message: 'Set environment variable MINGLO_COOKIE_PARSER (boolean), example: true',
-  // })
-  // cookieParser: boolean;
-  //
-  // @IsBoolean({
-  //   message: 'Set environment variable MINGLO_CORS (boolean), example: true',
-  // })
-  // cors: boolean;
-  //
-  // @ValidateIf((o) => o.cors)
-  // @IsString({
-  //   message:
-  //     'Set environment variable MINGLO_CORS_ORIGINS (string), example: http://localhost:3000,https://minglo.com',
-  // })
-  // corsOrigins: string;
-  //
-  // @ValidateIf((o) => o.cors)
-  // @IsBoolean({
-  //   message: 'Set environment variable MINGLO_CORS_CREDENTIALS (boolean), example: true',
-  // })
-  // corsCredentials: boolean;
+  @IsBoolean({
+    message: 'Set environment variable MINGLO_TRUST_PROXY (boolean), example: true',
+  })
+  trustProxy: boolean;
+
+  @IsBoolean({
+    message: 'Set environment variable MINGLO_COOKIE_PARSER (boolean), example: true',
+  })
+  cookieParser: boolean;
+
+  @IsBoolean({
+    message: 'Set environment variable MINGLO_CORS (boolean), example: true',
+  })
+  cors: boolean;
+
+  @ValidateIf((o) => o.cors)
+  @IsString({
+    message:
+      'Set environment variable MINGLO_CORS_ORIGINS (string), example: http://localhost:3000,https://minglo.com',
+  })
+  corsOrigins: string;
+
+  @ValidateIf((o) => o.cors)
+  @IsBoolean({
+    message: 'Set environment variable MINGLO_CORS_CREDENTIALS (boolean), example: true',
+  })
+  corsCredentials: boolean;
 
   constructor(private configService: ConfigService<any, true>) {
     this.env = this.configService.get('NODE_ENV');
@@ -67,20 +67,20 @@ export class CoreConfig {
     this.swagger = configValidationUtility.convertToBoolean(
       this.configService.get('MINGLO_SWAGGER'),
     ) as boolean;
-    // this.cookieParser = configValidationUtility.convertToBoolean(
-    //   this.configService.get('MINGLO_COOKIE_PARSER'),
-    // ) as boolean;
-    // this.trustProxy = configValidationUtility.convertToBoolean(
-    //   this.configService.get('MINGLO_TRUST_PROXY'),
-    // ) as boolean;
-    //
-    // this.cors = configValidationUtility.convertToBoolean(
-    //   this.configService.get('MINGLO_CORS'),
-    // ) as boolean;
-    // this.corsOrigins = this.configService.get('MINGLO_CORS_ORIGINS');
-    // this.corsCredentials = configValidationUtility.convertToBoolean(
-    //   this.configService.get('MINGLO_CORS_CREDENTIALS'),
-    // ) as boolean;
+    this.cookieParser = configValidationUtility.convertToBoolean(
+      this.configService.get('MINGLO_COOKIE_PARSER'),
+    ) as boolean;
+    this.trustProxy = configValidationUtility.convertToBoolean(
+      this.configService.get('MINGLO_TRUST_PROXY'),
+    ) as boolean;
+
+    this.cors = configValidationUtility.convertToBoolean(
+      this.configService.get('MINGLO_CORS'),
+    ) as boolean;
+    this.corsOrigins = this.configService.get('MINGLO_CORS_ORIGINS');
+    this.corsCredentials = configValidationUtility.convertToBoolean(
+      this.configService.get('MINGLO_CORS_CREDENTIALS'),
+    ) as boolean;
 
     configValidationUtility.validateConfig(this);
   }

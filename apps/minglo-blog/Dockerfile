@@ -25,6 +25,8 @@ WORKDIR /home/node/dist/${SERVICE}
 COPY --chown=node package*.json ./
 
 RUN pnpm install
+# Устанавливаем Prisma client
+RUN pnpm run prisma:minglo-blog:generate:prod
 
 # Bundle app source code
 COPY --chown=node . .

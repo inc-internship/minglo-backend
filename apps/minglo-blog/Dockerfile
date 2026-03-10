@@ -27,7 +27,7 @@ COPY --chown=node package*.json ./
 RUN pnpm install
 
 # Bundle app source code
-COPY --chown=node folder .
+COPY --chown=node . .
 
 # Устанавливаем Prisma client
 RUN pnpm run prisma:minglo-blog:generate:prod

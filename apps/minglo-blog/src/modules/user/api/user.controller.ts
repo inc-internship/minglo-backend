@@ -15,7 +15,7 @@ import { CreateUserInputDto } from './input-dto/create-user.input-dto';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ErrorResponseBody } from '@app/exceptions';
 
-@Controller({ path: 'users', version: '1' })
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

@@ -10,7 +10,6 @@ export function swaggerSetup(app: INestApplication, isSwaggerEnabled: boolean) {
         'Minglo API — backend service for a social media platform inspired by Instagram.',
       )
       .setVersion('1.0')
-      .addServer('/v1')
       .build();
 
     const document = SwaggerModule.createDocument(app, config);

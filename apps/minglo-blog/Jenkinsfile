@@ -20,21 +20,7 @@ pipeline {
                 checkout scm
             }
         }
-//         stage('Unit tests') {
-//             steps {
-//                 script {
-//                     sh '''
-//                        export NVM_DIR="$HOME/.nvm"
-//                        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-//                        nvm use --lts
-//                        yarn install
-//                        yarn test
-//                     '''
-//                 }
-//             }
-//         }
-//                        yarn test:e2e
-        stage('e2e tests') {
+        stage('Prepare test DB') {
             steps {
                 script {
                     sh '''
@@ -42,16 +28,28 @@ pipeline {
                        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
                        nvm use --lts
 
-                       #Устанавливаем зависимости (если ещё не установлены)
                        yarn install
 
-                       #Миграция БД для тестовой среды
+                       # Миграция тестовой базы и генерация Prisma Client
                        yarn migrate:minglo-blog:test
-
-                       #Генерация Prisma Client
                        yarn prisma:minglo-blog:generate-test
-
-                       #Запуск e2e тестов
+                    '''
+                }
+            }
+        }
+        stage('Unit tests') {
+            steps {
+                script {
+                    sh '''
+                       yarn test:minglo-blog:unit
+                    '''
+                }
+            }
+        }
+        stage('e2e tests') {
+            steps {
+                script {
+                    sh '''
                        yarn test:minglo-blog:e2e
                     '''
                 }

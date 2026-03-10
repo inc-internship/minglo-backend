@@ -19,6 +19,7 @@
     "test:minglo-blog:cov": "cross-env NODE_ENV=test jest --project apps/minglo-blog --coverage",
     "test:minglo-blog:debug": "cross-env NODE_ENV=test node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand --project apps/minglo-blog",
     "test:minglo-blog:e2e": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --config apps/minglo-blog/test/jest-e2e.json --runInBand",
+    "test:minglo-blog:unit": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --config apps/minglo-blog/test/jest-unit.json --runInBand",
     "migrate:minglo-blog:dev": "cross-env NODE_ENV=development prisma migrate dev --config apps/minglo-blog/prisma.config.ts",
     "migrate:minglo-blog:test": "cross-env NODE_ENV=test prisma migrate dev --config apps/minglo-blog/prisma.config.ts",
     "migrate:minglo-blog:deploy": "cross-env NODE_ENV=production prisma migrate deploy --config apps/minglo-blog/prisma.config.ts",

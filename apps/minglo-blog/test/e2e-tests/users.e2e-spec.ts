@@ -1,13 +1,13 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
-import { initTestSettings } from './helpers/init-test-settings';
-import { deleteAllData } from './helpers/delete-all-data';
-import { UserTestManager } from './managers/user-test.manager';
-import { UserTestDtoManager } from './managers/user-test.dto-manager';
-import { CreateUserDto } from '../src/modules/user/dto/create-user.dto';
-import { User } from '../prisma/generated/prisma/client';
-import { UserViewDto } from '../src/modules/user/api/view-dto/user.view-dto';
+import { initTestSettings } from '../helpers/init-test-settings';
+import { deleteAllData } from '../helpers/delete-all-data';
+import { UserTestManager } from '../managers/user-test.manager';
+import { UserTestDtoManager } from '../managers/user-test.dto-manager';
+import { CreateUserDto } from '../../src/modules/user/dto/create-user.dto';
+import { User } from '../../prisma/generated/prisma/client';
+import { UserViewDto } from '../../src/modules/user/api/view-dto/user.view-dto';
 
 describe('UserController - demo (e2e)', () => {
   let app: INestApplication<App>;

@@ -1,0 +1,27 @@
+model Session {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz
+
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // device info:
+  ip             String   @db.VarChar(255)
+  lastActive     DateTime @updatedAt @map("last_active") @db.Timestamptz
+  deviceId       String   @unique @default(cuid()) @map("device_id") @db.VarChar(255)
+  deviceName     String   @map("device_name") @db.VarChar(255)
+  browserName    String   @map("browser_name") @db.VarChar(255)
+  browserVersion String   @map("browser_version") @db.VarChar(255)
+  osName         String   @map("os_name") @db.VarChar(255)
+
+  // refresh token:
+  issuedAt  DateTime @map("issued_at") @db.Timestamptz
+  expiresAt DateTime @map("expires_at") @db.Timestamptz
+
+  @@index([userId])
+  @@index([deviceId])
+  @@index([deletedAt])
+  @@map("sessions")
+}

@@ -36,8 +36,12 @@ export class UserController {
     status: HttpStatus.NOT_FOUND,
     description: 'Not Found',
   })
-  async create(@Body() user: CreateUserInputDto) {
-    return this.userService.createUser(user);
+  async create(@Body() dto: CreateUserInputDto) {
+    return this.userService.createUser({
+      login: dto.login,
+      email: dto.email,
+      passwordHash: dto.password,
+    });
   }
 
   @Get()

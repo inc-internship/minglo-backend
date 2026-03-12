@@ -10,7 +10,7 @@ model Session {
   // device info:
   ip             String   @db.VarChar(255)
   lastActive     DateTime @updatedAt @map("last_active") @db.Timestamptz
-  deviceId       String   @map("device_id") @db.VarChar(255)
+  deviceId       String   @unique @default(cuid()) @map("device_id") @db.VarChar(255)
   deviceName     String   @map("device_name") @db.VarChar(255)
   browserName    String   @map("browser_name") @db.VarChar(255)
   browserVersion String   @map("browser_version") @db.VarChar(255)

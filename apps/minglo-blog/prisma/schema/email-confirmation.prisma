@@ -7,9 +7,9 @@ model EmailConfirmation {
   userId Int  @map("user_id")
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  confirmationCode String    @unique @map("confirmation_code") @db.VarChar(255)
-  expiresAt        DateTime  @map("expires_at") @db.Timestamptz
-  confirmedAt      DateTime? @map("confirmed_at") @db.Timestamptz
+  code        String    @map("code") @db.VarChar(255)
+  expiresAt   DateTime  @map("expires_at") @db.Timestamptz
+  confirmedAt DateTime? @map("confirmed_at") @db.Timestamptz
 
   @@index([userId])
   @@index([deletedAt])

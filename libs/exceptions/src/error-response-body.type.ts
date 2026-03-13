@@ -3,18 +3,18 @@ import { DomainExceptionCode } from './domain-exception-codes.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ErrorResponseBody {
-  @ApiProperty({ example: '2026-03-09T18:00:00Z' })
+  @ApiProperty()
   timestamp: string;
 
-  @ApiProperty({ example: '/users', nullable: true })
-  path: string | null;
+  @ApiProperty()
+  path: string;
 
-  @ApiProperty({ example: 'User not found' })
+  @ApiProperty({ enum: DomainExceptionCode })
+  code: DomainExceptionCode;
+
+  @ApiProperty()
   message: string;
 
   @ApiProperty({ type: [Extension] })
   extensions: Extension[];
-
-  @ApiProperty({ enum: DomainExceptionCode })
-  code: DomainExceptionCode;
 }

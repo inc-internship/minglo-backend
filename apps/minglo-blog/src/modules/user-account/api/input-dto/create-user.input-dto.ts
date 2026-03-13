@@ -11,7 +11,12 @@ const validationMessages = {
 };
 
 export class CreateUserInputDto {
-  @ApiProperty()
+  @ApiProperty({
+    minLength: loginConstraints.min,
+    maxLength: loginConstraints.max,
+    pattern: loginConstraints.regex.source,
+    example: 'avocado',
+  })
   @IsValidLogin({
     min: loginConstraints.min,
     max: loginConstraints.max,
@@ -20,7 +25,12 @@ export class CreateUserInputDto {
   })
   login: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    minLength: passwordConstraints.min,
+    maxLength: passwordConstraints.max,
+    pattern: passwordConstraints.regex.source,
+    example: 'Qwerty123!',
+  })
   @IsValidPassword({
     min: passwordConstraints.min,
     max: passwordConstraints.max,
@@ -29,7 +39,9 @@ export class CreateUserInputDto {
   })
   password: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 'avocado@mail.com',
+  })
   @IsValidEmail()
   email: string;
 }

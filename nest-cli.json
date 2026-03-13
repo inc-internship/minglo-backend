@@ -10,6 +10,15 @@
   "monorepo": true,
   "root": "apps/minglo-blog",
   "projects": {
+    "decorators": {
+      "type": "library",
+      "root": "libs/decorators",
+      "entryFile": "index",
+      "sourceRoot": "libs/decorators/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/decorators/tsconfig.lib.json"
+      }
+    },
     "dynamic-config": {
       "type": "library",
       "root": "libs/dynamic-config",

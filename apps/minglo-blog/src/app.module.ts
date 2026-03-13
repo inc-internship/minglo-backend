@@ -6,9 +6,24 @@ import { MingloTestModule } from './modules/testing/testing.module';
 import { MingloTestController } from './modules/testing/api/testing.controller';
 import { ExceptionsModule } from '@app/exceptions';
 import { UserAccountModule } from './modules/user-account/user-account.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
-  imports: [DynamicConfigModule, CoreModule, ExceptionsModule, UserAccountModule],
+  imports: [
+    DynamicConfigModule,
+    CoreModule,
+    ThrottlerModule.forRootAsync({
+      useFactory: (coreConfig: CoreConfig) => [
+        {
+          ttl: coreConfig.throttleTtl,
+          limit: coreConfig.throttleLimit,
+        },
+      ],
+      inject: [CoreConfig],
+    }),
+    ExceptionsModule,
+    UserAccountModule,
+  ],
   controllers: [],
   providers: [],
   exports: [],

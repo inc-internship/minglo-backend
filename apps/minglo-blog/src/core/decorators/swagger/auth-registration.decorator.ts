@@ -4,6 +4,7 @@ import {
   ApiBody,
   ApiConflictResponse,
   ApiNoContentResponse,
+  ApiTooManyRequestsResponse,
 } from '@nestjs/swagger';
 import { CreateUserInputDto } from '../../../modules/user-account/api/input-dto';
 import { ErrorResponseBody } from '@app/exceptions';
@@ -19,11 +20,14 @@ export function ApiAuthRegistration() {
         'User successfully registered. Email has been sent to the specified email address',
     }),
     ApiBadRequestResponse({
-      description: 'Validation failed or user data is invalid',
+      description: 'Bad request',
       type: ErrorResponseBody,
     }),
     ApiConflictResponse({
-      description: 'Login or email already exists',
+      description: 'login or email already exists',
+    }),
+    ApiTooManyRequestsResponse({
+      description: 'More than 5 attempts from one IP-address during 10 seconds',
     }),
   );
 }

@@ -1,6 +1,8 @@
 import { Controller, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { PrismaService } from '../../../database/prisma.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Testing')
 @Controller('testing')
 export class MingloTestController {
   constructor(private readonly prisma: PrismaService) {}

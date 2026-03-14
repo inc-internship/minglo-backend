@@ -2,14 +2,13 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { DynamicConfigModule } from '@app/dynamic-config';
 import { CoreModule } from './core/core.module';
 import { CoreConfig } from './core/core.config';
-import { UserModule } from './modules/user/user.module';
-import { PostModule } from './modules/post/post.module';
 import { MingloTestModule } from './modules/testing/testing.module';
 import { MingloTestController } from './modules/testing/api/testing.controller';
 import { ExceptionsModule } from '@app/exceptions';
+import { UserAccountModule } from './modules/user-account/user-account.module';
 
 @Module({
-  imports: [DynamicConfigModule, CoreModule, ExceptionsModule, UserModule, PostModule],
+  imports: [DynamicConfigModule, CoreModule, ExceptionsModule, UserAccountModule],
   controllers: [],
   providers: [],
   exports: [],

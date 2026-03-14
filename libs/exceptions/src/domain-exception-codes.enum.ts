@@ -12,4 +12,6 @@ export enum DomainExceptionCode {
   PasswordRecoveryCodeExpired = 14,
   //ip-restriction
   TooManyRequests = 15,
+  //conflicts
+  Conflict = 16,
 }

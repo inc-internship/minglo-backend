@@ -22,6 +22,12 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
+      "@app/decorators": [
+        "libs/decorators/src"
+      ],
+      "@app/decorators/*": [
+        "libs/decorators/src/*"
+      ],
       "@app/dynamic-config": [
         "libs/dynamic-config/src"
       ],
@@ -33,6 +39,12 @@
       ],
       "@app/exceptions/*": [
         "libs/exceptions/src/*"
+      ],
+      "@app/notifications": [
+        "libs/notifications/src"
+      ],
+      "@app/notifications/*": [
+        "libs/notifications/src/*"
       ],
       "@app/setup": [
         "libs/setup/src"

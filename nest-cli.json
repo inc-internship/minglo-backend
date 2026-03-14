@@ -10,6 +10,15 @@
   "monorepo": true,
   "root": "apps/minglo-blog",
   "projects": {
+    "decorators": {
+      "type": "library",
+      "root": "libs/decorators",
+      "entryFile": "index",
+      "sourceRoot": "libs/decorators/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/decorators/tsconfig.lib.json"
+      }
+    },
     "dynamic-config": {
       "type": "library",
       "root": "libs/dynamic-config",
@@ -28,15 +37,6 @@
         "tsConfigPath": "libs/exceptions/tsconfig.lib.json"
       }
     },
-    "micro-app": {
-      "type": "application",
-      "root": "apps/micro-app",
-      "entryFile": "main",
-      "sourceRoot": "apps/micro-app/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/micro-app/tsconfig.app.json"
-      }
-    },
     "minglo-blog": {
       "type": "application",
       "root": "apps/minglo-blog",
@@ -44,6 +44,15 @@
       "sourceRoot": "apps/minglo-blog/src",
       "compilerOptions": {
         "tsConfigPath": "apps/minglo-blog/tsconfig.app.json"
+      }
+    },
+    "notifications": {
+      "type": "library",
+      "root": "libs/notifications",
+      "entryFile": "index",
+      "sourceRoot": "libs/notifications/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/notifications/tsconfig.lib.json"
       }
     },
     "setup": {

@@ -65,6 +65,26 @@ spec:
                  secretKeyRef:
                    name: minglo-core-backend-production-config-secret
                    key: MINGLO_COOKIE_PARSER
+             - name: MAIL_SERVICE
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MAIL_SERVICE
+             - name: MAIL_ADDRESS
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MAIL_ADDRESS
+             - name: MAIL_PASS
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MAIL_PASS
+             - name: MAIL_FROM
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MAIL_FROM
              - name: MINGLO_PORT
                valueFrom:
                  secretKeyRef:

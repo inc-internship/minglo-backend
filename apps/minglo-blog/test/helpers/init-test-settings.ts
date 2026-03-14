@@ -2,6 +2,8 @@ import { Test, TestingModuleBuilder } from '@nestjs/testing';
 import { initAppModule } from '../../src/init-app-module';
 import { UserTestManager } from '../managers/user-test.manager';
 import { UserTestDtoManager } from '../managers/user-test.dto-manager';
+import { appSetup } from '../../src/setup/app.setup';
+import { EmailService } from '@app/notifications';
 
 export const initTestSettings = async (
   addSettingsToModuleBuilder?: (moduleBuilder: TestingModuleBuilder) => void,
@@ -12,6 +14,10 @@ export const initTestSettings = async (
     imports: [DynamicAppModule],
   });
 
+  testingModuleBuilder.overrideProvider(EmailService).useValue({
+    sendConfirmationEmail: jest.fn().mockResolvedValue(undefined),
+  });
+
   if (addSettingsToModuleBuilder) {
     addSettingsToModuleBuilder(testingModuleBuilder);
   }
@@ -19,6 +25,9 @@ export const initTestSettings = async (
   const testingAppModule = await testingModuleBuilder.compile();
 
   const app = testingAppModule.createNestApplication();
+
+  appSetup(app, false);
+
   await app.init();
 
   const userTestManger = new UserTestManager(app);

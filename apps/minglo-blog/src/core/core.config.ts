@@ -58,6 +58,15 @@ export class CoreConfig {
   })
   corsCredentials: boolean;
 
+  // Throttler
+  @ValidateIf((o) => o.throttleTtl !== undefined)
+  @IsNumber({}, { message: 'Set environment variable MINGLO_THROTTLE_TTL (seconds)' })
+  throttleTtl: number;
+
+  @ValidateIf((o) => o.throttleLimit !== undefined)
+  @IsNumber({}, { message: 'Set environment variable MINGLO_THROTTLE_LIMIT (number)' })
+  throttleLimit: number;
+
   constructor(private configService: ConfigService<any, true>) {
     this.env = this.configService.get('NODE_ENV');
     this.port = Number(this.configService.get('MINGLO_PORT'));
@@ -81,6 +90,8 @@ export class CoreConfig {
     this.corsCredentials = configValidationUtility.convertToBoolean(
       this.configService.get('MINGLO_CORS_CREDENTIALS'),
     ) as boolean;
+    this.throttleTtl = Number(this.configService.get('MINGLO_THROTTLE_TTL'));
+    this.throttleLimit = Number(this.configService.get('MINGLO_THROTTLE_LIMIT'));
 
     configValidationUtility.validateConfig(this);
   }

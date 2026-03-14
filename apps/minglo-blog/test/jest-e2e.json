@@ -11,6 +11,14 @@
     "@app/dynamic-config": "<rootDir>/../../../libs/dynamic-config/src",
     "@app/exceptions/(.*)": "<rootDir>/../../../libs/exceptions/src/$1",
     "@app/exceptions": "<rootDir>/../../../libs/exceptions/src",
+    "@app/decorators/(.*)": "<rootDir>/../../../libs/decorators/src/$1",
+    "@app/decorators": "<rootDir>/../../../libs/decorators/src",
+    "@app/notifications/(.*)": "<rootDir>/../../../libs/notifications/src/$1",
+    "@app/notifications": "<rootDir>/../../../libs/notifications/src",
+    "@app/setup/(.*)": "<rootDir>/../../../libs/setup/src/$1",
+    "@app/setup": "<rootDir>/../../../libs/setup/src",
+    "@app/utils/(.*)": "<rootDir>/../../../libs/utils/src/$1",
+    "@app/utils": "<rootDir>/../../../libs/utils/src",
     "^(\\.{1,2}/.*)\\.js$": "$1"
   }
 }

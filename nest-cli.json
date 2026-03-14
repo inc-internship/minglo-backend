@@ -55,6 +55,15 @@
         "tsConfigPath": "apps/minglo-blog/tsconfig.app.json"
       }
     },
+    "notifications": {
+      "type": "library",
+      "root": "libs/notifications",
+      "entryFile": "index",
+      "sourceRoot": "libs/notifications/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/notifications/tsconfig.lib.json"
+      }
+    },
     "setup": {
       "type": "library",
       "root": "libs/setup",

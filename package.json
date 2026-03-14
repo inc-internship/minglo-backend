@@ -30,6 +30,7 @@
     "prisma:minglo-blog:generate:prod": "cross-env NODE_ENV=production prisma generate --config apps/minglo-blog/prisma.config.ts"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.3",
     "@nestjs/core": "^11.0.1",
@@ -47,6 +48,7 @@
     "cookie-parser": "^1.4.7",
     "cross-env": "^10.1.0",
     "date-fns": "^4.1.0",
+    "nodemailer": "^8.0.2",
     "passport-jwt": "^4.0.1",
     "pg": "^8.20.0",
     "reflect-metadata": "^0.2.2",
@@ -63,6 +65,7 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.7",
+    "@types/nodemailer": "^7.0.11",
     "@types/passport-jwt": "^4.0.1",
     "@types/pg": "^8.18.0",
     "@types/supertest": "^6.0.2",
@@ -107,6 +110,7 @@
       "^@app/decorators(|/.*)$": "<rootDir>/libs/decorators/src/$1",
       "^@app/dynamic-config(|/.*)$": "<rootDir>/libs/dynamic-config/src/$1",
       "^@app/exceptions(|/.*)$": "<rootDir>/libs/exceptions/src/$1",
+      "^@app/notifications(|/.*)$": "<rootDir>/libs/notifications/src/$1",
       "^@app/setup(|/.*)$": "<rootDir>/libs/setup/src/$1",
       "^@app/utils(|/.*)$": "<rootDir>/libs/utils/src/$1"
     }

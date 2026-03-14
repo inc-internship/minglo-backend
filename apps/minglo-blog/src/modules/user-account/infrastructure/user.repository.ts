@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../database/prisma.service';
 import { User } from '../../../../prisma/generated/prisma/client';
-import { UserEntity as UserEntity } from '../domains';
-import { PrismaExceptionMapper } from '@app/exceptions';
+import { UserEntity as UserEntity, UserFactory } from '../domains';
+import { DomainException, DomainExceptionCode, PrismaExceptionMapper } from '@app/exceptions';
 
 @Injectable()
 export class UserRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly userFactory: UserFactory,
+  ) {}
 
   /** Находит первое совпадение по login или email */
   async findFirst(login: string, email: string): Promise<User | null> {
@@ -15,6 +18,28 @@ export class UserRepository {
         OR: [{ login }, { email }],
       },
     });
+  }
+
+  /* Находит юзера по коду подтверждения email */
+  async findByConfirmationCode(code: string): Promise<UserEntity> {
+    const result = await this.prisma.emailConfirmation.findFirst({
+      where: {
+        code,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    if (!result) {
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: 'Invalid Code',
+        extensions: [{ field: 'code', message: 'Invalid confirmation code' }],
+      });
+    }
+
+    return this.userFactory.fromPersistenceWithConfirmation(result);
   }
 
   /* Создает юзера */
@@ -45,5 +70,19 @@ export class UserRepository {
       // перехватываем ошибку базы данных и мапим ее в DomainException
       PrismaExceptionMapper.map(error);
     }
+  }
+
+  /* Подтверждает юзера */
+  async confirmEmail(user: UserEntity): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      await tx.user.update({
+        where: { id: user.id },
+        data: { emailConfirmed: true },
+      });
+      await tx.emailConfirmation.update({
+        where: { id: user.emailConfirmation.id },
+        data: { confirmedAt: new Date() },
+      });
+    });
   }
 }

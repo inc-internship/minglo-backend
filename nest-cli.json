@@ -37,15 +37,6 @@
         "tsConfigPath": "libs/exceptions/tsconfig.lib.json"
       }
     },
-    "micro-app": {
-      "type": "application",
-      "root": "apps/micro-app",
-      "entryFile": "main",
-      "sourceRoot": "apps/micro-app/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/micro-app/tsconfig.app.json"
-      }
-    },
     "minglo-blog": {
       "type": "application",
       "root": "apps/minglo-blog",

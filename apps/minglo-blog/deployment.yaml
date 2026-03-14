@@ -85,6 +85,16 @@ spec:
                  secretKeyRef:
                    name: minglo-core-backend-production-config-secret
                    key: MAIL_FROM
+             - name: MINGLO_THROTTLE_TTL
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MINGLO_THROTTLE_TTL
+             - name: MINGLO_THROTTLE_LIMIT
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MINGLO_THROTTLE_LIMIT
              - name: MINGLO_PORT
                valueFrom:
                  secretKeyRef:

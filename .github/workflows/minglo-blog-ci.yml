@@ -1,4 +1,4 @@
-name: Minglo Blog CI
+name: minglo-blog e2e and unit tests run.
 
 on:
   pull_request:

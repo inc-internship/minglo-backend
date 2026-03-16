@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CryptoService } from '../../application/services/crypto.service';
+import { CryptoService } from '../../application/services';
 import { EmailConfirmationEntity, UserEntity } from '../entities';
 import { EmailConfirmationWithUser, UserWithEmailConfirmation } from '../../../../../prisma/types';
 

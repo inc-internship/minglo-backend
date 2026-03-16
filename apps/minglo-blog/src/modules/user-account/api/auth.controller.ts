@@ -37,9 +37,11 @@ export class AuthController {
   @Post('registration/confirmation/resend')
   @ApiAuthRegistrationConfirmationResend()
   @HttpCode(HttpStatus.NO_CONTENT)
-  async resendConfirmationEmail(@Body() { email }: RegistrationConfirmationResendInputDto) {
+  async resendConfirmationEmail(
+    @Body() { email, redirectUrl }: RegistrationConfirmationResendInputDto,
+  ) {
     return this.commandBus.execute<ResendConfirmEmailCommand, void>(
-      new ResendConfirmEmailCommand(email),
+      new ResendConfirmEmailCommand(email, redirectUrl),
     );
   }
 }

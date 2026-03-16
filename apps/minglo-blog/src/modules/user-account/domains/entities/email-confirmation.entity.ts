@@ -45,4 +45,10 @@ export class EmailConfirmationEntity {
   confirm() {
     this.confirmedAt = new Date();
   }
+
+  /** Генерирует новый код и продлевает срок жизни */
+  regenerate(hours = 1): void {
+    this.code = randomUUID();
+    this.expiresAt = add(new Date(), { hours });
+  }
 }

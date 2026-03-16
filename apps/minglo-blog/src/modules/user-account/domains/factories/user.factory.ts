@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CryptoService } from '../../application/services/crypto.service';
 import { EmailConfirmationEntity, UserEntity } from '../entities';
-import { EmailConfirmationWithUser } from '../../../../../prisma/types';
+import { EmailConfirmationWithUser, UserWithEmailConfirmation } from '../../../../../prisma/types';
 
 type UserCreateArgs = {
   login: string;
@@ -31,7 +31,7 @@ export class UserFactory {
   }
 
   /* Перегрузка prisma модели emailConfirmation в доменную сущность UserEntity */
-  fromPersistenceWithConfirmation(record: EmailConfirmationWithUser): UserEntity {
+  fromEmailConfirmationRecord(record: EmailConfirmationWithUser): UserEntity {
     return UserEntity.reconstitute({
       id: record.user.id,
       login: record.user.login,
@@ -42,6 +42,21 @@ export class UserFactory {
         id: record.id,
         code: record.code,
         expiresAt: record.expiresAt,
+        confirmedAt: record.confirmedAt,
+      }),
+    });
+  }
+
+  /* Перегрузка prisma модели User с массивом emailConfirmations в доменную сущность для resend */
+  fromUserWithEmailConfirmations(record: UserWithEmailConfirmation): UserEntity {
+    return UserEntity.reconstitute({
+      id: record.id,
+      login: record.login,
+      email: record.email,
+      passwordHash: record.passwordHash,
+      emailConfirmed: record.emailConfirmed,
+      emailConfirmation: EmailConfirmationEntity.reconstitute({
+        ...record.emailConfirmations?.[0],
       }),
     });
   }

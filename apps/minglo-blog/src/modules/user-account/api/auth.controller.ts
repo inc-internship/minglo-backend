@@ -5,7 +5,11 @@ import {
   RegistrationConfirmationInputDto,
   RegistrationConfirmationResendInputDto,
 } from './input-dto';
-import { ConfirmEmailCommand, CreateUserCommand } from '../application/usecases';
+import {
+  ConfirmEmailCommand,
+  CreateUserCommand,
+  ResendConfirmEmailCommand,
+} from '../application/usecases';
 import {
   ApiAuthRegistration,
   ApiAuthRegistrationConfirmation,
@@ -34,8 +38,8 @@ export class AuthController {
   @ApiAuthRegistrationConfirmationResend()
   @HttpCode(HttpStatus.NO_CONTENT)
   async resendConfirmationEmail(@Body() { email }: RegistrationConfirmationResendInputDto) {
-    console.log(email);
-
-    return 'registration/confirmation/resend';
+    return this.commandBus.execute<ResendConfirmEmailCommand, void>(
+      new ResendConfirmEmailCommand(email),
+    );
   }
 }

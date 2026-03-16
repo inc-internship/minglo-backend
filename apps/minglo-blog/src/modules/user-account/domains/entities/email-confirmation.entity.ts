@@ -6,6 +6,7 @@ export class EmailConfirmationEntity {
   public id: number;
   public code: string;
   public expiresAt: Date;
+  public confirmedAt: Date | null;
 
   static create(): EmailConfirmationEntity {
     const ec = new this();
@@ -19,11 +20,13 @@ export class EmailConfirmationEntity {
     id: number;
     code: string;
     expiresAt: Date;
+    confirmedAt: Date | null;
   }): EmailConfirmationEntity {
     const ec = new this();
     ec.id = data.id;
     ec.code = data.code;
     ec.expiresAt = data.expiresAt;
+    ec.confirmedAt = data.confirmedAt;
     return ec;
   }
 
@@ -36,5 +39,10 @@ export class EmailConfirmationEntity {
         extensions: [{ field: 'code', message: 'Confirmation code expired' }],
       });
     }
+  }
+
+  /* Устанавливает дату подтверждения кода */
+  confirm() {
+    this.confirmedAt = new Date();
   }
 }

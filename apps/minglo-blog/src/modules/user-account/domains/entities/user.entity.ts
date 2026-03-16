@@ -44,5 +44,6 @@ export class UserEntity {
       });
     }
     this.emailConfirmed = true;
+    this.emailConfirmation.confirm();
   }
 }

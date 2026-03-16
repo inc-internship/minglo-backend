@@ -1,7 +1,11 @@
 import { Module } from '@nestjs/common';
 import { UserService } from './application/services/user.service';
 import { AuthController } from './api/auth.controller';
-import { CreateUserUseCase, ConfirmEmailUseCase } from './application/usecases';
+import {
+  CreateUserUseCase,
+  ConfirmEmailUseCase,
+  ResendConfirmEmailUseCase,
+} from './application/usecases';
 import { UserFactory } from './domains';
 import { CryptoService } from './application/services/crypto.service';
 import { UserRepository } from './infrastructure/user.repository';
@@ -19,6 +23,7 @@ import { EmailModule } from '@app/notifications';
     CreateUserUseCase,
     UserRegisteredHandler,
     ConfirmEmailUseCase,
+    ResendConfirmEmailUseCase,
   ],
 })
 export class UserAccountModule {}

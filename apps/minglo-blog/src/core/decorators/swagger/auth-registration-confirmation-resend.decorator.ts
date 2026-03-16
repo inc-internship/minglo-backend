@@ -27,7 +27,7 @@ export function ApiAuthRegistrationConfirmationResend() {
       type: ErrorResponseBody,
     }),
     ApiTooManyRequestsResponse({
-      description: 'More than 5 attempts from one IP-address during 10 seconds',
+      description: 'Too many attempts from the same IP address. Please try again later.',
     }),
   );
 }

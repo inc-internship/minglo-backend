@@ -33,7 +33,7 @@ export function ApiAuthRegistration() {
       description: 'login or email already exists',
     }),
     ApiTooManyRequestsResponse({
-      description: 'More than 5 attempts from one IP-address during 10 seconds',
+      description: 'Too many attempts from the same IP address. Please try again later.',
     }),
   );
 }

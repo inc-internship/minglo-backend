@@ -1,6 +1,9 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { CreateUserInputDto } from '../../src/modules/user-account/api/input-dto';
+import {
+  CreateUserInputDto,
+  RegistrationConfirmationInputDto,
+} from '../../src/modules/user-account/api/input-dto';
 
 export class AuthTestManager {
   constructor(private readonly app: INestApplication) {}
@@ -11,6 +14,16 @@ export class AuthTestManager {
   ): Promise<request.Response> {
     return request(this.app.getHttpServer())
       .post('/api/v1/auth/registration')
+      .send(dto)
+      .expect(statusCode);
+  }
+
+  async confirmRegistration(
+    dto: Partial<RegistrationConfirmationInputDto>,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ): Promise<request.Response> {
+    return request(this.app.getHttpServer())
+      .post('/api/v1/auth/registration-confirmation')
       .send(dto)
       .expect(statusCode);
   }

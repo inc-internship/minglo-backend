@@ -14,7 +14,7 @@ export function swaggerSetup(app: INestApplication, isSwaggerEnabled: boolean) {
 
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup(GLOBAL_PREFIX, app, document, {
-      customSiteTitle: 'Minglo Swagger',
+      customSiteTitle: 'Minglo API',
     });
   }
 }

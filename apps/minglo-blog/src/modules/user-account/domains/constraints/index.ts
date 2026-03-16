@@ -9,3 +9,8 @@ export const passwordConstraints = {
   max: 20,
   regex: /^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])[0-9A-Za-z!"#$%&'()*+,\-./:;<=>?@[\\\]^_{|}~]+$/,
 };
+
+export const emailConfirmationConstraints = {
+  min: 1,
+  max: 255,
+};

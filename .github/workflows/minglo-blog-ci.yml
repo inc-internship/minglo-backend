@@ -1,0 +1,56 @@
+name: minglo-blog e2e and unit tests run.
+
+on:
+  pull_request:
+    paths:
+      - 'apps/minglo-blog/**'
+      - 'libs/**'
+      - '.github/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      MINGLO_PORT: 4000
+      MINGLO_DB_URL: ${{ secrets.MINGLO_DB_URL_GITHUB }}
+      MINGLO_TESTING_MODULE: true
+      MAIL_SERVICE: Gmail
+      MAIL_ADDRESS: minglo.backend@gmail.com
+      MAIL_PASS: ${{ secrets.MAIL_PASS_GITHUB }}
+      MAIL_FROM: '"Minglo" <minglo.backend@gmail.com>'
+      MINGLO_THROTTLE_TTL: 10
+      MINGLO_THROTTLE_LIMIT: 5
+      MINGLO_CORS: false
+      MINGLO_CORS_CREDENTIALS: true
+      MINGLO_COOKIE_PARSER: true
+      MINGLO_TRUST_PROXY: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Prepare test DB
+        run: |
+          pnpm run migrate:minglo-blog:test
+          pnpm run prisma:minglo-blog:generate-test
+
+      - name: Run unit tests
+        run: pnpm run test:minglo-blog:unit
+
+      - name: Run e2e tests
+        run: pnpm run test:minglo-blog:e2e

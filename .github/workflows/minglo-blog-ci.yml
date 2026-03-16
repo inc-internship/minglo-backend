@@ -6,6 +6,7 @@ on:
     paths:
       - 'apps/minglo-blog/**'
       - 'libs/**'
+      - '.github/**'
 
 jobs:
   test:

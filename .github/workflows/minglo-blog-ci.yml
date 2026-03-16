@@ -1,0 +1,41 @@
+# .github/workflows/minglo-blog-ci.yml
+name: Minglo Blog CI
+
+on:
+  pull_request:
+    paths:
+      - 'apps/minglo-blog/**'
+      - 'libs/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      DATABASE_URL: ${{ secrets.MINGLO_DB_URL_GITHUB }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Prepare test DB
+        run: |
+          pnpm run migrate:minglo-blog:test
+          pnpm run prisma:minglo-blog:generate-test
+
+      - name: Run unit tests
+        run: pnpm run test:minglo-blog:unit
+
+      - name: Run e2e tests
+        run: pnpm run test:minglo-blog:e2e

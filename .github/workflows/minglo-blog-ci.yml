@@ -12,7 +12,20 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_ENV: test
+      MINGLO_PORT: 4000
       MINGLO_DB_URL: ${{ secrets.MINGLO_DB_URL_GITHUB }}
+      MINGLO_TESTING_MODULE: true
+      MAIL_SERVICE: Gmail
+      MAIL_ADDRESS: minglo.backend@gmail.com
+      MAIL_PASS: ${{ secrets.MAIL_PASS_GITHUB }}
+      MAIL_FROM: '"Minglo" <minglo.backend@gmail.com>'
+      MINGLO_THROTTLE_TTL: 10
+      MINGLO_THROTTLE_LIMIT: 5
+      MINGLO_CORS: false
+      MINGLO_CORS_CREDENTIALS: true
+      MINGLO_COOKIE_PARSER: true
+      MINGLO_TRUST_PROXY: false
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

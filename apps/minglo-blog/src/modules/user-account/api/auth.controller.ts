@@ -68,6 +68,7 @@ export class AuthController {
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
+      sameSite: 'lax',
       maxAge: this.coreConfigService.maxAgeRefreshToken * 1000,
     });
     return { accessToken: accessToken };

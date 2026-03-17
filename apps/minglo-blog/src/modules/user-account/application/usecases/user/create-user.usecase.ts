@@ -1,9 +1,9 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { CreateUserInputDto } from '../../../api/input-dto';
-import { UserService } from '../../services/user.service';
+import { UserService } from '../../services';
 import { UserFactory } from '../../../domains';
-import { UserRepository } from '../../../infrastructure/user.repository';
-import { UserRegisteredEvent } from '../../events/user-registered.handler';
+import { UserRepository } from '../../../infrastructure';
+import { UserRegisteredEvent } from '../../events';
 
 export class CreateUserCommand {
   constructor(public dto: CreateUserInputDto & { forSA?: boolean }) {}
@@ -27,15 +27,14 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand, str
 
     await this.userService.ensureUserCredentialsAreUnique(login, email);
 
-    const userEntity = await this.userFactory.create({ login, email, password, forSA });
+    const user = await this.userFactory.create({ login, email, password, forSA });
 
-    const publicId = await this.userRepo.create(userEntity);
+    const publicId = await this.userRepo.create(user);
 
     if (!forSA) {
       // отправляем письмо на почту если это не SA
-      this.eventBus.publish(
-        new UserRegisteredEvent(email, redirectUrl, userEntity.emailConfirmation.code),
-      );
+      const code = user.emailConfirmation.code;
+      this.eventBus.publish(new UserRegisteredEvent({ email, code, redirectUrl }));
     }
 
     return publicId;

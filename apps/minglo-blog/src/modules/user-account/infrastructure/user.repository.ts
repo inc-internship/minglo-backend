@@ -16,22 +16,25 @@ export class UserRepository {
     return this.prisma.user.findFirst({
       where: {
         OR: [{ login }, { email }],
+        deletedAt: null,
       },
     });
   }
 
   /* Находит юзера по коду подтверждения email */
   async findByConfirmationCode(code: string): Promise<UserEntity> {
-    const result = await this.prisma.emailConfirmation.findFirst({
+    const dbEmailConfirmation = await this.prisma.emailConfirmation.findFirst({
       where: {
         code,
+        deletedAt: null,
+        confirmedAt: null,
       },
       include: {
         user: true,
       },
     });
 
-    if (!result) {
+    if (!dbEmailConfirmation) {
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
         message: 'Invalid Code',
@@ -39,7 +42,39 @@ export class UserRepository {
       });
     }
 
-    return this.userFactory.fromPersistenceWithConfirmation(result);
+    return this.userFactory.fromEmailConfirmationRecord(dbEmailConfirmation);
+  }
+
+  /* Находит юзера по email */
+  async findByEmail(email: string): Promise<UserEntity> {
+    const dbUser = await this.prisma.user.findFirst({
+      where: {
+        email,
+        deletedAt: null,
+      },
+      include: {
+        emailConfirmations: {
+          where: {
+            deletedAt: null,
+            confirmedAt: null,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 1,
+        },
+      },
+    });
+
+    if (!dbUser) {
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: 'Invalid email',
+        extensions: [{ field: 'email', message: 'Invalid email' }],
+      });
+    }
+
+    return this.userFactory.fromUserWithEmailConfirmations(dbUser);
   }
 
   /* Создает юзера */

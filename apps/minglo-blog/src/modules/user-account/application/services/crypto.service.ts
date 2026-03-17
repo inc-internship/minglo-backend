@@ -5,12 +5,12 @@ import bcrypt from 'bcrypt';
 export class CryptoService {
   /* генерация bcrypt-хеша пароля */
   async hashPassword(password: string): Promise<string> {
-    const salt = await bcrypt.genSalt(10);
+    const salt: string = await bcrypt.genSalt(10);
     return bcrypt.hash(password, salt);
   }
 
   /* проверка соответствия пароля и сохранённого хеша */
-  comparePassword(args: { password: string; hash: string }): Promise<boolean> {
-    return bcrypt.compare(args.password, args.hash);
+  comparePassword(args: { password: string; passwordHash: string }): Promise<boolean> {
+    return bcrypt.compare(args.password, args.passwordHash);
   }
 }

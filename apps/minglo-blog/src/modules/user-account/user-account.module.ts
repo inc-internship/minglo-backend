@@ -7,6 +7,8 @@ import { CryptoService } from './application/services/crypto.service';
 import { UserRepository } from './infrastructure/user.repository';
 import { UserRegisteredHandler } from './application/events/user-registered.handler';
 import { EmailModule } from '@app/notifications';
+import { JwtService } from './application/services/jwt.service';
+import { LoginUserUseCase } from './application/usecases/auth/login-user.usecase';
 
 @Module({
   imports: [EmailModule],
@@ -15,8 +17,10 @@ import { EmailModule } from '@app/notifications';
     UserFactory,
     UserService,
     CryptoService,
+    JwtService,
     UserRepository,
     CreateUserUseCase,
+    LoginUserUseCase,
     UserRegisteredHandler,
     ConfirmEmailUseCase,
   ],

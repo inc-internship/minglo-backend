@@ -4,6 +4,7 @@ import {
   CreateUserInputDto,
   RegistrationConfirmationInputDto,
 } from '../../src/modules/user-account/api/input-dto';
+import { LoginUserInputDto } from '../../src/modules/user-account/api/input-dto/login-user.input.dto';
 
 export class AuthTestManager {
   constructor(private readonly app: INestApplication) {}
@@ -36,5 +37,15 @@ export class AuthTestManager {
       redirectUrl: 'https://minglo.blog/auth/confirm',
       ...overrides,
     };
+  }
+
+  async login(
+    dto: LoginUserInputDto,
+    expectedStatus: number = HttpStatus.OK,
+  ): Promise<request.Response> {
+    return request(this.app.getHttpServer())
+      .post('/api/v1/auth/login')
+      .send(dto)
+      .expect(expectedStatus);
   }
 }

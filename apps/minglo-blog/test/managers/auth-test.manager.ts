@@ -3,6 +3,7 @@ import request from 'supertest';
 import {
   CreateUserInputDto,
   RegistrationConfirmationInputDto,
+  RegistrationConfirmationResendInputDto,
 } from '../../src/modules/user-account/api/input-dto';
 
 export class AuthTestManager {
@@ -23,7 +24,17 @@ export class AuthTestManager {
     statusCode: number = HttpStatus.NO_CONTENT,
   ): Promise<request.Response> {
     return request(this.app.getHttpServer())
-      .post('/api/v1/auth/registration-confirmation')
+      .post('/api/v1/auth/registration/confirmation')
+      .send(dto)
+      .expect(statusCode);
+  }
+
+  async resendConfirmationEmail(
+    dto: Partial<RegistrationConfirmationResendInputDto>,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ): Promise<request.Response> {
+    return request(this.app.getHttpServer())
+      .post('/api/v1/auth/registration/confirmation/resend')
       .send(dto)
       .expect(statusCode);
   }

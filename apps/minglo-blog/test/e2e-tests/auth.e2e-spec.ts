@@ -50,4 +50,35 @@ describe('Auth API (e2e)', () => {
       HttpStatus.BAD_REQUEST,
     );
   });
+
+  it('204 — should resend confirmation email and allow confirm with new code', async () => {
+    const dto = authManager.validDto();
+    await authManager.register(dto);
+
+    await authManager.resendConfirmationEmail({ email: dto.email, redirectUrl: dto.redirectUrl });
+
+    const { code } = emailService.sendConfirmationEmail.mock.calls[1][0];
+
+    await authManager.confirmRegistration({ code });
+  });
+
+  it('400 — should fail resend if email is already confirmed', async () => {
+    const dto = authManager.validDto();
+    await authManager.register(dto);
+
+    const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
+    await authManager.confirmRegistration({ code });
+
+    await authManager.resendConfirmationEmail(
+      { email: dto.email, redirectUrl: dto.redirectUrl },
+      HttpStatus.BAD_REQUEST,
+    );
+  });
+
+  it('400 — should fail resend for non-existent email', async () => {
+    await authManager.resendConfirmationEmail(
+      { email: 'nonexistent@gmail.com', redirectUrl: 'https://minglo.blog/auth/confirm' },
+      HttpStatus.BAD_REQUEST,
+    );
+  });
 });

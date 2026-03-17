@@ -56,7 +56,7 @@ export class UserFactory {
       passwordHash: record.passwordHash,
       emailConfirmed: record.emailConfirmed,
       emailConfirmation: EmailConfirmationEntity.reconstitute({
-        ...record.emailConfirmations?.[0],
+        ...record.emailConfirmations[0],
       }),
     });
   }

@@ -27,6 +27,7 @@ export class UserRepository {
       where: {
         code,
         deletedAt: null,
+        confirmedAt: null,
       },
       include: {
         user: true,

@@ -40,7 +40,7 @@ export class AuthController {
   async resendConfirmationEmail(
     @Body() { email, redirectUrl }: RegistrationConfirmationResendInputDto,
   ) {
-    return this.commandBus.execute<ResendConfirmEmailCommand, void>(
+    await this.commandBus.execute<ResendConfirmEmailCommand, void>(
       new ResendConfirmEmailCommand(email, redirectUrl),
     );
   }

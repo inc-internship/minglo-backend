@@ -5,10 +5,11 @@ import { appSetup } from './setup/app.setup';
 import { proxySetup } from './setup/proxy.setup';
 import { cookiesSetup } from './setup/cookies.setup';
 import { corsSetup } from './setup/cors.setup';
+import { loggerSetup } from './setup/logger.setup';
 
 async function bootstrap() {
   const DynamicAppModule = await initAppModule();
-  const app = await NestFactory.create(DynamicAppModule);
+  const app = await NestFactory.create(DynamicAppModule, { bufferLogs: true });
 
   const coreConfig = app.get<CoreConfig>(CoreConfig);
 
@@ -22,6 +23,8 @@ async function bootstrap() {
     origin: coreConfig.corsOrigins,
     credentials: coreConfig.corsCredentials,
   });
+
+  await loggerSetup(app);
 
   const port = coreConfig.port;
 

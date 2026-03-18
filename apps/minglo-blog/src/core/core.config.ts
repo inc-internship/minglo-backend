@@ -10,7 +10,7 @@ export class CoreConfig {
       'Set environment variable NODE_ENV. Allowed values: ' +
       configValidationUtility.getEnumValues(Environments).join(', '),
   })
-  env: string;
+  env: Environments;
 
   @IsNumber(
     {},

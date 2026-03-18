@@ -114,6 +114,7 @@
       "^@app/decorators(|/.*)$": "<rootDir>/libs/decorators/src/$1",
       "^@app/dynamic-config(|/.*)$": "<rootDir>/libs/dynamic-config/src/$1",
       "^@app/exceptions(|/.*)$": "<rootDir>/libs/exceptions/src/$1",
+      "^@app/logger(|/.*)$": "<rootDir>/libs/logger/src/$1",
       "^@app/notifications(|/.*)$": "<rootDir>/libs/notifications/src/$1",
       "^@app/setup(|/.*)$": "<rootDir>/libs/setup/src/$1",
       "^@app/utils(|/.*)$": "<rootDir>/libs/utils/src/$1"

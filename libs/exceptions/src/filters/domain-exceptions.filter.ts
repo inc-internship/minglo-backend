@@ -3,15 +3,27 @@ import { DomainException } from '../domain-exceptions';
 import { Response } from 'express';
 import { DomainExceptionCode } from '../domain-exception-codes.enum';
 import { ErrorResponseBody } from '../error-response-body.type';
+import { LoggerService } from '@app/logger';
 
 @Catch(DomainException)
 export class DomainHttpExceptionsFilter implements ExceptionFilter {
+  constructor(private logger: LoggerService) {
+    this.logger.setContext(DomainHttpExceptionsFilter.name);
+  }
+
   catch(exception: DomainException, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
     const status = this.mapToHttpStatus(exception.code);
+
+    if (status >= 500) {
+      this.logger.error(exception, 'catch');
+    } else {
+      this.logger.warn(exception.message, 'catch');
+    }
+
     const responseBody = this.buildResponseBody(exception, request.url);
 
     response.status(status).json(responseBody);

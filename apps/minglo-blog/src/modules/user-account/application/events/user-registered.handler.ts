@@ -1,5 +1,6 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { EmailService } from '@app/notifications';
+import { LoggerService } from '@app/logger';
 
 export interface UserRegisteredEventProps {
   email: string;
@@ -21,10 +22,20 @@ export class UserRegisteredEvent {
 
 @EventsHandler(UserRegisteredEvent)
 export class UserRegisteredHandler implements IEventHandler<UserRegisteredEvent> {
-  constructor(private readonly emailService: EmailService) {}
+  constructor(
+    private readonly emailService: EmailService,
+    private readonly logger: LoggerService,
+  ) {
+    this.logger.setContext(UserRegisteredHandler.name);
+  }
 
   handle(event: UserRegisteredEvent): void {
     const { email, redirectUrl, code } = event;
-    void this.emailService.sendConfirmationEmail({ email, redirectUrl, code });
+    this.logger.log('Sending confirmation email', 'handle');
+    void this.emailService
+      .sendConfirmationEmail({ email, redirectUrl, code })
+      .catch((exception) => {
+        this.logger.error(exception, `Failed to send confirmation email to ${email}`);
+      });
   }
 }

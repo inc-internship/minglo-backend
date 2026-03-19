@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { emailTemplates } from '@app/notifications/email/templates';
+import { LoggerService } from '@app/logger';
 
 type ConfirmationEmail = {
   email: string;
@@ -10,7 +11,12 @@ type ConfirmationEmail = {
 
 @Injectable()
 export class EmailService {
-  constructor(private mailer: MailerService) {}
+  constructor(
+    private mailer: MailerService,
+    private logger: LoggerService,
+  ) {
+    this.logger.setContext(EmailService.name);
+  }
 
   async sendConfirmationEmail({ email, redirectUrl, code }: ConfirmationEmail): Promise<void> {
     try {
@@ -19,9 +25,9 @@ export class EmailService {
         subject: 'Complete Registration',
         html: emailTemplates.confirmationEmail(redirectUrl, code),
       });
-    } catch (error) {
-      console.error('Failed to send confirmation email');
-      throw error;
+    } catch (exception) {
+      this.logger.error(exception, 'Failed to send confirmation email');
+      throw exception;
     }
   }
 }

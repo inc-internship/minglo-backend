@@ -25,6 +25,7 @@ jobs:
       MINGLO_CORS_CREDENTIALS: true
       MINGLO_COOKIE_PARSER: true
       MINGLO_TRUST_PROXY: false
+      LOGGER_LEVEL: error
 
     steps:
       - name: Checkout code

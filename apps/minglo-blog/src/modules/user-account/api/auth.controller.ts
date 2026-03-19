@@ -17,16 +17,18 @@ import {
 } from '../../../core/decorators/swagger';
 import { LoginUserInputDto } from './input-dto/login-user.input.dto';
 import { LoginUserCommand } from '../application/usecases/auth/login-user.usecase';
-import { CoreConfig } from '../../../core/core.config';
 import type { Response } from 'express';
 import { LoginResult } from './types/login-result';
 import { ApiLoginDecorator } from '../../../core/decorators/swagger/auth-login.decorator';
+import { GetUserMetadata } from '../../../core/decorators/auth/user-agent.decorator';
+import type { UserMetadata } from '../../../core/decorators/auth/user-agent.decorator';
+import { UserConfig } from '../../../core/user.config';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly commandBus: CommandBus,
-    private coreConfigService: CoreConfig,
+    private userConfig: UserConfig,
   ) {}
 
   @Post('registration')
@@ -60,16 +62,17 @@ export class AuthController {
   async login(
     @Body() dto: LoginUserInputDto,
     @Res({ passthrough: true }) res: Response,
+    @GetUserMetadata() meta: UserMetadata,
   ): Promise<{ accessToken: string }> {
     const { refreshToken, accessToken } = await this.commandBus.execute<
       LoginUserCommand,
       LoginResult
-    >(new LoginUserCommand(dto));
+    >(new LoginUserCommand(dto, meta));
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
-      maxAge: this.coreConfigService.maxAgeRefreshToken * 1000,
+      maxAge: this.userConfig.maxAgeRefreshToken * 1000,
     });
     return { accessToken: accessToken };
   }

@@ -5,6 +5,7 @@ import { MingloDataBaseConfig } from '../database/database.config';
 import { PrismaModule } from '../database/prisma.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { UserConfig } from './user.config';
 
 //глобальный модуль для провайдеров и модулей необходимых во всех частях приложения (например LoggerService, CqrsModule, etc...)
 @Global()
@@ -24,12 +25,13 @@ import { APP_GUARD } from '@nestjs/core';
   ],
   providers: [
     CoreConfig,
+    UserConfig,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
     MingloDataBaseConfig,
   ],
-  exports: [CoreConfig, CqrsModule, ThrottlerModule],
+  exports: [CoreConfig, CqrsModule, ThrottlerModule, UserConfig],
 })
 export class CoreModule {}

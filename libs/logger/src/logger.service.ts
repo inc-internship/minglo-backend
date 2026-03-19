@@ -40,22 +40,18 @@ export class LoggerService extends ConsoleLogger {
   }
 
   trace(message: string, functionName?: string) {
-    super.verbose(message, this.getSourceContext() || functionName);
     this.winstonLogger.trace(message, this.getRequestId(), functionName, this.getSourceContext());
   }
 
   debug(message: string, functionName?: string) {
-    super.debug(message, this.getSourceContext() || functionName);
     this.winstonLogger.debug(message, this.getRequestId(), functionName, this.getSourceContext());
   }
 
   log(message: string, functionName?: string) {
-    super.log(message, this.getSourceContext() || functionName);
     this.winstonLogger.info(message, this.getRequestId(), functionName, this.getSourceContext());
   }
 
   warn(message: string, functionName?: string) {
-    super.warn(message, this.getSourceContext() || functionName);
     this.winstonLogger.warn(message, this.getRequestId(), functionName, this.getSourceContext());
   }
 
@@ -64,7 +60,6 @@ export class LoggerService extends ConsoleLogger {
     const stack = this.getStack(error);
     const fullErrorMessage = `${error?.message ? `msg: ${error?.message}; ` : ''} fullError: ${jsonError}`;
 
-    super.error(error, stack, this.getSourceContext() || functionName);
     this.winstonLogger.error(
       fullErrorMessage,
       this.getRequestId(),
@@ -75,7 +70,6 @@ export class LoggerService extends ConsoleLogger {
   }
 
   fatal(message: string, functionName?: string, stack?: string) {
-    super.fatal(message, this.getSourceContext() || functionName);
     this.winstonLogger.fatal(
       message,
       this.getRequestId(),

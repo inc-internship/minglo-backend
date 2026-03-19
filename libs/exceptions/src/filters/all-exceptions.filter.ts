@@ -16,7 +16,7 @@ export class AllHttpExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    this.logger.error(exception, `HTTP Exception Raised! (${AllHttpExceptionsFilter.name})`);
+    this.logger.error(exception, `catch`);
 
     const message = exception.message || UNKNOWN_EXCEPTION_TEXT;
     const status = HttpStatus.INTERNAL_SERVER_ERROR;

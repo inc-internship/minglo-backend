@@ -4,6 +4,7 @@ import { initTestSettings } from '../helpers/init-test-settings';
 import { deleteAllData } from '../helpers/delete-all-data';
 import { AuthTestManager } from '../managers/auth-test.manager';
 import { EmailService } from '@app/notifications';
+import request from 'supertest';
 
 describe('Auth API (e2e)', () => {
   let app: INestApplication<App>;
@@ -112,5 +113,16 @@ describe('Auth API (e2e)', () => {
       { email: 'non-existent-user@mail.com', password: 'SomePassword123!' },
       HttpStatus.BAD_REQUEST,
     );
+  });
+  it('Login: 401 — should fail if User-Agent header is missing', async () => {
+    const dto = authManager.validDto();
+
+    const { body, status } = await request(app.getHttpServer())
+      .post('/api/v1/auth/login')
+      .set('x-forwarded-for', '127.0.0.1')
+      .send(dto);
+
+    expect(status).toBe(401);
+    expect(body.message).toBe('User-Agent header is required');
   });
 });

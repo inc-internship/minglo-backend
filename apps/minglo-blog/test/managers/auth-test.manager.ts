@@ -56,6 +56,8 @@ export class AuthTestManager {
   ): Promise<request.Response> {
     return request(this.app.getHttpServer())
       .post('/api/v1/auth/login')
+      .set('x-forwarded-for', '127.0.0.1')
+      .set('user-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)')
       .send(dto)
       .expect(expectedStatus);
   }

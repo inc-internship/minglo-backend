@@ -4,14 +4,14 @@ import {
 } from '@nestjs/common/services/console-logger.service';
 import { Injectable, Scope } from '@nestjs/common';
 import { WinstonService } from './winston.service';
-import { AsyncLocalStorageService } from './async-local-storage/async-local-storage.service';
-import { REQUEST_ID_KEY } from './middleware/request-context.middleware';
+import { AsyncLocalStorageService } from './async-local-storage';
+import { REQUEST_ID_KEY } from './middleware';
 
 // TRANSIENT: каждый раз при инжекции — новый экземпляр.
 // Нужно потому что каждый класс вызывает setContext(ClassName) —
 // при синглтоне контекст постоянно перезаписывался бы.
 @Injectable({ scope: Scope.TRANSIENT })
-export class ContextLogger extends ConsoleLogger {
+export class LoggerService extends ConsoleLogger {
   constructor(
     context: string,
     options: ConsoleLoggerOptions,

@@ -3,11 +3,11 @@ import { Request, Response } from 'express';
 import { ErrorResponseBody } from '../error-response-body.type';
 import { DomainExceptionCode } from '../domain-exception-codes.enum';
 import { UNKNOWN_EXCEPTION_TEXT } from '@app/exceptions/constants';
-import { ContextLogger } from '@app/logger';
+import { LoggerService } from '@app/logger';
 
 @Catch()
 export class AllHttpExceptionsFilter implements ExceptionFilter {
-  constructor(private logger: ContextLogger) {
+  constructor(private logger: LoggerService) {
     this.logger.setContext(AllHttpExceptionsFilter.name);
   }
 
@@ -16,7 +16,7 @@ export class AllHttpExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    this.logger.error(exception, 'All http exception filter');
+    this.logger.error(exception, `HTTP Exception Raised! (${AllHttpExceptionsFilter.name})`);
 
     const message = exception.message || UNKNOWN_EXCEPTION_TEXT;
     const status = HttpStatus.INTERNAL_SERVER_ERROR;

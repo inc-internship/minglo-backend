@@ -22,7 +22,9 @@ import { AsyncLocalStorageService, LoggerModule, RequestContextMiddleware } from
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(RequestContextMiddleware).forRoutes({ path: '*', method: RequestMethod.ALL });
+    consumer
+      .apply(RequestContextMiddleware)
+      .forRoutes({ path: '*path', method: RequestMethod.ALL });
   }
 
   static async forRoot(coreConfig: CoreConfig): Promise<DynamicModule> {

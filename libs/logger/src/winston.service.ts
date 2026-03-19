@@ -3,8 +3,13 @@ import * as winston from 'winston';
 import * as Transport from 'winston-transport';
 import { LoggerConfig } from './logger.config';
 
-const customLevels = {
-  levels: { trace: 5, debug: 4, info: 3, warn: 2, error: 1, fatal: 0 },
+const logLevels = {
+  trace: 5,
+  debug: 4,
+  info: 3,
+  warn: 2,
+  error: 1,
+  fatal: 0,
 };
 
 const timeFormat = 'YYYY-MM-DD HH:mm:ss';
@@ -15,7 +20,7 @@ export class WinstonService {
   private logger: winston.Logger;
 
   constructor(
-    private loggerConfig: LoggerConfig,
+    private config: LoggerConfig,
     private serviceName: string,
   ) {
     const consoleTransport = new winston.transports.Console({
@@ -29,11 +34,11 @@ export class WinstonService {
 
     const transports: Transport[] = [consoleTransport];
 
-    if (loggerConfig.isProduction) {
+    if (config.isProduction) {
       transports.push(
         new winston.transports.Http({
-          host: loggerConfig.loggerHost,
-          path: loggerConfig.loggerUrlPath,
+          host: config.loggerHost,
+          path: config.loggerUrlPath,
           ssl: true,
         }),
       );
@@ -41,8 +46,8 @@ export class WinstonService {
 
     this.logger = winston.createLogger({
       format: winston.format.timestamp({ format: timeFormat }),
-      level: loggerConfig.loggerLevel,
-      levels: customLevels.levels,
+      level: config.loggerLevel,
+      levels: logLevels,
       transports,
       defaultMeta: { serviceName: this.serviceName },
     });

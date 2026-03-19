@@ -24,13 +24,15 @@ async function bootstrap() {
     credentials: coreConfig.corsCredentials,
   });
 
-  await loggerSetup(app);
+  const { logger } = await loggerSetup(app);
 
-  const port = coreConfig.port;
+  const { port, env } = coreConfig;
 
   await app.listen(port, () => {
-    console.log('Minglo starting listen port:', coreConfig.port);
-    console.log('Minglo environment (NODE_ENV):', coreConfig.env);
+    logger.log(
+      `Minglo-Blog app starting listen port: ${port}, environment (NODE_ENV): ${env}`,
+      'bootstrap',
+    );
   });
 }
 

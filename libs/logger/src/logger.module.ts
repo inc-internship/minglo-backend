@@ -1,8 +1,8 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
-import { ContextLogger } from './logger.service';
+import { LoggerService } from './logger.service';
 import { WinstonService } from './winston.service';
 import { LoggerConfig } from './logger.config';
-import { AsyncLocalStorageService } from './async-local-storage/async-local-storage.service';
+import { AsyncLocalStorageService } from './async-local-storage';
 
 @Global()
 @Module({})
@@ -11,7 +11,7 @@ export class LoggerModule {
     return {
       module: LoggerModule,
       providers: [
-        ContextLogger,
+        LoggerService,
         AsyncLocalStorageService,
         LoggerConfig,
         {
@@ -22,7 +22,7 @@ export class LoggerModule {
           inject: [LoggerConfig],
         },
       ],
-      exports: [ContextLogger],
+      exports: [LoggerService],
     };
   }
 }

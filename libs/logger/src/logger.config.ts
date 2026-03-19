@@ -20,7 +20,6 @@ export class LoggerConfig {
   })
   loggerLevel: string;
 
-  // isProduction нужен для ValidateIf — сам по себе не env-переменная
   @IsBoolean()
   isProduction: boolean;
 

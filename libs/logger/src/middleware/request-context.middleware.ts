@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { AsyncLocalStorageService } from '../async-local-storage/async-local-storage.service';
+import { AsyncLocalStorageService } from '../async-local-storage';
 
 export const REQUEST_ID_KEY = 'requestId';
 

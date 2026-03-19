@@ -1,3 +1,4 @@
+import './newrelic.js';
 import { NestFactory } from '@nestjs/core';
 import { initAppModule } from './init-app-module';
 import { CoreConfig } from './core/core.config';

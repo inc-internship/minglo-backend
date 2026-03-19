@@ -4,12 +4,11 @@ import { Response } from 'express';
 import { DomainExceptionCode } from '../domain-exception-codes.enum';
 import { ErrorResponseBody } from '../error-response-body.type';
 import { LoggerService } from '@app/logger';
-import { AllHttpExceptionsFilter } from './all-exceptions.filter';
 
 @Catch(DomainException)
 export class DomainHttpExceptionsFilter implements ExceptionFilter {
   constructor(private logger: LoggerService) {
-    this.logger.setContext(AllHttpExceptionsFilter.name);
+    this.logger.setContext(DomainHttpExceptionsFilter.name);
   }
 
   catch(exception: DomainException, host: ArgumentsHost): void {

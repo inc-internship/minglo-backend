@@ -14,7 +14,7 @@
     "start:minglo-blog": "nest start minglo-blog",
     "start:minglo-blog:dev": "cross-env NODE_ENV=development nest start minglo-blog --watch",
     "start:minglo-blog:debug": "cross-env NODE_ENV=development nest start minglo-blog --debug --watch",
-    "start:minglo-blog:prod": "cross-env NODE_ENV=production node dist/apps/minglo-blog/main",
+    "start:minglo-blog:prod": "cross-env NODE_ENV=production node -r ./newrelic.js dist/apps/minglo-blog/main",
     "test:minglo-blog:watch": "cross-env NODE_ENV=test jest --project apps/minglo-blog --watch",
     "test:minglo-blog:cov": "cross-env NODE_ENV=test jest --project apps/minglo-blog --coverage",
     "test:minglo-blog:debug": "cross-env NODE_ENV=test node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand --project apps/minglo-blog",

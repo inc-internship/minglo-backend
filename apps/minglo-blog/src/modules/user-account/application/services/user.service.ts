@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from '../../infrastructure/user.repository';
+import { UserRepository } from '../../infrastructure';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
 
 @Injectable()

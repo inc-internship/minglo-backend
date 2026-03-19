@@ -38,7 +38,7 @@ export class LoggerConfig {
   loggerUrlPath: string;
 
   constructor(private configService: ConfigService<any, true>) {
-    const env = this.configService.get('ENV');
+    const env = this.configService.get('NODE_ENV');
 
     this.isProduction = env === Environments.PRODUCTION;
     this.loggerLevel = this.configService.get('LOGGER_LEVEL') || LogLevel.DEBUG;

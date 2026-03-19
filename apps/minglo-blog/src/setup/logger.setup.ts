@@ -3,7 +3,7 @@ import { LoggerService } from '@app/logger';
 
 export async function loggerSetup(app: INestApplication): Promise<{ logger: LoggerService }> {
   const logger = await app.resolve(LoggerService);
-  logger.setContext('NEST_INIT');
+  logger.setContext(loggerSetup.name);
   app.useLogger(logger);
 
   return { logger };

@@ -27,8 +27,8 @@ export class WinstonService {
       format: combine(
         timestamp({ format: timeFormat }),
         errors({ stack: true }),
-        prettyPrint(),
-        colorize({ all: true, colors: { trace: 'yellow' } }),
+        prettyPrint({ colorize: true }),
+        colorize({ all: true }),
       ),
     });
 

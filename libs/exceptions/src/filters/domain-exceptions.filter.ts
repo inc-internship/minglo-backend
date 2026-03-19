@@ -16,9 +16,15 @@ export class DomainHttpExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    this.logger.error(exception, `catch`);
 
     const status = this.mapToHttpStatus(exception.code);
+
+    if (status >= 500) {
+      this.logger.error(exception, 'catch');
+    } else {
+      this.logger.warn(exception.message, 'catch');
+    }
+
     const responseBody = this.buildResponseBody(exception, request.url);
 
     response.status(status).json(responseBody);

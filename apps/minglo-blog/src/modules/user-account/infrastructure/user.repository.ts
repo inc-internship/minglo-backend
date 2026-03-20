@@ -120,4 +120,21 @@ export class UserRepository {
       });
     });
   }
+
+  async getByEmail(email: string): Promise<User> {
+    const findUser: User | null = await this.prisma.user.findUnique({
+      where: {
+        email: email,
+        deletedAt: null,
+      },
+    });
+    // чтобы не было пробива по логину и паролю
+    if (!findUser) {
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: 'Invalid email or password',
+      });
+    }
+    return findUser;
+  }
 }

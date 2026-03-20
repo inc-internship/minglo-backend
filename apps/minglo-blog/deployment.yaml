@@ -115,6 +115,26 @@ spec:
                  secretKeyRef:
                    name: minglo-core-backend-production-config-secret
                    key: LOGGER_LICENSE_KEY
+             - name: ACCESS_SECRET
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: ACCESS_SECRET
+             - name: MAX_AGE_ACCESS_TOKEN
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MAX_AGE_ACCESS_TOKEN
+             - name: REFRESH_SECRET
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: REFRESH_SECRET
+             - name: MAX_AGE_REFRESH_TOKEN
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MAX_AGE_REFRESH_TOKEN
              - name: MINGLO_PORT
                valueFrom:
                  secretKeyRef:

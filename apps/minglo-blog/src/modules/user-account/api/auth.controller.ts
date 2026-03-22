@@ -1,5 +1,5 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Res } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { Body, Controller, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   CreateUserInputDto,
   RegistrationConfirmationInputDto,
@@ -24,11 +24,17 @@ import { GetUserMetadata } from '../../../core/decorators/auth/user-agent.decora
 import type { UserMetadata } from '../../../core/decorators/auth/user-agent.decorator';
 import { UserConfig } from '../../../core/user.config';
 import { LoggerService } from '@app/logger';
+import { ApiAuthMeDecorator } from '../../../core/decorators/swagger/auth-me.decorator';
+import { CurrentUser } from '../../../core/decorators/auth/current-user.decorator';
+import { ActiveUserDto } from '../../../core/decorators/auth/dto/active-user.dto';
+import { MeQuery } from '../application/usecases/auth/me.usecase';
+import { AccessGuard } from '../guards/access.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
     private logger: LoggerService,
     private userConfig: UserConfig,
   ) {
@@ -81,6 +87,17 @@ export class AuthController {
       sameSite: 'lax',
       maxAge: this.userConfig.maxAgeRefreshToken * 1000,
     });
+    this.logger.log('Login completed', 'Login');
     return { accessToken: accessToken };
+  }
+
+  @Post('me')
+  @ApiAuthMeDecorator()
+  @UseGuards(AccessGuard)
+  @HttpCode(HttpStatus.OK)
+  async me(@CurrentUser() user: ActiveUserDto) {
+    const result = await this.queryBus.execute(new MeQuery(user));
+    this.logger.log('Get UserData', 'Me');
+    return result;
   }
 }

@@ -18,6 +18,8 @@ import { AccessStrategy } from './guards/strategy/access.strategy';
 import { SessionFactory } from './domains/factories/session.factory';
 import { DeviceService } from './application/services/device.service';
 import { JwtModule } from '@nestjs/jwt';
+import { MeUseCase } from './application/usecases/auth/me.usecase';
+import { UserQueryRepository } from './infrastructure/queries/user.query.repository';
 
 @Module({
   imports: [EmailModule, JwtModule.register({})],
@@ -39,6 +41,8 @@ import { JwtModule } from '@nestjs/jwt';
     UserRegisteredHandler,
     ConfirmEmailUseCase,
     ResendConfirmEmailUseCase,
+    MeUseCase,
+    UserQueryRepository,
   ],
 })
 export class UserAccountModule {}

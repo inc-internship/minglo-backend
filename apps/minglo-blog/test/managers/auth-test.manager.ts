@@ -61,4 +61,11 @@ export class AuthTestManager {
       .send(dto)
       .expect(expectedStatus);
   }
+
+  async me(token: string, statusCode: number = HttpStatus.OK): Promise<request.Response> {
+    return request(this.app.getHttpServer())
+      .post('/api/v1/auth/me')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(statusCode);
+  }
 }

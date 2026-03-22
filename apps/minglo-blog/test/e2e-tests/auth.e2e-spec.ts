@@ -52,6 +52,7 @@ describe('Auth API (e2e)', () => {
     );
   });
 
+  // повторное подтверждение по почте
   it('204 — should resend confirmation email and allow confirm with new code', async () => {
     const dto = authManager.validDto();
     await authManager.register(dto);
@@ -62,7 +63,6 @@ describe('Auth API (e2e)', () => {
 
     await authManager.confirmRegistration({ code });
   });
-
   it('400 — should fail resend if email is already confirmed', async () => {
     const dto = authManager.validDto();
     await authManager.register(dto);
@@ -75,7 +75,6 @@ describe('Auth API (e2e)', () => {
       HttpStatus.BAD_REQUEST,
     );
   });
-
   it('400 — should fail resend for non-existent email', async () => {
     await authManager.resendConfirmationEmail(
       { email: 'nonexistent@gmail.com', redirectUrl: 'https://minglo.blog/auth/confirm' },
@@ -124,5 +123,39 @@ describe('Auth API (e2e)', () => {
 
     expect(status).toBe(401);
     expect(body.message).toBe('User-Agent header is required');
+  });
+
+  //me
+  it('Me: 200 — should return current user profile with valid token', async () => {
+    const registerDto = authManager.validDto();
+    await authManager.register(registerDto);
+
+    const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
+    await authManager.confirmRegistration({ code });
+
+    const { body, headers } = await authManager.login(registerDto);
+
+    expect(body.accessToken).toBeDefined();
+    expect(headers['set-cookie']).toBeDefined();
+
+    const accessToken = body.accessToken;
+
+    const response = await authManager.me(accessToken);
+
+    expect(response.status).toBe(HttpStatus.OK);
+    expect(response.body).toEqual({
+      id: expect.any(String),
+      login: registerDto.login,
+      email: registerDto.email,
+    });
+
+    expect(response.body.password).toBeUndefined();
+    expect(response.body.confirmationCode).toBeUndefined();
+  });
+  it('Me: 401 — should return Unauthorized if token is missing or invalid', async () => {
+    await authManager.me('', HttpStatus.UNAUTHORIZED);
+
+    const fakeToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid.payload';
+    await authManager.me(fakeToken, HttpStatus.UNAUTHORIZED);
   });
 });

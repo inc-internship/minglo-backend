@@ -1,4 +1,4 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ErrorResponseBody } from '../error-response-body.type';
 import { DomainExceptionCode } from '../domain-exception-codes.enum';
@@ -16,10 +16,17 @@ export class AllHttpExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    this.logger.error(exception, `catch`);
-
     const message = exception.message || UNKNOWN_EXCEPTION_TEXT;
-    const status = HttpStatus.INTERNAL_SERVER_ERROR;
+    //чтобы кастомные ошибки неста не превращались в 500
+    const status =
+      exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+
+    if (status >= 500) {
+      this.logger.error(exception, `catch`);
+    } else {
+      this.logger.warn(`[${status}] ${exception.message}`, `catch`);
+    }
+
     const responseBody = this.buildResponseBody(request.url, message);
 
     response.status(status).json(responseBody);

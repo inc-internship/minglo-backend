@@ -1,5 +1,5 @@
 export interface AccessTokenDto {
-  publicId: number;
+  publicId: string;
   deviceId: string;
   iat: number;
   exp: number;

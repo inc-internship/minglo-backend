@@ -158,4 +158,71 @@ describe('Auth API (e2e)', () => {
     const fakeToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid.payload';
     await authManager.me(fakeToken, HttpStatus.UNAUTHORIZED);
   });
+
+  // rotation tokens(refresh-tokens)
+  it('Refresh Token: 200 — success rotation (updates access token and cookie)', async () => {
+    const dto = authManager.validDto();
+    await authManager.register(dto);
+    const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
+    await authManager.confirmRegistration({ code });
+
+    const loginRes = await authManager.login(dto);
+    const firstAccessToken = loginRes.body.accessToken;
+    const firstCookie = loginRes.headers['set-cookie'];
+
+    await new Promise((res) => setTimeout(res, 1000));
+
+    const refreshRes = await authManager.refreshToken(firstCookie);
+
+    expect(refreshRes.status).toBe(200);
+    expect(refreshRes.body.accessToken).toBeDefined();
+    expect(refreshRes.body.accessToken).not.toBe(firstAccessToken);
+
+    const secondCookie = refreshRes.headers['set-cookie'];
+    expect(secondCookie).toBeDefined();
+    expect(secondCookie).not.toBe(firstCookie);
+  });
+
+  it('Refresh Token: 403 — Forbidden (token reuse detection)', async () => {
+    const dto = authManager.validDto();
+    await authManager.register(dto);
+    const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
+    await authManager.confirmRegistration({ code });
+
+    const loginRes = await authManager.login(dto);
+    const firstCookie = loginRes.headers['set-cookie'];
+
+    await new Promise((res) => setTimeout(res, 1000));
+
+    await authManager.refreshToken(firstCookie);
+    await new Promise((res) => setTimeout(res, 1000));
+
+    const reuseRes = await authManager.refreshToken(firstCookie, 403);
+
+    expect(reuseRes.status).toBe(403);
+    expect(reuseRes.body.message).toContain('Token reuse detected');
+  });
+
+  it('Refresh Token: 401 — Unauthorized (session cleared after reuse attempt)', async () => {
+    const dto = authManager.validDto();
+    await authManager.register(dto);
+    const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
+    await authManager.confirmRegistration({ code });
+
+    const loginRes = await authManager.login(dto);
+    const cookie1 = loginRes.headers['set-cookie'];
+
+    await new Promise((res) => setTimeout(res, 1000));
+    const refreshRes = await authManager.refreshToken(cookie1);
+    const cookie2 = refreshRes.headers['set-cookie'];
+
+    await new Promise((res) => setTimeout(res, 1000));
+
+    await authManager.refreshToken(cookie1, 403);
+
+    const finalRes = await authManager.refreshToken(cookie2, 404);
+
+    expect(finalRes.status).toBe(404);
+    expect(finalRes.body.message).toContain('Session not found');
+  });
 });

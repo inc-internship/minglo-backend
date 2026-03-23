@@ -8,4 +8,12 @@ export class SessionService {
   async findSessionByDeviceIdAndUserId(publicId: string, deviceId: string): Promise<SessionEntity> {
     return await this.sessionRepositories.findSessionByDeviceIdAndUserId(publicId, deviceId);
   }
+
+  async updateLastActive(session: SessionEntity): Promise<void> {
+    return await this.sessionRepositories.updateLastActive(session);
+  }
+
+  async deleteDeviceById(publicId: string, deviceId: string): Promise<void> {
+    return await this.sessionRepositories.deleteDeviceById(publicId, deviceId);
+  }
 }

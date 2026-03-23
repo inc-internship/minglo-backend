@@ -20,6 +20,8 @@ import { DeviceService } from './application/services/device.service';
 import { JwtModule } from '@nestjs/jwt';
 import { MeUseCase } from './application/usecases/auth/me.usecase';
 import { UserQueryRepository } from './infrastructure/queries/user.query.repository';
+import { RefreshStrategy } from './guards/strategy/refresh.strategy';
+import { RefreshTokenUseCase } from './application/usecases/auth/refresh-token.usecase';
 
 @Module({
   imports: [EmailModule, JwtModule.register({})],
@@ -43,6 +45,9 @@ import { UserQueryRepository } from './infrastructure/queries/user.query.reposit
     ResendConfirmEmailUseCase,
     MeUseCase,
     UserQueryRepository,
+    LoginUserUseCase,
+    RefreshStrategy,
+    RefreshTokenUseCase,
   ],
 })
 export class UserAccountModule {}

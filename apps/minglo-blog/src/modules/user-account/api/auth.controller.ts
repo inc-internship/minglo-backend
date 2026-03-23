@@ -19,7 +19,7 @@ import { LoginUserInputDto } from './input-dto/login-user.input.dto';
 import { LoginUserCommand } from '../application/usecases/auth/login-user.usecase';
 import type { Response } from 'express';
 import { LoginResult } from './types/login-result';
-import { ApiLoginDecorator } from '../../../core/decorators/swagger/auth-login.decorator';
+import { ApiAuthLoginDecorator } from '../../../core/decorators/swagger/auth-login.decorator';
 import { GetUserMetadata } from '../../../core/decorators/auth/user-agent.decorator';
 import type { UserMetadata } from '../../../core/decorators/auth/user-agent.decorator';
 import { UserConfig } from '../../../core/user.config';
@@ -29,6 +29,11 @@ import { CurrentUser } from '../../../core/decorators/auth/current-user.decorato
 import { ActiveUserDto } from '../../../core/decorators/auth/dto/active-user.dto';
 import { MeQuery } from '../application/usecases/auth/me.usecase';
 import { AccessGuard } from '../guards/access.guard';
+import { ApiAuthRefreshTokenDecorator } from '../../../core/decorators/swagger/auth-refresh-token.decorator';
+import { MeViewDto } from './view-dto/me-view.dto';
+import { RefreshTokenCommand } from '../application/usecases/auth/refresh-token.usecase';
+import { RefreshTokenResult } from './types/refresh-token-result';
+import { RefreshGuard } from '../guards/refresh.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -70,7 +75,7 @@ export class AuthController {
   }
 
   @Post('login')
-  @ApiLoginDecorator()
+  @ApiAuthLoginDecorator()
   @HttpCode(HttpStatus.OK)
   async login(
     @Body() dto: LoginUserInputDto,
@@ -96,8 +101,30 @@ export class AuthController {
   @UseGuards(AccessGuard)
   @HttpCode(HttpStatus.OK)
   async me(@CurrentUser() user: ActiveUserDto) {
-    const result = await this.queryBus.execute(new MeQuery(user));
+    const result: MeViewDto = await this.queryBus.execute<MeQuery, MeViewDto>(new MeQuery(user));
     this.logger.log('Get UserData', 'Me');
     return result;
+  }
+
+  @Post('refresh-token')
+  @ApiAuthRefreshTokenDecorator()
+  @UseGuards(RefreshGuard)
+  @HttpCode(HttpStatus.OK)
+  async refreshToken(
+    @Res({ passthrough: true }) res: Response,
+    @CurrentUser() user: ActiveUserDto,
+  ): Promise<{ accessToken: string }> {
+    const { refreshToken, accessToken } = await this.commandBus.execute<
+      RefreshTokenCommand,
+      RefreshTokenResult
+    >(new RefreshTokenCommand(user));
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      maxAge: this.userConfig.maxAgeRefreshToken * 1000,
+    });
+    this.logger.log('rotation refresh and access token completed', 'refresh-token');
+    return { accessToken: accessToken };
   }
 }

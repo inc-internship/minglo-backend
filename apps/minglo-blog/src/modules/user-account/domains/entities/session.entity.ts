@@ -9,8 +9,8 @@ export class SessionEntity {
     public readonly browserVersion: string,
     public readonly osName: string,
     public readonly ip: string,
-    public readonly issuedAt: Date,
-    public readonly expiresAt: Date,
+    public issuedAt: Date,
+    public expiresAt: Date,
     public lastActive: Date,
   ) {}
 
@@ -68,7 +68,14 @@ export class SessionEntity {
     session.id = args.id;
     return session;
   }
+
   updateActivity() {
     this.lastActive = new Date();
+  }
+
+  updateTokens(issuedAt: number, expiresAt: number) {
+    this.issuedAt = new Date(issuedAt * 1000);
+    this.expiresAt = new Date(expiresAt * 1000);
+    this.updateActivity();
   }
 }

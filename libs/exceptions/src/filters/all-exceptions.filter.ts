@@ -21,12 +21,6 @@ export class AllHttpExceptionsFilter implements ExceptionFilter {
     const status =
       exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    if (status >= 500) {
-      this.logger.error(exception, `catch`);
-    } else {
-      this.logger.warn(`[${status}] ${exception.message}`, `catch`);
-    }
-
     const responseBody = this.buildResponseBody(request.url, message);
 
     response.status(status).json(responseBody);

@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   CreateUserInputDto,
@@ -91,7 +91,7 @@ export class AuthController {
     return { accessToken: accessToken };
   }
 
-  @Post('me')
+  @Get('me')
   @ApiAuthMeDecorator()
   @UseGuards(AccessGuard)
   @HttpCode(HttpStatus.OK)

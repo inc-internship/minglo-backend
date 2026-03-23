@@ -1,14 +1,14 @@
 import { User } from '../../../../../prisma/generated/prisma/client';
 
-export class UserMeViewDto {
-  id: string;
+export class MeViewDto {
+  publicId: string;
   login: string;
   email: string;
 
-  static mapToView(user: User): UserMeViewDto {
-    const dto: UserMeViewDto = new UserMeViewDto();
+  static mapToView(user: User): MeViewDto {
+    const dto: MeViewDto = new MeViewDto();
 
-    dto.id = user.publicId;
+    dto.publicId = user.publicId;
     dto.email = user.email;
     dto.login = user.login;
 

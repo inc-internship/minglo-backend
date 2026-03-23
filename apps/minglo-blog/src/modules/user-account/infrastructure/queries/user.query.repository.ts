@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
 import { PrismaService } from '../../../../database/prisma.service';
 import { User } from '../../../../../prisma/generated/prisma/client';
-import { UserMeViewDto } from '../../api/view-dto/user-me.view-dto';
+import { MeViewDto } from '../../api/view-dto/me-view.dto';
 
 @Injectable()
 export class UserQueryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getById(id: string): Promise<UserMeViewDto> {
+  async getById(id: string): Promise<MeViewDto> {
     const findUser: User | null = await this.prisma.user.findUnique({
       where: {
         publicId: id,
@@ -22,6 +22,6 @@ export class UserQueryRepository {
         message: 'User not found',
       });
     }
-    return UserMeViewDto.mapToView(findUser);
+    return MeViewDto.mapToView(findUser);
   }
 }

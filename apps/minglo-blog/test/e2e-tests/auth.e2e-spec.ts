@@ -144,7 +144,7 @@ describe('Auth API (e2e)', () => {
 
     expect(response.status).toBe(HttpStatus.OK);
     expect(response.body).toEqual({
-      id: expect.any(String),
+      publicId: expect.any(String),
       login: registerDto.login,
       email: registerDto.email,
     });

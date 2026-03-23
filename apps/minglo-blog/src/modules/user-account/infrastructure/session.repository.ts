@@ -82,7 +82,7 @@ export class SessionRepository {
     });
     if (result.count === 0) {
       throw new DomainException({
-        code: DomainExceptionCode.NotFound,
+        code: DomainExceptionCode.Unauthorized,
         message: 'Device not found',
       });
     }

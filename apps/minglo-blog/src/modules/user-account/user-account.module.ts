@@ -22,6 +22,7 @@ import { MeUseCase } from './application/usecases/auth/me.usecase';
 import { UserQueryRepository } from './infrastructure/queries/user.query.repository';
 import { RefreshStrategy } from './guards/strategy/refresh.strategy';
 import { RefreshTokenUseCase } from './application/usecases/auth/refresh-token.usecase';
+import { LogOutUseCase } from './application/usecases/auth/logout.usecase';
 
 @Module({
   imports: [EmailModule, JwtModule.register({})],
@@ -48,6 +49,7 @@ import { RefreshTokenUseCase } from './application/usecases/auth/refresh-token.u
     LoginUserUseCase,
     RefreshStrategy,
     RefreshTokenUseCase,
+    LogOutUseCase,
   ],
 })
 export class UserAccountModule {}

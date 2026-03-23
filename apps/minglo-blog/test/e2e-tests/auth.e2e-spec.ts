@@ -220,9 +220,9 @@ describe('Auth API (e2e)', () => {
 
     await authManager.refreshToken(cookie1, 403);
 
-    const finalRes = await authManager.refreshToken(cookie2, 404);
+    const finalRes = await authManager.refreshToken(cookie2, 401);
 
-    expect(finalRes.status).toBe(404);
+    expect(finalRes.status).toBe(401);
     expect(finalRes.body.message).toContain('Session not found');
   });
 

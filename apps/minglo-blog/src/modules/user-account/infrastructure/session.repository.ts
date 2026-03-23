@@ -37,7 +37,7 @@ export class SessionRepository {
     });
     if (!record) {
       throw new DomainException({
-        code: DomainExceptionCode.NotFound,
+        code: DomainExceptionCode.Unauthorized,
         message: 'Session not found',
       });
     }

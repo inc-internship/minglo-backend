@@ -9,7 +9,7 @@ import {
 import { ErrorResponseBody } from '@app/exceptions';
 import { LoginUserInputDto } from '../../../modules/user-account/api/input-dto/login-user.input.dto';
 
-export function ApiLoginDecorator() {
+export function ApiAuthLoginDecorator() {
   return applyDecorators(
     ApiOperation({
       summary: 'Login user',

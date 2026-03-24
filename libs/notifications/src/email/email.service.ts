@@ -22,7 +22,7 @@ export class EmailService {
     try {
       await this.mailer.sendMail({
         to: email,
-        subject: 'Complete Registration',
+        subject: '[Minglo] Complete Registration',
         html: emailTemplates.confirmationEmail(redirectUrl, code),
       });
     } catch (exception) {

@@ -24,7 +24,7 @@ export function ApiLoginDecorator() {
       schema: {
         type: 'object',
         properties: {
-          accessToken: { type: 'string', example: 'eyJhbGciOiJIUzI1Ni...' },
+          accessToken: { type: 'string' },
         },
       },
     }),
@@ -33,7 +33,7 @@ export function ApiLoginDecorator() {
       type: ErrorResponseBody,
     }),
     ApiUnauthorizedResponse({
-      description: 'Invalid login or password',
+      description: 'Unauthorized',
     }),
   );
 }

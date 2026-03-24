@@ -6,9 +6,9 @@ import { UNKNOWN_EXCEPTION_TEXT } from '@app/exceptions/constants';
 import { LoggerService } from '@app/logger';
 
 @Catch()
-export class AllHttpExceptionsFilter implements ExceptionFilter {
+export class AllExceptionsFilter implements ExceptionFilter {
   constructor(private logger: LoggerService) {
-    this.logger.setContext(AllHttpExceptionsFilter.name);
+    this.logger.setContext(AllExceptionsFilter.name);
   }
 
   catch(exception: any, host: ArgumentsHost): void {

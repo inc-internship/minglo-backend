@@ -5,7 +5,7 @@ import { SessionEntity } from '../../domains/entities/session.entity';
 @Injectable()
 export class SessionService {
   constructor(private readonly sessionRepositories: SessionRepository) {}
-  async findSessionByDeviceIdAndUserId(publicId: number, deviceId: string): Promise<SessionEntity> {
+  async findSessionByDeviceIdAndUserId(publicId: string, deviceId: string): Promise<SessionEntity> {
     return await this.sessionRepositories.findSessionByDeviceIdAndUserId(publicId, deviceId);
   }
 }

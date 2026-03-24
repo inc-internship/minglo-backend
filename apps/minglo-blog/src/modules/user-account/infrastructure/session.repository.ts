@@ -24,9 +24,16 @@ export class SessionRepository {
     });
   }
 
-  async findSessionByDeviceIdAndUserId(userId: number, deviceId: string): Promise<SessionEntity> {
-    const record = await this.prisma.session.findUnique({
-      where: { userId, deviceId },
+  async findSessionByDeviceIdAndUserId(publicId: string, deviceId: string): Promise<SessionEntity> {
+    const record = await this.prisma.session.findFirst({
+      where: {
+        deviceId: deviceId,
+        user: {
+          publicId,
+          deletedAt: null,
+        },
+        deletedAt: null,
+      },
     });
     if (!record) {
       throw new DomainException({

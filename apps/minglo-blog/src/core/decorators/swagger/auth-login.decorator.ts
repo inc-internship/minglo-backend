@@ -34,7 +34,6 @@ export function ApiLoginDecorator() {
     }),
     ApiUnauthorizedResponse({
       description: 'Unauthorized',
-      type: ErrorResponseBody,
     }),
   );
 }

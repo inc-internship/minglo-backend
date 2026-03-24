@@ -6,7 +6,6 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { MeViewDto } from '../../../modules/user-account/api/view-dto/me-view.dto';
-import { ErrorResponseBody } from '@app/exceptions';
 
 export function ApiAuthMeDecorator() {
   return applyDecorators(
@@ -20,7 +19,6 @@ export function ApiAuthMeDecorator() {
     }),
     ApiUnauthorizedResponse({
       description: 'Unauthorized',
-      type: ErrorResponseBody,
     }),
   );
 }

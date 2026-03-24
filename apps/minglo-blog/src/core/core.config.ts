@@ -86,7 +86,10 @@ export class CoreConfig {
     this.cors = configValidationUtility.convertToBoolean(
       this.configService.get('MINGLO_CORS'),
     ) as boolean;
-    this.corsOrigins = this.configService.get('MINGLO_CORS_ORIGINS');
+    this.corsOrigins = this.configService
+      .get('MINGLO_CORS_ORIGINS')
+      ?.split(',')
+      .map((s: string) => s.trim());
     this.corsCredentials = configValidationUtility.convertToBoolean(
       this.configService.get('MINGLO_CORS_CREDENTIALS'),
     ) as boolean;

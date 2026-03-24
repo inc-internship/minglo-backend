@@ -68,4 +68,20 @@ export class AuthTestManager {
       .set('Authorization', `Bearer ${token}`)
       .expect(statusCode);
   }
+
+  async refreshToken(
+    cookie: string | string[],
+    expectedStatus: number = HttpStatus.OK,
+  ): Promise<request.Response> {
+    const cookiesArray = Array.isArray(cookie) ? cookie : [cookie];
+
+    const refreshCookie = cookiesArray.find((c) => c.startsWith('refreshToken='));
+    const cleanCookie = refreshCookie ? refreshCookie.split(';')[0] : '';
+
+    return request(this.app.getHttpServer())
+      .post('/api/v1/auth/refresh-token')
+      .set('Cookie', [cleanCookie])
+      .send()
+      .expect(expectedStatus);
+  }
 }

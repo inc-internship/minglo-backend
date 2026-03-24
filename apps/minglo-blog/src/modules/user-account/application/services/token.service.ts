@@ -14,7 +14,7 @@ export class TokenService {
     private userConfig: UserConfig,
   ) {}
 
-  createAccessToken(publicId: string, deviceId: string) {
+  createAccessToken(publicId: string, deviceId: string): string {
     const payload = { publicId, deviceId };
 
     return this.jwtService.sign(payload, {

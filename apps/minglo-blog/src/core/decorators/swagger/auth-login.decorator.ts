@@ -8,8 +8,9 @@ import {
 } from '@nestjs/swagger';
 import { ErrorResponseBody } from '@app/exceptions';
 import { LoginUserInputDto } from '../../../modules/user-account/api/input-dto/login-user.input.dto';
+import { AccessTokenResponse } from '../../../modules/user-account/api/types';
 
-export function ApiLoginDecorator() {
+export function ApiAuthLoginDecorator() {
   return applyDecorators(
     ApiOperation({
       summary: 'Login user',
@@ -21,12 +22,7 @@ export function ApiLoginDecorator() {
     }),
     ApiOkResponse({
       description: 'Successfully logged in',
-      schema: {
-        type: 'object',
-        properties: {
-          accessToken: { type: 'string' },
-        },
-      },
+      type: AccessTokenResponse,
     }),
     ApiBadRequestResponse({
       description: 'Incorrect input data',

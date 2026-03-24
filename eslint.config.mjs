@@ -37,4 +37,11 @@ export default tseslint.config(
       'prettier/prettier': ['error', { endOfLine: 'auto' }],
     },
   },
+  //чтобы в юнит тестах не было ошибки с this при моках
+  {
+    files: ['**/*unit-spec.ts'],
+    rules: {
+      '@typescript-eslint/unbound-method': 'off',
+    },
+  },
 );

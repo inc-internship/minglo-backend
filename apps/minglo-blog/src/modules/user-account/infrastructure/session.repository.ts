@@ -52,4 +52,39 @@ export class SessionRepository {
       },
     });
   }
+
+  async updateSessionTokens(session: SessionEntity): Promise<void> {
+    await this.prisma.session.update({
+      where: {
+        deviceId: session.deviceId,
+      },
+      data: {
+        issuedAt: session.issuedAt,
+        expiresAt: session.expiresAt,
+        lastActive: session.lastActive,
+      },
+    });
+  }
+
+  async deleteDeviceById(publicId: string, deviceId: string): Promise<void> {
+    const result = await this.prisma.session.updateMany({
+      where: {
+        deviceId: deviceId,
+        deletedAt: null,
+        user: {
+          publicId: publicId,
+          deletedAt: null,
+        },
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+    if (result.count === 0) {
+      throw new DomainException({
+        code: DomainExceptionCode.NotFound,
+        message: 'Device not found',
+      });
+    }
+  }
 }

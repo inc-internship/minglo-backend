@@ -1,24 +1,24 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiNoContentResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiNoContentResponse,
+  ApiOperation,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 export function ApiAuthLogoutDecorator() {
   return applyDecorators(
     ApiOperation({
-      summary: 'Logout current session',
+      summary: 'Logout user',
       description:
         'Terminates the current user session by removing it from the database and clearing the refresh token cookie.',
     }),
+    ApiBearerAuth('access-token'),
     ApiNoContentResponse({
-      description: 'Successfully logged out. Refresh token cookie is cleared.',
-      headers: {
-        'Set-Cookie': {
-          description: 'Clears the refreshToken by setting its expiration to the past.',
-          schema: { type: 'string', example: 'refreshToken=; Max-Age=0; Path=/;' },
-        },
-      },
+      description: 'Success',
     }),
     ApiUnauthorizedResponse({
-      description: 'Access token is missing or invalid',
+      description: 'Unauthorized',
     }),
   );
 }

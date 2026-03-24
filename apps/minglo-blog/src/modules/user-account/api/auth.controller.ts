@@ -120,16 +120,6 @@ export class AuthController {
     return { accessToken };
   }
 
-  /** Sets the refresh token as an httpOnly cookie on the response. */
-  private setRefreshTokenCookie(res: Response, refreshToken: string): void {
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-      maxAge: this.userConfig.maxAgeRefreshToken * 1000,
-    });
-  }
-
   @Post('logout')
   @ApiAuthLogoutDecorator()
   @UseGuards(AccessGuard)
@@ -144,6 +134,16 @@ export class AuthController {
       secure: true,
       sameSite: 'lax',
     });
-    this.logger.log(`user ${user.userId} logout', 'logout`);
+    this.logger.log(`user ${user.userId} logged out', 'logout`);
+  }
+
+  /** Sets the refresh token as an httpOnly cookie on the response. */
+  private setRefreshTokenCookie(res: Response, refreshToken: string): void {
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      maxAge: this.userConfig.maxAgeRefreshToken * 1000,
+    });
   }
 }

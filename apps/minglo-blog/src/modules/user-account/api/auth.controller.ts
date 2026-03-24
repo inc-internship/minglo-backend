@@ -29,6 +29,7 @@ import { CurrentUser } from '../../../core/decorators/auth/current-user.decorato
 import { ActiveUserDto } from '../../../core/decorators/auth/dto/active-user.dto';
 import { MeQuery } from '../application/usecases/auth/me.usecase';
 import { AccessGuard } from '../guards/access.guard';
+import { MeViewDto } from './view-dto/me-view.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -88,16 +89,15 @@ export class AuthController {
       maxAge: this.userConfig.maxAgeRefreshToken * 1000,
     });
     this.logger.log('Login completed', 'Login');
-    return { accessToken: accessToken };
+    return { accessToken };
   }
 
   @Get('me')
   @ApiAuthMeDecorator()
   @UseGuards(AccessGuard)
   @HttpCode(HttpStatus.OK)
-  async me(@CurrentUser() user: ActiveUserDto) {
-    const result = await this.queryBus.execute(new MeQuery(user));
+  async me(@CurrentUser() user: ActiveUserDto): Promise<MeViewDto> {
     this.logger.log('Get UserData', 'Me');
-    return result;
+    return this.queryBus.execute(new MeQuery(user));
   }
 }

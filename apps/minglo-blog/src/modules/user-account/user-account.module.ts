@@ -7,6 +7,7 @@ import {
   ResendConfirmEmailUseCase,
   LoginUserUseCase,
   RefreshTokenUseCase,
+  LogOutUseCase,
 } from './application/usecases';
 import { UserFactory } from './domains';
 import { EmailConfirmationRepository, UserRepository } from './infrastructure';
@@ -15,13 +16,12 @@ import { EmailModule } from '@app/notifications';
 import { SessionRepository } from './infrastructure/session.repository';
 import { TokenService } from './application/services/token.service';
 import { SessionService } from './application/services/session.service';
-import { AccessStrategy } from './guards/strategy/access.strategy';
+import { AccessStrategy, RefreshStrategy } from './guards/strategy';
 import { SessionFactory } from './domains/factories/session.factory';
 import { DeviceService } from './application/services/device.service';
 import { JwtModule } from '@nestjs/jwt';
 import { MeQueryHandler } from './application/queries';
 import { UserQueryRepository } from './infrastructure/queries/user.query.repository';
-import { RefreshStrategy } from './guards/strategy/refresh.strategy';
 
 @Module({
   imports: [EmailModule, JwtModule.register({})],
@@ -48,6 +48,7 @@ import { RefreshStrategy } from './guards/strategy/refresh.strategy';
     LoginUserUseCase,
     RefreshStrategy,
     RefreshTokenUseCase,
+    LogOutUseCase,
   ],
 })
 export class UserAccountModule {}

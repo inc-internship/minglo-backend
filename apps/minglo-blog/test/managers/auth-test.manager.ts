@@ -84,4 +84,22 @@ export class AuthTestManager {
       .send()
       .expect(expectedStatus);
   }
+
+  async logout(
+    accessToken: string,
+    cookie: string | string[],
+    expectedStatus: number = HttpStatus.NO_CONTENT,
+  ): Promise<request.Response> {
+    const cookiesArray = Array.isArray(cookie) ? cookie : [cookie];
+
+    const refreshCookie = cookiesArray.find((c) => c.startsWith('refreshToken='));
+    const cleanCookie = refreshCookie ? refreshCookie.split(';')[0] : '';
+
+    return request(this.app.getHttpServer())
+      .post('/api/v1/auth/logout')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Cookie', [cleanCookie])
+      .send()
+      .expect(expectedStatus);
+  }
 }

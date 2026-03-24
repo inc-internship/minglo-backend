@@ -5,6 +5,8 @@ import { deleteAllData } from '../helpers/delete-all-data';
 import { AuthTestManager } from '../managers/auth-test.manager';
 import { EmailService } from '@app/notifications';
 import request from 'supertest';
+import { PrismaService } from '../../src/database/prisma.service';
+import { JwtService } from '@nestjs/jwt';
 
 describe('Auth API (e2e)', () => {
   let app: INestApplication<App>;
@@ -182,7 +184,6 @@ describe('Auth API (e2e)', () => {
     expect(secondCookie).toBeDefined();
     expect(secondCookie).not.toBe(firstCookie);
   });
-
   it('Refresh Token: 403 — Forbidden (token reuse detection)', async () => {
     const dto = authManager.validDto();
     await authManager.register(dto);
@@ -202,7 +203,6 @@ describe('Auth API (e2e)', () => {
     expect(reuseRes.status).toBe(403);
     expect(reuseRes.body.message).toContain('Token reuse detected');
   });
-
   it('Refresh Token: 401 — Unauthorized (session cleared after reuse attempt)', async () => {
     const dto = authManager.validDto();
     await authManager.register(dto);
@@ -220,9 +220,45 @@ describe('Auth API (e2e)', () => {
 
     await authManager.refreshToken(cookie1, 403);
 
-    const finalRes = await authManager.refreshToken(cookie2, 404);
+    const finalRes = await authManager.refreshToken(cookie2, 401);
 
-    expect(finalRes.status).toBe(404);
+    expect(finalRes.status).toBe(401);
     expect(finalRes.body.message).toContain('Session not found');
+  });
+
+  //logout
+  it('Logout: 204 — success (clears cookie and marks session as deleted)', async () => {
+    const dto = authManager.validDto();
+    await authManager.register(dto);
+    const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
+    await authManager.confirmRegistration({ code });
+
+    const { body, headers } = await authManager.login(dto);
+    const accessToken = body.accessToken;
+    const refreshTokenCookie = headers['set-cookie'];
+
+    const logoutResponse = await authManager.logout(accessToken, refreshTokenCookie);
+    expect(logoutResponse.status).toBe(204);
+
+    const setCookie = logoutResponse.headers['set-cookie'];
+    expect(setCookie[0]).toMatch(/refreshToken=;/);
+    expect(setCookie[0]).toMatch(/Max-Age=0|Expires=Thu, 01 Jan 1970/);
+
+    const jwtService = app.get(JwtService);
+    const payload = jwtService.decode(body.accessToken);
+    const prisma = app.get(PrismaService);
+    const session = await prisma.session.findUnique({
+      where: {
+        userId: payload.userId,
+        deviceId: payload.deviceId,
+      },
+    });
+    expect(session).not.toBeNull();
+    expect(session!.deletedAt).toBeInstanceOf(Date);
+  });
+  it('Logout: 401 — fail (unauthorized)', async () => {
+    const response = await authManager.logout('', [], 401);
+
+    expect(response.status).toBe(401);
   });
 });

@@ -24,14 +24,8 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   }
 
   async validate(payload: RefreshTokenDto) {
-    const findRefreshToken: SessionEntity | null =
+    const findRefreshToken: SessionEntity =
       await this.sessionService.findSessionByDeviceIdAndUserId(payload.publicId, payload.deviceId);
-    if (!findRefreshToken) {
-      throw new DomainException({
-        code: DomainExceptionCode.Unauthorized,
-        message: 'Session not found',
-      });
-    }
 
     const exp: number = Math.round(findRefreshToken.expiresAt.getTime() / 1000);
     const iat: number = Math.round(findRefreshToken.issuedAt.getTime() / 1000);

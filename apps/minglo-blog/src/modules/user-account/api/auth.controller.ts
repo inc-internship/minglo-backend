@@ -11,9 +11,11 @@ import {
   LoginUserCommand,
   RefreshTokenCommand,
   ResendConfirmEmailCommand,
+  LogOutCommand,
 } from '../application/usecases';
 import {
   ApiAuthLoginDecorator,
+  ApiAuthLogoutDecorator,
   ApiAuthMeDecorator,
   ApiAuthRefreshTokenDecorator,
   ApiAuthRegistration,
@@ -116,6 +118,23 @@ export class AuthController {
     this.setRefreshTokenCookie(res, refreshToken);
     this.logger.log('rotation refresh and access token completed', 'refresh-token');
     return { accessToken };
+  }
+
+  @Post('logout')
+  @ApiAuthLogoutDecorator()
+  @UseGuards(AccessGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async logout(
+    @Res({ passthrough: true }) res: Response,
+    @CurrentUser() user: ActiveUserDto,
+  ): Promise<void> {
+    await this.commandBus.execute<LogOutCommand, void>(new LogOutCommand(user));
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+    });
+    this.logger.log(`user ${user.userId} logged out', 'logout`);
   }
 
   /** Sets the refresh token as an httpOnly cookie on the response. */

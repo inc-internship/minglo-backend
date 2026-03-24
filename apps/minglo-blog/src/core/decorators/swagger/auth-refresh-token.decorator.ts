@@ -1,5 +1,10 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { AccessTokenResponse } from '../../../modules/user-account/api/types';
 
 export function ApiAuthRefreshTokenDecorator() {
@@ -8,6 +13,7 @@ export function ApiAuthRefreshTokenDecorator() {
       summary: 'Renew access and refresh tokens',
       description: 'Exchange valid Refresh Token (from cookies) for a new pair of tokens',
     }),
+    ApiBearerAuth('access-token'),
     ApiOkResponse({
       description: 'Tokens successfully rotated. New Refresh Token is sent via Set-Cookie.',
       type: AccessTokenResponse,

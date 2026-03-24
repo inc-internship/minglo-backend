@@ -8,6 +8,7 @@ import {
 } from '@nestjs/swagger';
 import { ErrorResponseBody } from '@app/exceptions';
 import { LoginUserInputDto } from '../../../modules/user-account/api/input-dto/login-user.input.dto';
+import { AccessTokenResponse } from '../../../modules/user-account/api/types';
 
 export function ApiAuthLoginDecorator() {
   return applyDecorators(
@@ -21,19 +22,14 @@ export function ApiAuthLoginDecorator() {
     }),
     ApiOkResponse({
       description: 'Successfully logged in',
-      schema: {
-        type: 'object',
-        properties: {
-          accessToken: { type: 'string', example: 'eyJhbGciOiJIUzI1Ni...' },
-        },
-      },
+      type: AccessTokenResponse,
     }),
     ApiBadRequestResponse({
       description: 'Incorrect input data',
       type: ErrorResponseBody,
     }),
     ApiUnauthorizedResponse({
-      description: 'Invalid login or password',
+      description: 'Unauthorized',
     }),
   );
 }

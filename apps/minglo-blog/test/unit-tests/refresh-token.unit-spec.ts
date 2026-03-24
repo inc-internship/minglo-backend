@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   RefreshTokenCommand,
   RefreshTokenUseCase,
-} from '../../src/modules/user-account/application/usecases/auth/refresh-token.usecase';
+} from '../../src/modules/user-account/application/usecases';
 import { TokenService } from '../../src/modules/user-account/application/services/token.service';
 import { SessionRepository } from '../../src/modules/user-account/infrastructure/session.repository';
 

@@ -1,5 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { AccessTokenResponse } from '../../../modules/user-account/api/types';
 
 export function ApiAuthRefreshTokenDecorator() {
   return applyDecorators(
@@ -9,16 +10,7 @@ export function ApiAuthRefreshTokenDecorator() {
     }),
     ApiOkResponse({
       description: 'Tokens successfully rotated. New Refresh Token is sent via Set-Cookie.',
-      schema: {
-        type: 'object',
-        properties: {
-          accessToken: {
-            type: 'string',
-            example: 'eyJhbGciOiJIUzI1Ni...',
-            description: 'New JWT Access Token',
-          },
-        },
-      },
+      type: AccessTokenResponse,
       headers: {
         'Set-Cookie': {
           description: 'Contains the new refreshToken',
@@ -27,7 +19,7 @@ export function ApiAuthRefreshTokenDecorator() {
       },
     }),
     ApiUnauthorizedResponse({
-      description: 'Refresh token is missing, invalid or expired',
+      description: 'Unauthorized',
     }),
   );
 }

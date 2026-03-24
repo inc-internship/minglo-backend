@@ -19,26 +19,23 @@ export class RefreshTokenUseCase implements ICommandHandler<
     private readonly sessionRepository: SessionRepository,
   ) {}
 
-  async execute(command: RefreshTokenCommand): Promise<RefreshTokenResult> {
-    const { user } = command;
+  async execute({ user }: RefreshTokenCommand): Promise<RefreshTokenResult> {
+    const { userId, deviceId } = user;
 
-    const accessToken: string = this.tokenService.createAccessToken(user.userId, user.deviceId);
-    const { refreshToken, payload } = this.tokenService.createRefreshToken(
-      user.userId,
-      user.deviceId,
-    );
+    const accessToken = this.tokenService.createAccessToken(userId, deviceId);
+    const { refreshToken, payload } = this.tokenService.createRefreshToken(userId, deviceId);
 
     const session: SessionEntity = await this.sessionRepository.findSessionByDeviceIdAndUserId(
-      user.userId,
-      user.deviceId,
+      userId,
+      deviceId,
     );
 
     session.updateTokens(payload.iat, payload.exp);
     await this.sessionRepository.updateSessionTokens(session);
 
     return {
-      refreshToken: refreshToken,
-      accessToken: accessToken,
+      refreshToken,
+      accessToken,
     };
   }
 }

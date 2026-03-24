@@ -19,7 +19,7 @@ export function ApiAuthMeDecorator() {
       type: MeViewDto,
     }),
     ApiUnauthorizedResponse({
-      description: 'Invalid token or user not found',
+      description: 'Unauthorized',
       type: ErrorResponseBody,
     }),
   );

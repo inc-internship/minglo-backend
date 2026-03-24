@@ -33,7 +33,7 @@ export function ApiLoginDecorator() {
       type: ErrorResponseBody,
     }),
     ApiUnauthorizedResponse({
-      description: 'Invalid login or password',
+      description: 'Unauthorized',
       type: ErrorResponseBody,
     }),
   );

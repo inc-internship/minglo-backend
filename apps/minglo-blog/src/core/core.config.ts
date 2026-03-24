@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IsBoolean, IsEnum, IsNumber, IsString, ValidateIf } from 'class-validator';
+import { IsArray, IsBoolean, IsEnum, IsNumber, IsString, ValidateIf } from 'class-validator';
 import { configValidationUtility, Environments } from '@app/dynamic-config';
 
 @Injectable()
@@ -46,11 +46,12 @@ export class CoreConfig {
   cors: boolean;
 
   @ValidateIf((o) => o.cors)
-  @IsString({
+  @IsArray({
     message:
       'Set environment variable MINGLO_CORS_ORIGINS (string), example: http://localhost:3000,https://minglo.com',
   })
-  corsOrigins: string;
+  @IsString({ each: true })
+  corsOrigins: string[];
 
   @ValidateIf((o) => o.cors)
   @IsBoolean({
@@ -86,7 +87,10 @@ export class CoreConfig {
     this.cors = configValidationUtility.convertToBoolean(
       this.configService.get('MINGLO_CORS'),
     ) as boolean;
-    this.corsOrigins = this.configService.get('MINGLO_CORS_ORIGINS');
+    this.corsOrigins = this.configService
+      .get('MINGLO_CORS_ORIGINS')
+      ?.split(',')
+      .map((s: string) => s.trim());
     this.corsCredentials = configValidationUtility.convertToBoolean(
       this.configService.get('MINGLO_CORS_CREDENTIALS'),
     ) as boolean;

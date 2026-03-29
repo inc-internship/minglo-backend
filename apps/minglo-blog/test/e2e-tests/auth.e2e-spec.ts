@@ -261,4 +261,39 @@ describe('Auth API (e2e)', () => {
 
     expect(response.status).toBe(401);
   });
+
+  //password-recovery
+  it('password-recovery — success', async () => {
+    const dto = authManager.validDto();
+    await authManager.register(dto);
+
+    const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
+    await authManager.confirmRegistration({ code });
+
+    const { body, headers } = await authManager.login(dto);
+
+    expect(body.accessToken).toBeDefined();
+    expect(headers['set-cookie']).toBeDefined();
+
+    await authManager.passwordRecovery({ email: dto.email, redirectUrl: dto.redirectUrl });
+
+    expect(emailService.sendPasswordRecoveryEmail).toHaveBeenCalledTimes(1);
+
+    const recoveryEmailArgs = emailService.sendPasswordRecoveryEmail.mock.calls[0][0];
+
+    expect(recoveryEmailArgs.email).toBe(dto.email);
+    expect(recoveryEmailArgs.redirectUrl).toBe(dto.redirectUrl);
+    expect(recoveryEmailArgs.code).toBeDefined();
+  });
+  it('password-recovery: user does NOT exist — success 204 (security check)', async () => {
+    const fakeDto = {
+      email: 'non-existent-user@ghost.com',
+      redirectUrl: 'https://minglo.blog/recovery',
+    };
+
+    const response = await authManager.passwordRecovery(fakeDto);
+
+    expect(response.status).toBe(204);
+    expect(emailService.sendPasswordRecoveryEmail).not.toHaveBeenCalled();
+  });
 });

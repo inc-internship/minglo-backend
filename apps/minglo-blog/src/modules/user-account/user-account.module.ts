@@ -11,7 +11,7 @@ import {
 } from './application/usecases';
 import { UserFactory } from './domains';
 import { EmailConfirmationRepository, UserRepository } from './infrastructure';
-import { UserRegisteredHandler } from './application/events';
+import { PasswordRecoveryHandler, UserRegisteredHandler } from './application/events';
 import { EmailModule } from '@app/notifications';
 import { SessionRepository } from './infrastructure/session.repository';
 import { TokenService } from './application/services/token.service';
@@ -22,6 +22,8 @@ import { DeviceService } from './application/services/device.service';
 import { JwtModule } from '@nestjs/jwt';
 import { MeQueryHandler } from './application/queries';
 import { UserQueryRepository } from './infrastructure/queries/user.query.repository';
+import { PasswordRecoveryUseCase } from './application/usecases/auth/password-recovery.usecase';
+import { PasswordRecoveryRepository } from './infrastructure/password-recovery.repository';
 
 @Module({
   imports: [EmailModule, JwtModule.register({})],
@@ -49,6 +51,9 @@ import { UserQueryRepository } from './infrastructure/queries/user.query.reposit
     RefreshStrategy,
     RefreshTokenUseCase,
     LogOutUseCase,
+    PasswordRecoveryUseCase,
+    PasswordRecoveryHandler,
+    PasswordRecoveryRepository,
   ],
 })
 export class UserAccountModule {}

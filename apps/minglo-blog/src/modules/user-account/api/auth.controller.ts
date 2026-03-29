@@ -17,6 +17,7 @@ import {
   ApiAuthLoginDecorator,
   ApiAuthLogoutDecorator,
   ApiAuthMeDecorator,
+  ApiAuthPasswordRecoveryDecorator,
   ApiAuthRefreshTokenDecorator,
   ApiAuthRegistration,
   ApiAuthRegistrationConfirmation,
@@ -37,6 +38,8 @@ import { RefreshTokenResult } from './types/refresh-token-result';
 import { RefreshGuard } from '../guards/refresh.guard';
 import { MeQuery } from '../application/queries';
 import { AccessTokenResponse } from './types';
+import { PasswordRecoveryInputDto } from './input-dto/password-recovery.input-dto';
+import { PasswordRecoveryUseCaseCommand } from '../application/usecases/auth/password-recovery.usecase';
 
 @Controller('auth')
 export class AuthController {
@@ -135,6 +138,16 @@ export class AuthController {
       sameSite: 'lax',
     });
     this.logger.log(`user ${user.userId} logged out', 'logout`);
+  }
+
+  @Post('password-recovery')
+  @ApiAuthPasswordRecoveryDecorator()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async passwordRecovery(@Body() body: PasswordRecoveryInputDto): Promise<void> {
+    await this.commandBus.execute<PasswordRecoveryUseCaseCommand, void>(
+      new PasswordRecoveryUseCaseCommand(body),
+    );
+    this.logger.log(`Password-recovery success', 'password-recovery`);
   }
 
   /** Sets the refresh token as an httpOnly cookie on the response. */

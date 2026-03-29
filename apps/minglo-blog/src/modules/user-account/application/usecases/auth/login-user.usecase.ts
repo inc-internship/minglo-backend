@@ -31,7 +31,13 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand, Login
   async execute(command: LoginUserCommand): Promise<LoginResult> {
     const { dto, meta } = command;
 
-    const user: User = await this.userRepository.getByEmail(dto.email);
+    const user: User | null = await this.userRepository.getByEmail(dto.email);
+    if (!user) {
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: 'Invalid email or password',
+      });
+    }
     if (!user.emailConfirmed) {
       throw new DomainException({
         code: DomainExceptionCode.Unauthorized,

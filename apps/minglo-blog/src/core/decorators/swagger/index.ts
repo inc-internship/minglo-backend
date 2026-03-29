@@ -5,3 +5,4 @@ export * from './auth-me.decorator';
 export * from './auth-login.decorator';
 export * from './auth-refresh-token.decorator';
 export * from './auth-logout.decorator';
+export * from './auth-password-recovery.decorator';

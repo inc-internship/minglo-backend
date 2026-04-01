@@ -285,6 +285,7 @@ describe('Auth API (e2e)', () => {
     expect(recoveryEmailArgs.redirectUrl).toBe(dto.redirectUrl);
     expect(recoveryEmailArgs.code).toBeDefined();
   });
+
   it('password-recovery: user does NOT exist — success 204 (security check)', async () => {
     const fakeDto = {
       email: 'non-existent-user@ghost.com',

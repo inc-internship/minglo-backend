@@ -5,7 +5,7 @@ import {
   ApiOperation,
   ApiTooManyRequestsResponse,
 } from '@nestjs/swagger';
-import { PasswordRecoveryInputDto } from '../../../modules/user-account/api/input-dto/password-recovery.input-dto';
+import { PasswordRecoveryInputDto } from '../../../modules/user-account/api/input-dto';
 
 export function ApiAuthPasswordRecoveryDecorator() {
   return applyDecorators(
@@ -21,7 +21,7 @@ export function ApiAuthPasswordRecoveryDecorator() {
       description: 'If the email exists, a recovery link has been sent.',
     }),
     ApiTooManyRequestsResponse({
-      description: 'Too many requests. Please wait before trying again.',
+      description: 'Too many attempts from the same IP address. Please try again later.',
     }),
   );
 }

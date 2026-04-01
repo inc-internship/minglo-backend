@@ -1,9 +1,7 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { PasswordRecoveryInputDto } from '../../../api/input-dto/password-recovery.input-dto';
+import { PasswordRecoveryInputDto } from '../../../api/input-dto';
 import { UserRepository } from '../../../infrastructure';
 import { LoggerService } from '@app/logger';
-import { PasswordRecoveryEntity } from '../../../domains/entities/password-recovery.entity';
-import { PasswordRecoveryRepository } from '../../../infrastructure/password-recovery.repository';
 import { PasswordRecoveryEvent } from '../../events';
 
 export class PasswordRecoveryUseCaseCommand {
@@ -16,30 +14,32 @@ export class PasswordRecoveryUseCase implements ICommandHandler<
   void
 > {
   constructor(
-    private readonly userRepository: UserRepository,
-    private readonly recoveryRepository: PasswordRecoveryRepository,
+    private readonly userRepo: UserRepository,
     private eventBus: EventBus,
     private logger: LoggerService,
   ) {}
 
-  async execute(command: PasswordRecoveryUseCaseCommand): Promise<void> {
-    const { body } = command;
+  async execute({ body }: PasswordRecoveryUseCaseCommand): Promise<void> {
+    const { email, redirectUrl } = body;
 
-    const user = await this.userRepository.getByEmail(body.email);
-    this.logger.log(`Attempt to recover password for non-existent email: ${body.email}`);
-    if (!user) return;
+    this.logger.log(`Attempt to recover password, user email: ${email}`, 'execute');
 
-    const recovery: PasswordRecoveryEntity = PasswordRecoveryEntity.create(user.id);
+    const user = await this.userRepo.findByEmail(email);
 
-    await this.recoveryRepository.create(recovery);
+    if (!user) {
+      this.logger.warn(`User not found, returning 204 silently`, 'execute');
+      return;
+    }
+
+    const recoveryData = user.generatePasswordRecovery();
+
+    await this.userRepo.savePasswordRecovery(recoveryData);
+
+    this.eventBus.publish(new PasswordRecoveryEvent(email, redirectUrl, recoveryData.recoveryCode));
+
     this.logger.log(
-      `User save history recovery-password in DB, publicId: ${recovery.userId}`,
+      `New Password Recovery data successfully generated, user email: ${email}`,
       'execute',
     );
-
-    this.eventBus.publish(
-      new PasswordRecoveryEvent(body.email, body.redirectUrl, recovery.recoveryCode),
-    );
-    this.logger.log(`Password recovery code generated for user: ${user.publicId}`, 'execute');
   }
 }

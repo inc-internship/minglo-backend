@@ -7,7 +7,8 @@ import {
   ResendConfirmEmailUseCase,
   LoginUserUseCase,
   RefreshTokenUseCase,
-  LogOutUseCase,
+  LogoutUsecase,
+  PasswordRecoveryUseCase,
 } from './application/usecases';
 import { UserFactory } from './domains';
 import { EmailConfirmationRepository, UserRepository } from './infrastructure';
@@ -22,38 +23,36 @@ import { DeviceService } from './application/services/device.service';
 import { JwtModule } from '@nestjs/jwt';
 import { MeQueryHandler } from './application/queries';
 import { UserQueryRepository } from './infrastructure/queries/user.query.repository';
-import { PasswordRecoveryUseCase } from './application/usecases/auth/password-recovery.usecase';
-import { PasswordRecoveryRepository } from './infrastructure/password-recovery.repository';
+
+const services = [UserService, CryptoService, TokenService, SessionService, DeviceService];
+
+const usecases = [
+  CreateUserUseCase,
+  LoginUserUseCase,
+  ConfirmEmailUseCase,
+  ResendConfirmEmailUseCase,
+  LoginUserUseCase,
+  RefreshTokenUseCase,
+  LogoutUsecase,
+  PasswordRecoveryUseCase,
+];
+
+const repos = [UserRepository, SessionRepository, EmailConfirmationRepository, UserQueryRepository];
 
 @Module({
   imports: [EmailModule, JwtModule.register({})],
   controllers: [AuthController],
   providers: [
+    ...services,
+    ...usecases,
+    ...repos,
     UserFactory,
-    UserService,
-    CryptoService,
-    UserRepository,
-    SessionRepository,
-    TokenService,
-    SessionService,
-    AccessStrategy,
-    DeviceService,
     SessionFactory,
-    EmailConfirmationRepository,
-    CreateUserUseCase,
-    LoginUserUseCase,
-    UserRegisteredHandler,
-    ConfirmEmailUseCase,
-    ResendConfirmEmailUseCase,
-    MeQueryHandler,
-    UserQueryRepository,
-    LoginUserUseCase,
+    AccessStrategy,
     RefreshStrategy,
-    RefreshTokenUseCase,
-    LogOutUseCase,
-    PasswordRecoveryUseCase,
+    UserRegisteredHandler,
+    MeQueryHandler,
     PasswordRecoveryHandler,
-    PasswordRecoveryRepository,
   ],
 })
 export class UserAccountModule {}

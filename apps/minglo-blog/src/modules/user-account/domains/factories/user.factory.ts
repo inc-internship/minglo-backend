@@ -34,6 +34,7 @@ export class UserFactory {
   fromEmailConfirmationRecord(record: EmailConfirmationWithUser): UserEntity {
     return UserEntity.reconstitute({
       id: record.user.id,
+      publicId: record.user.publicId,
       login: record.user.login,
       email: record.user.email,
       passwordHash: record.user.passwordHash,
@@ -51,6 +52,7 @@ export class UserFactory {
   fromUserWithEmailConfirmations(record: UserWithEmailConfirmation): UserEntity {
     return UserEntity.reconstitute({
       id: record.id,
+      publicId: record.publicId,
       login: record.login,
       email: record.email,
       passwordHash: record.passwordHash,

@@ -3,6 +3,7 @@ import { PrismaService } from '../../../database/prisma.service';
 import { User } from '../../../../prisma/generated/prisma/client';
 import { UserEntity as UserEntity, UserFactory } from '../domains';
 import { DomainException, DomainExceptionCode, PrismaExceptionMapper } from '@app/exceptions';
+import { PasswordRecoveryEntity } from '../domains/entities/password-recovery.entity';
 
 @Injectable()
 export class UserRepository {
@@ -45,8 +46,8 @@ export class UserRepository {
     return this.userFactory.fromEmailConfirmationRecord(dbEmailConfirmation);
   }
 
-  /* Находит юзера по email */
-  async findByEmail(email: string): Promise<UserEntity> {
+  /* Находит юзера по email. Вернет exception (400) если пользователь не существует. */
+  async findByEmailOrFail(email: string): Promise<UserEntity> {
     const dbUser = await this.prisma.user.findFirst({
       where: {
         email,
@@ -72,6 +73,26 @@ export class UserRepository {
         message: 'Invalid email',
         extensions: [{ field: 'email', message: 'Invalid email' }],
       });
+    }
+
+    return this.userFactory.fromUserWithEmailConfirmations(dbUser);
+  }
+
+  /* Находит юзера по email, без exception */
+  async findByEmail(email: string): Promise<UserEntity | null> {
+    const dbUser = await this.prisma.user.findFirst({
+      where: { email, deletedAt: null },
+      include: {
+        emailConfirmations: {
+          where: { deletedAt: null, confirmedAt: null },
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+        },
+      },
+    });
+
+    if (!dbUser) {
+      return null;
     }
 
     return this.userFactory.fromUserWithEmailConfirmations(dbUser);
@@ -121,11 +142,13 @@ export class UserRepository {
     });
   }
 
-  async getByEmail(email: string): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: {
-        email: email,
-        deletedAt: null,
+  /* Сохраняет данные восстановления пароля */
+  async savePasswordRecovery(recoveryData: PasswordRecoveryEntity): Promise<void> {
+    await this.prisma.passwordRecovery.create({
+      data: {
+        userId: recoveryData.userId,
+        recoveryCode: recoveryData.recoveryCode,
+        expiresAt: recoveryData.expiresAt,
       },
     });
   }

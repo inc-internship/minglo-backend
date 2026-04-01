@@ -18,6 +18,7 @@ export class PasswordRecoveryEntity {
     return ec;
   }
 
+  //todo: удалить если не используется
   /* Восстанавливает доменную сущность из БД */
   static reconstitute(data: {
     id: number;
@@ -35,6 +36,7 @@ export class PasswordRecoveryEntity {
     return ec;
   }
 
+  //todo: удалить если не используется
   /* Валидирует срок действия кода */
   validate(): void {
     if (this.expiresAt < new Date()) {
@@ -46,6 +48,7 @@ export class PasswordRecoveryEntity {
     }
   }
 
+  //todo: удалить если не используется
   /* Устанавливает дату подтверждения кода */
   confirm(): void {
     this.usedAt = new Date();

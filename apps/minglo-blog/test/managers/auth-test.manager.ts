@@ -2,11 +2,11 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import {
   CreateUserInputDto,
+  LoginUserInputDto,
+  PasswordRecoveryInputDto,
   RegistrationConfirmationInputDto,
   RegistrationConfirmationResendInputDto,
 } from '../../src/modules/user-account/api/input-dto';
-import { LoginUserInputDto } from '../../src/modules/user-account/api/input-dto/login-user.input.dto';
-import { PasswordRecoveryInputDto } from '../../src/modules/user-account/api/input-dto/password-recovery.input-dto';
 
 export class AuthTestManager {
   constructor(private readonly app: INestApplication) {}

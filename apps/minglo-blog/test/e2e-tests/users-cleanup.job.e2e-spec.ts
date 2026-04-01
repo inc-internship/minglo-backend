@@ -7,7 +7,7 @@ import { EmailService } from '@app/notifications';
 import { PrismaService } from '../../src/database/prisma.service';
 import { UsersCleanupJob } from '../../src/modules/user-account/application/jobs';
 
-describe('UsersCleanupJob (e2e)', () => {
+describe('JOB users cleanup (e2e)', () => {
   let app: INestApplication<App>;
   let authManager: AuthTestManager;
   let emailService: jest.Mocked<EmailService>;

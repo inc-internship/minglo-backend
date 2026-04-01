@@ -14,7 +14,7 @@ export function ApiAuthRegistrationConfirmationResend() {
     ApiOperation({
       summary: 'Resend registration confirmation email',
       description:
-        'Resends the email confirmation code to complete user registration. Code expires in 10 minutes',
+        'Resends the email confirmation code to complete user registration (code expires in 10 minutes).',
     }),
     ApiBody({
       type: RegistrationConfirmationResendInputDto,

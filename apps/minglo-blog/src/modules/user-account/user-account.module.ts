@@ -4,11 +4,11 @@ import { AuthController } from './api/auth.controller';
 import {
   ConfirmEmailUseCase,
   CreateUserUseCase,
-  ResendConfirmEmailUseCase,
   LoginUserUseCase,
-  RefreshTokenUseCase,
   LogoutUsecase,
   PasswordRecoveryUseCase,
+  RefreshTokenUseCase,
+  ResendConfirmEmailUseCase,
 } from './application/usecases';
 import { UserFactory } from './domains';
 import { EmailConfirmationRepository, UserRepository } from './infrastructure';
@@ -23,6 +23,7 @@ import { DeviceService } from './application/services/device.service';
 import { JwtModule } from '@nestjs/jwt';
 import { MeQueryHandler } from './application/queries';
 import { UserQueryRepository } from './infrastructure/queries/user.query.repository';
+import { UsersCleanupJob } from './application/jobs';
 
 const services = [UserService, CryptoService, TokenService, SessionService, DeviceService];
 
@@ -39,6 +40,8 @@ const usecases = [
 
 const repos = [UserRepository, SessionRepository, EmailConfirmationRepository, UserQueryRepository];
 
+const jobs = [UsersCleanupJob];
+
 @Module({
   imports: [EmailModule, JwtModule.register({})],
   controllers: [AuthController],
@@ -53,6 +56,7 @@ const repos = [UserRepository, SessionRepository, EmailConfirmationRepository, U
     UserRegisteredHandler,
     MeQueryHandler,
     PasswordRecoveryHandler,
+    ...jobs,
   ],
 })
 export class UserAccountModule {}

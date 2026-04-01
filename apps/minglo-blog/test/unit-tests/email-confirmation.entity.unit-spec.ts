@@ -14,9 +14,9 @@ describe('EmailConfirmationEntity — доменная логика', () => {
       const ec = EmailConfirmationEntity.create();
       const after = new Date();
 
-      const oneHourMs = 60 * 60 * 1000;
-      expect(ec.expiresAt.getTime()).toBeGreaterThanOrEqual(before.getTime() + oneHourMs - 100);
-      expect(ec.expiresAt.getTime()).toBeLessThanOrEqual(after.getTime() + oneHourMs + 100);
+      const tenMinutes = 10 * 60 * 1000;
+      expect(ec.expiresAt.getTime()).toBeGreaterThanOrEqual(before.getTime() + tenMinutes - 100);
+      expect(ec.expiresAt.getTime()).toBeLessThanOrEqual(after.getTime() + tenMinutes + 100);
     });
 
     it('confirmedAt не установлен', () => {

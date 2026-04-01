@@ -15,7 +15,7 @@ export function ApiAuthRegistration() {
     ApiOperation({
       summary: 'Register new user',
       description:
-        'Creates a new user account and sends an email confirmation link to the specified email address.',
+        'Creates a new user account and sends an email confirmation link to the specified email address (code expires in 10 minutes).',
     }),
     ApiBody({
       type: CreateUserInputDto,

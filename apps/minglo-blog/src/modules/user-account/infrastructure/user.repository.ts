@@ -4,6 +4,7 @@ import { User } from '../../../../prisma/generated/prisma/client';
 import { UserEntity as UserEntity, UserFactory } from '../domains';
 import { DomainException, DomainExceptionCode, PrismaExceptionMapper } from '@app/exceptions';
 import { PasswordRecoveryEntity } from '../domains/entities/password-recovery.entity';
+import { BatchPayload } from '../../../../prisma/generated/prisma/internal/prismaNamespace';
 
 @Injectable()
 export class UserRepository {
@@ -98,6 +99,26 @@ export class UserRepository {
     return this.userFactory.fromUserWithEmailConfirmations(dbUser);
   }
 
+  /* Возвращает массив id пользователей с протухшим проверочным кодом */
+  async findAllExpired(): Promise<number[]> {
+    const expiredUsers = await this.prisma.user.findMany({
+      where: {
+        emailConfirmed: false,
+        deletedAt: null,
+        emailConfirmations: {
+          some: {
+            expiresAt: { lt: new Date() },
+            confirmedAt: null,
+            deletedAt: null,
+          },
+        },
+      },
+      select: { id: true },
+    });
+
+    return expiredUsers.map((u) => u.id);
+  }
+
   /* Создает юзера */
   async create(user: UserEntity): Promise<string> {
     try {
@@ -149,6 +170,15 @@ export class UserRepository {
         userId: recoveryData.userId,
         recoveryCode: recoveryData.recoveryCode,
         expiresAt: recoveryData.expiresAt,
+      },
+    });
+  }
+
+  /* Удаляет пользователей из БД */
+  async deleteManyByIds(ids: number[]): Promise<BatchPayload> {
+    return this.prisma.user.deleteMany({
+      where: {
+        id: { in: ids },
       },
     });
   }

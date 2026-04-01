@@ -7,6 +7,7 @@ import { MingloTestController } from './modules/testing/api/testing.controller';
 import { ExceptionsModule } from '@app/exceptions';
 import { UserAccountModule } from './modules/user-account/user-account.module';
 import { AsyncLocalStorageService, LoggerModule, RequestContextMiddleware } from '@app/logger';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AsyncLocalStorageService, LoggerModule, RequestContextMiddleware } from
     LoggerModule.forRoot('MINGLO-BLOG'),
     ExceptionsModule,
     UserAccountModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [],
   providers: [AsyncLocalStorageService],

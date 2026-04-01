@@ -14,7 +14,7 @@ export class PasswordRecoveryEntity {
     const ec: PasswordRecoveryEntity = new this(userId);
     ec.userId = userId;
     ec.recoveryCode = randomUUID();
-    ec.expiresAt = add(new Date(), { hours: 1 });
+    ec.expiresAt = add(new Date(), { minutes: 10 });
     return ec;
   }
 

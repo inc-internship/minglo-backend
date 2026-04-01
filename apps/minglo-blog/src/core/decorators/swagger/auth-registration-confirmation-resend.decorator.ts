@@ -13,7 +13,8 @@ export function ApiAuthRegistrationConfirmationResend() {
   return applyDecorators(
     ApiOperation({
       summary: 'Resend registration confirmation email',
-      description: 'Resends the email confirmation code to complete user registration.',
+      description:
+        'Resends the email confirmation code to complete user registration. Code expires in 10 minutes',
     }),
     ApiBody({
       type: RegistrationConfirmationResendInputDto,

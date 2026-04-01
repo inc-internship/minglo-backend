@@ -1,8 +1,10 @@
 import { EmailConfirmationEntity } from './email-confirmation.entity';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
+import { PasswordRecoveryEntity } from './password-recovery.entity';
 
 export class UserEntity {
   public id: number;
+  public publicId: string;
   public emailConfirmed: boolean = false;
   public emailConfirmation: EmailConfirmationEntity;
 
@@ -21,6 +23,7 @@ export class UserEntity {
   /* Восстановление доменной сущности из БД */
   static reconstitute(args: {
     id: number;
+    publicId: string;
     login: string;
     email: string;
     passwordHash: string;
@@ -29,6 +32,7 @@ export class UserEntity {
   }): UserEntity {
     const user = new this(args.login, args.email, args.passwordHash);
     user.id = args.id;
+    user.publicId = args.publicId;
     user.emailConfirmed = args.emailConfirmed;
     user.emailConfirmation = args.emailConfirmation;
 
@@ -45,5 +49,9 @@ export class UserEntity {
     }
     this.emailConfirmed = true;
     this.emailConfirmation.confirm();
+  }
+
+  generatePasswordRecovery(): PasswordRecoveryEntity {
+    return PasswordRecoveryEntity.create(this.id);
   }
 }

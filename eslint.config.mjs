@@ -39,7 +39,7 @@ export default tseslint.config(
   },
   //чтобы в юнит тестах не было ошибки с this при моках
   {
-    files: ['**/*unit-spec.ts'],
+    files: ["**/*.e2e-spec.ts", '**/*unit-spec.ts'],
     rules: {
       '@typescript-eslint/unbound-method': 'off',
     },

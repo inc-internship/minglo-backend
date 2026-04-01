@@ -2,10 +2,11 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import {
   CreateUserInputDto,
+  LoginUserInputDto,
+  PasswordRecoveryInputDto,
   RegistrationConfirmationInputDto,
   RegistrationConfirmationResendInputDto,
 } from '../../src/modules/user-account/api/input-dto';
-import { LoginUserInputDto } from '../../src/modules/user-account/api/input-dto/login-user.input.dto';
 
 export class AuthTestManager {
   constructor(private readonly app: INestApplication) {}
@@ -101,5 +102,15 @@ export class AuthTestManager {
       .set('Cookie', [cleanCookie])
       .send()
       .expect(expectedStatus);
+  }
+
+  async passwordRecovery(
+    dto: PasswordRecoveryInputDto,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ): Promise<request.Response> {
+    return request(this.app.getHttpServer())
+      .post('/api/v1/auth/password-recovery')
+      .send(dto)
+      .expect(statusCode);
   }
 }

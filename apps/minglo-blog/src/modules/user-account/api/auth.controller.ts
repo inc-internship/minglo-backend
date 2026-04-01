@@ -2,6 +2,8 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } fro
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   CreateUserInputDto,
+  LoginUserInputDto,
+  PasswordRecoveryInputDto,
   RegistrationConfirmationInputDto,
   RegistrationConfirmationResendInputDto,
 } from './input-dto';
@@ -9,20 +11,21 @@ import {
   ConfirmEmailCommand,
   CreateUserCommand,
   LoginUserCommand,
+  LogoutCommand,
+  PasswordRecoveryUseCaseCommand,
   RefreshTokenCommand,
   ResendConfirmEmailCommand,
-  LogOutCommand,
 } from '../application/usecases';
 import {
   ApiAuthLoginDecorator,
   ApiAuthLogoutDecorator,
   ApiAuthMeDecorator,
+  ApiAuthPasswordRecoveryDecorator,
   ApiAuthRefreshTokenDecorator,
   ApiAuthRegistration,
   ApiAuthRegistrationConfirmation,
   ApiAuthRegistrationConfirmationResend,
 } from '../../../core/decorators/swagger';
-import { LoginUserInputDto } from './input-dto/login-user.input.dto';
 import type { Response } from 'express';
 import { LoginResult } from './types/login-result';
 import type { UserMetadata } from '../../../core/decorators/auth/user-agent.decorator';
@@ -30,7 +33,7 @@ import { GetUserMetadata } from '../../../core/decorators/auth/user-agent.decora
 import { UserConfig } from '../../../core/user.config';
 import { LoggerService } from '@app/logger';
 import { CurrentUser } from '../../../core/decorators/auth/current-user.decorator';
-import { ActiveUserDto } from '../../../core/decorators/auth/dto/active-user.dto';
+import { ActiveUserDto } from '../../../core/decorators/auth/dto';
 import { AccessGuard } from '../guards/access.guard';
 import { MeViewDto } from './view-dto/me-view.dto';
 import { RefreshTokenResult } from './types/refresh-token-result';
@@ -90,7 +93,7 @@ export class AuthController {
       LoginResult
     >(new LoginUserCommand(dto, meta));
     this.setRefreshTokenCookie(res, refreshToken);
-    this.logger.log('Login completed', 'Login');
+    this.logger.log('User successfully logged into the app', 'Login');
     return { accessToken };
   }
 
@@ -128,13 +131,23 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @CurrentUser() user: ActiveUserDto,
   ): Promise<void> {
-    await this.commandBus.execute<LogOutCommand, void>(new LogOutCommand(user));
+    await this.commandBus.execute<LogoutCommand, void>(new LogoutCommand(user));
     res.clearCookie('refreshToken', {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
     });
     this.logger.log(`user ${user.userId} logged out', 'logout`);
+  }
+
+  @Post('password-recovery')
+  @ApiAuthPasswordRecoveryDecorator()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async passwordRecovery(@Body() body: PasswordRecoveryInputDto): Promise<void> {
+    await this.commandBus.execute<PasswordRecoveryUseCaseCommand, void>(
+      new PasswordRecoveryUseCaseCommand(body),
+    );
+    this.logger.log(`Password-recovery success', 'password-recovery`);
   }
 
   /** Sets the refresh token as an httpOnly cookie on the response. */

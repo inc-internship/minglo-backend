@@ -23,7 +23,7 @@ export class ResendConfirmEmailUseCase implements ICommandHandler<ResendConfirmE
   }
 
   async execute({ email, redirectUrl }: ResendConfirmEmailCommand): Promise<void> {
-    const user = await this.userRepo.findByEmail(email);
+    const user = await this.userRepo.findByEmailOrFail(email);
 
     if (user.emailConfirmed) {
       throw new DomainException({

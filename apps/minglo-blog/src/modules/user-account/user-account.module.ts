@@ -7,11 +7,12 @@ import {
   ResendConfirmEmailUseCase,
   LoginUserUseCase,
   RefreshTokenUseCase,
-  LogOutUseCase,
+  LogoutUsecase,
+  PasswordRecoveryUseCase,
 } from './application/usecases';
 import { UserFactory } from './domains';
 import { EmailConfirmationRepository, UserRepository } from './infrastructure';
-import { UserRegisteredHandler } from './application/events';
+import { PasswordRecoveryHandler, UserRegisteredHandler } from './application/events';
 import { EmailModule } from '@app/notifications';
 import { SessionRepository } from './infrastructure/session.repository';
 import { TokenService } from './application/services/token.service';
@@ -23,32 +24,35 @@ import { JwtModule } from '@nestjs/jwt';
 import { MeQueryHandler } from './application/queries';
 import { UserQueryRepository } from './infrastructure/queries/user.query.repository';
 
+const services = [UserService, CryptoService, TokenService, SessionService, DeviceService];
+
+const usecases = [
+  CreateUserUseCase,
+  LoginUserUseCase,
+  ConfirmEmailUseCase,
+  ResendConfirmEmailUseCase,
+  LoginUserUseCase,
+  RefreshTokenUseCase,
+  LogoutUsecase,
+  PasswordRecoveryUseCase,
+];
+
+const repos = [UserRepository, SessionRepository, EmailConfirmationRepository, UserQueryRepository];
+
 @Module({
   imports: [EmailModule, JwtModule.register({})],
   controllers: [AuthController],
   providers: [
+    ...services,
+    ...usecases,
+    ...repos,
     UserFactory,
-    UserService,
-    CryptoService,
-    UserRepository,
-    SessionRepository,
-    TokenService,
-    SessionService,
-    AccessStrategy,
-    DeviceService,
     SessionFactory,
-    EmailConfirmationRepository,
-    CreateUserUseCase,
-    LoginUserUseCase,
-    UserRegisteredHandler,
-    ConfirmEmailUseCase,
-    ResendConfirmEmailUseCase,
-    MeQueryHandler,
-    UserQueryRepository,
-    LoginUserUseCase,
+    AccessStrategy,
     RefreshStrategy,
-    RefreshTokenUseCase,
-    LogOutUseCase,
+    UserRegisteredHandler,
+    MeQueryHandler,
+    PasswordRecoveryHandler,
   ],
 })
 export class UserAccountModule {}

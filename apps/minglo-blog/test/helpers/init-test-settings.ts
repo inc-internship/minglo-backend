@@ -16,6 +16,7 @@ export const initTestSettings = async (
 
   testingModuleBuilder.overrideProvider(EmailService).useValue({
     sendConfirmationEmail: jest.fn().mockResolvedValue(undefined),
+    sendPasswordRecoveryEmail: jest.fn().mockResolvedValue(undefined),
   });
 
   if (addSettingsToModuleBuilder) {

@@ -33,9 +33,9 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand, Login
 
     this.logger.log(`Attempt to login into the app, user email: ${email}`, 'execute');
 
-    const user = await this.userRepository.findByEmailOrFail(email);
+    const user = await this.userRepository.findByEmail(email);
 
-    if (!user.emailConfirmed) {
+    if (!user || !user.emailConfirmed) {
       throw new DomainException({
         code: DomainExceptionCode.Unauthorized,
         message: 'Invalid email or password',

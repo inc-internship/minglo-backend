@@ -109,10 +109,10 @@ describe('Auth API (e2e)', () => {
       HttpStatus.UNAUTHORIZED,
     );
   });
-  it('Login: 400 — user not found (security-focused response)', async () => {
+  it('Login: 401 — user not found', async () => {
     await authManager.login(
       { email: 'non-existent-user@mail.com', password: 'SomePassword123!' },
-      HttpStatus.BAD_REQUEST,
+      HttpStatus.UNAUTHORIZED,
     );
   });
   it('Login: 401 — should fail if User-Agent header is missing', async () => {

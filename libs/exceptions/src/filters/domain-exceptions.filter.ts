@@ -6,9 +6,9 @@ import { ErrorResponseBody } from '../error-response-body.type';
 import { LoggerService } from '@app/logger';
 
 @Catch(DomainException)
-export class DomainHttpExceptionsFilter implements ExceptionFilter {
+export class DomainExceptionsFilter implements ExceptionFilter {
   constructor(private logger: LoggerService) {
-    this.logger.setContext(DomainHttpExceptionsFilter.name);
+    this.logger.setContext(DomainExceptionsFilter.name);
   }
 
   catch(exception: DomainException, host: ArgumentsHost): void {

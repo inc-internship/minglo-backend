@@ -4,7 +4,7 @@ import { LoggerService } from '@app/logger';
 import {
   AllExceptionsFilter,
   ThrottlerExceptionsFilter,
-  DomainHttpExceptionsFilter,
+  DomainExceptionsFilter,
 } from '@app/exceptions/filters';
 
 @Module({
@@ -26,7 +26,7 @@ import {
     {
       provide: APP_FILTER,
       useFactory: (logger: LoggerService) => {
-        return new DomainHttpExceptionsFilter(logger);
+        return new DomainExceptionsFilter(logger);
       },
       inject: [LoggerService],
     },

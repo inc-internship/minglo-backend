@@ -1,6 +1,6 @@
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import { LoginUserInputDto } from '../../src/modules/user-account/api/input-dto/login-user.input.dto';
+import { LoginUserInputDto } from '../../src/modules/user-account/api/input-dto';
 
 const validLoginDto = {
   email: 'valid@gmail.com',
@@ -19,13 +19,23 @@ describe('LoginUserInputDto — валидация', () => {
     expect(fields).toHaveLength(0);
   });
 
-  it('невалидный email (пустой или кривой) возвращает ошибку', async () => {
+  it('невалидный формат email (строка) не возвращает ошибку валидации DTO', async () => {
     const fields = await getErrorFields({ ...validLoginDto, email: 'shlak' });
+    expect(fields).toHaveLength(0);
+  });
+
+  it('пароль не подходящий под регулярку (строка) не возвращает ошибку валидации DTO', async () => {
+    const fields = await getErrorFields({ ...validLoginDto, password: '123' });
+    expect(fields).toHaveLength(0);
+  });
+
+  it('email не является строкой — возвращает ошибку', async () => {
+    const fields = await getErrorFields({ ...validLoginDto, email: 123 });
     expect(fields).toContain('email');
   });
 
-  it('пароль, не подходящий под регулярку, возвращает ошибку', async () => {
-    const fields = await getErrorFields({ ...validLoginDto, password: '123' });
+  it('password не является строкой — возвращает ошибку', async () => {
+    const fields = await getErrorFields({ ...validLoginDto, password: null });
     expect(fields).toContain('password');
   });
 });

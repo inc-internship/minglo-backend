@@ -7,7 +7,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ErrorResponseBody } from '@app/exceptions';
-import { LoginUserInputDto } from '../../../modules/user-account/api/input-dto/login-user.input.dto';
+import { LoginUserInputDto } from '../../../modules/user-account/api/input-dto';
 import { AccessTokenResponse } from '../../../modules/user-account/api/types';
 
 export function ApiAuthLoginDecorator() {

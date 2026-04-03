@@ -30,6 +30,7 @@
     "prisma:minglo-blog:generate:prod": "cross-env NODE_ENV=production prisma generate --config apps/minglo-blog/prisma.config.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1023.0",
     "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.3",
@@ -37,6 +38,7 @@
     "@nestjs/cqrs": "^11.0.3",
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/mapped-types": "*",
+    "@nestjs/microservices": "^11.1.18",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/schedule": "^6.1.1",

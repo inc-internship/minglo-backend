@@ -10,7 +10,7 @@ export class CryptoService {
   }
 
   /* проверка соответствия пароля и сохранённого хеша */
-  comparePassword(args: { password: string; passwordHash: string }): Promise<boolean> {
+  async comparePassword(args: { password: string; passwordHash: string }): Promise<boolean> {
     return bcrypt.compare(args.password, args.passwordHash);
   }
 }

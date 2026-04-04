@@ -13,3 +13,17 @@ export type UserWithEmailConfirmation = Prisma.UserGetPayload<{
     };
   };
 }>;
+
+export type PassworRecoveryWithUser = Prisma.PasswordRecoveryGetPayload<{
+  include: { user: true };
+}>;
+
+export type UserWithPassworRecovery = Prisma.UserGetPayload<{
+  include: {
+    passwordRecoveries: {
+      where: { deletedAt: null; confirmedAt: null };
+      orderBy: { createdAt: 'desc' };
+      take: 1;
+    };
+  };
+}>;

@@ -1,0 +1,25 @@
+import { applyDecorators } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { GetDevicesViewDto } from '../../../modules/user-account/api/view-dto/get-devices-view.dto';
+
+export function ApiSecurityGetDevicesDecorator() {
+  return applyDecorators(
+    ApiOperation({
+      summary: 'Returns all devices with active sessions for current user',
+    }),
+    ApiBearerAuth('access-token'),
+    ApiOkResponse({
+      description: 'Success',
+      type: GetDevicesViewDto,
+      isArray: true,
+    }),
+    ApiUnauthorizedResponse({
+      description: 'Unauthorized (Access token is invalid or expired)',
+    }),
+  );
+}

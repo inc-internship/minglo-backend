@@ -7,6 +7,7 @@ import { EmailService } from '@app/notifications';
 import request from 'supertest';
 import { PrismaService } from '../../src/database/prisma.service';
 import { JwtService } from '@nestjs/jwt';
+import { randomUUID } from 'node:crypto';
 
 describe('Auth API (e2e)', () => {
   let app: INestApplication<App>;
@@ -285,7 +286,6 @@ describe('Auth API (e2e)', () => {
     expect(recoveryEmailArgs.redirectUrl).toBe(dto.redirectUrl);
     expect(recoveryEmailArgs.code).toBeDefined();
   });
-
   it('password-recovery: user does NOT exist — success 204 (security check)', async () => {
     const fakeDto = {
       email: 'non-existent-user@ghost.com',
@@ -296,5 +296,34 @@ describe('Auth API (e2e)', () => {
 
     expect(response.status).toBe(204);
     expect(emailService.sendPasswordRecoveryEmail).not.toHaveBeenCalled();
+  });
+
+  //new-password
+  it('new-password — success', async () => {
+    const dto = authManager.validDto();
+    await authManager.register(dto);
+    const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
+    await authManager.confirmRegistration({ code });
+    await authManager.login(dto);
+    await authManager.passwordRecovery({ email: dto.email, redirectUrl: dto.redirectUrl });
+    const recoveryEmailArgs = emailService.sendPasswordRecoveryEmail.mock.calls[0][0];
+    const recoveryCode = recoveryEmailArgs.code;
+
+    await authManager.newPassword({ newPassword: 'QweRty123', recoveryCode: recoveryCode });
+    const prisma = app.get(PrismaService);
+    const updatedRecovery = await prisma.passwordRecovery.findUnique({
+      where: { recoveryCode: recoveryCode },
+    });
+    expect(updatedRecovery?.usedAt).toBeInstanceOf(Date);
+  });
+  it('new-password — invalid code', async () => {
+    const dto = authManager.validDto();
+    await authManager.register(dto);
+    const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
+    await authManager.confirmRegistration({ code });
+    await authManager.login(dto);
+    await authManager.passwordRecovery({ email: dto.email, redirectUrl: dto.redirectUrl });
+
+    await authManager.newPassword({ newPassword: 'QweRty123', recoveryCode: randomUUID() }, 400);
   });
 });

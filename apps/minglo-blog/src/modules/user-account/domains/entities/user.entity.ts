@@ -7,6 +7,7 @@ export class UserEntity {
   public publicId: string;
   public emailConfirmed: boolean = false;
   public emailConfirmation: EmailConfirmationEntity;
+  public passwordRecoveries: PasswordRecoveryEntity;
 
   constructor(
     public login: string,
@@ -39,6 +40,21 @@ export class UserEntity {
     return user;
   }
 
+  static reconstituteWithPasswordRecovery(args: {
+    id: number;
+    publicId: string;
+    login: string;
+    email: string;
+    passwordHash: string;
+    emailConfirmed: boolean;
+    passwordRecoveries: PasswordRecoveryEntity;
+  }): UserEntity {
+    const user = new this(args.login, args.email, args.passwordHash);
+    user.id = args.id;
+    user.passwordRecoveries = args.passwordRecoveries;
+    return user;
+  }
+
   /* Подтверждает пользователя в доменной сущности */
   confirm() {
     if (this.emailConfirmed) {
@@ -53,5 +69,9 @@ export class UserEntity {
 
   generatePasswordRecovery(): PasswordRecoveryEntity {
     return PasswordRecoveryEntity.create(this.id);
+  }
+
+  updatePassword(newPasswordHash: string): void {
+    this.passwordHash = newPasswordHash;
   }
 }

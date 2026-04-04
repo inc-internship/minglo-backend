@@ -12,6 +12,7 @@ import {
   CreateUserCommand,
   LoginUserCommand,
   LogoutCommand,
+  NewPasswordCommand,
   PasswordRecoveryUseCaseCommand,
   RefreshTokenCommand,
   ResendConfirmEmailCommand,
@@ -20,6 +21,7 @@ import {
   ApiAuthLoginDecorator,
   ApiAuthLogoutDecorator,
   ApiAuthMeDecorator,
+  ApiAuthNewPasswordDecorator,
   ApiAuthPasswordRecoveryDecorator,
   ApiAuthRefreshTokenDecorator,
   ApiAuthRegistration,
@@ -40,6 +42,7 @@ import { RefreshTokenResult } from './types/refresh-token-result';
 import { RefreshGuard } from '../guards/refresh.guard';
 import { MeQuery } from '../application/queries';
 import { AccessTokenResponse } from './types';
+import { NewPasswordInputDto } from './input-dto/new-password.input-dto';
 
 @Controller('auth')
 export class AuthController {
@@ -148,6 +151,14 @@ export class AuthController {
       new PasswordRecoveryUseCaseCommand(body),
     );
     this.logger.log(`Password-recovery success', 'password-recovery`);
+  }
+
+  @Post('new-password')
+  @ApiAuthNewPasswordDecorator()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async newPassword(@Body() body: NewPasswordInputDto): Promise<void> {
+    await this.commandBus.execute<NewPasswordCommand, void>(new NewPasswordCommand(body));
+    this.logger.log(`New-password success', 'new-password`);
   }
 
   /** Sets the refresh token as an httpOnly cookie on the response. */

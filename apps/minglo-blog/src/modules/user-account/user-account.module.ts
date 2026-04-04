@@ -6,6 +6,7 @@ import {
   CreateUserUseCase,
   LoginUserUseCase,
   LogoutUsecase,
+  NewPasswordUseCase,
   PasswordRecoveryUseCase,
   RefreshTokenUseCase,
   ResendConfirmEmailUseCase,
@@ -36,6 +37,7 @@ const usecases = [
   RefreshTokenUseCase,
   LogoutUsecase,
   PasswordRecoveryUseCase,
+  NewPasswordUseCase,
 ];
 
 const repos = [UserRepository, SessionRepository, EmailConfirmationRepository, UserQueryRepository];

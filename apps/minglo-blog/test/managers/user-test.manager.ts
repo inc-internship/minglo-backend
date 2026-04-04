@@ -1,8 +1,10 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { CreateUserInputDto } from '../../src/modules/user/api/input-dto/create-user.input-dto';
-import { UserViewDto } from '../../src/modules/user/api/view-dto/user.view-dto';
-import { UpdateUserInputDto } from '../../src/modules/user/api/input-dto/update-user.input-dto';
+import {
+  CreateUserInputDto,
+  UpdateUserInputDto,
+} from '../../src/modules/user-account/api/input-dto';
+import { UserViewDto } from '../../src/modules/user-account/api/view-dto/user.view-dto';
 
 /* Вспомогательный класс для тестирования users (Demo)*/
 export class UserTestManager {
@@ -33,18 +35,18 @@ export class UserTestManager {
     return response.body;
   }
 
-  async createSeveralUsers(count: number): Promise<UserViewDto[]> {
-    const usersPromises = [] as Promise<UserViewDto>[];
-
-    for (let i = 0; i < count; ++i) {
-      const response = this.createUser({
-        login: `testlog` + i,
-        email: `test${i}@gmail.com`,
-        password: '123456789',
-      });
-      usersPromises.push(response);
-    }
-
-    return Promise.all(usersPromises);
-  }
+  // async createSeveralUsers(count: number): Promise<UserViewDto[]> {
+  //   const usersPromises = [] as Promise<UserViewDto>[];
+  //
+  //   for (let i = 0; i < count; ++i) {
+  //     const response = this.createUser({
+  //       login: `testlog` + i,
+  //       email: `test${i}@gmail.com`,
+  //       password: '123456789',
+  //     });
+  //     usersPromises.push(response);
+  //   }
+  //
+  //   return Promise.all(usersPromises);
+  // }
 }

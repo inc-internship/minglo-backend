@@ -1,9 +1,6 @@
-import { INestApplication } from '@nestjs/common';
-import { CreateUserDto } from '../../src/modules/user/dto/create-user.dto';
+import { CreateUserDto } from '../../src/modules/user-account/dto/create-user.dto';
 
 export class UserTestDtoManager {
-  constructor(private app: INestApplication) {}
-
   createUserDto({
     login,
     email,

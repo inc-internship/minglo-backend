@@ -18,11 +18,10 @@ export class PasswordRecoveryEntity {
     return ec;
   }
 
-  //todo: удалить если не используется
   /* Восстанавливает доменную сущность из БД */
   static reconstitute(data: {
     id: number;
-    code: string;
+    recoveryCode: string;
     userId: number;
     expiresAt: Date;
     confirmedAt: Date | null;
@@ -30,13 +29,12 @@ export class PasswordRecoveryEntity {
     const ec: PasswordRecoveryEntity = new this(data.userId);
     ec.id = data.id;
     ec.userId = data.userId;
-    ec.recoveryCode = data.code;
+    ec.recoveryCode = data.recoveryCode;
     ec.expiresAt = data.expiresAt;
     ec.usedAt = data.confirmedAt;
     return ec;
   }
 
-  //todo: удалить если не используется
   /* Валидирует срок действия кода */
   validate(): void {
     if (this.expiresAt < new Date()) {
@@ -46,11 +44,12 @@ export class PasswordRecoveryEntity {
         extensions: [{ field: 'code', message: 'Confirmation code expired' }],
       });
     }
-  }
-
-  //todo: удалить если не используется
-  /* Устанавливает дату подтверждения кода */
-  confirm(): void {
-    this.usedAt = new Date();
+    if (this.usedAt !== null) {
+      throw new DomainException({
+        code: DomainExceptionCode.ValidationError,
+        message: 'Code already used',
+        extensions: [{ field: 'code', message: 'Confirmation code already used' }],
+      });
+    }
   }
 }

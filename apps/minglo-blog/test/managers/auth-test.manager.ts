@@ -7,6 +7,7 @@ import {
   RegistrationConfirmationInputDto,
   RegistrationConfirmationResendInputDto,
 } from '../../src/modules/user-account/api/input-dto';
+import { NewPasswordInputDto } from '../../src/modules/user-account/api/input-dto/new-password.input-dto';
 
 export class AuthTestManager {
   constructor(private readonly app: INestApplication) {}
@@ -110,6 +111,16 @@ export class AuthTestManager {
   ): Promise<request.Response> {
     return request(this.app.getHttpServer())
       .post('/api/v1/auth/password-recovery')
+      .send(dto)
+      .expect(statusCode);
+  }
+
+  async newPassword(
+    dto: NewPasswordInputDto,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ): Promise<request.Response> {
+    return request(this.app.getHttpServer())
+      .post('/api/v1/auth/new-password')
       .send(dto)
       .expect(statusCode);
   }

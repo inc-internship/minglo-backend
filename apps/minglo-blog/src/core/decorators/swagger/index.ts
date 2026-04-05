@@ -6,3 +6,4 @@ export * from './auth-login.decorator';
 export * from './auth-refresh-token.decorator';
 export * from './auth-logout.decorator';
 export * from './auth-password-recovery.decorator';
+export * from './auth-new-password.decorator';

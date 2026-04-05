@@ -32,6 +32,7 @@ import { SessionQueryRepository } from './infrastructure/queries/session.query.r
 const services = [UserService, CryptoService, TokenService, SessionService, DeviceService];
 
 const usecases = [
+  NewPasswordUseCase,
   CreateUserUseCase,
   LoginUserUseCase,
   ConfirmEmailUseCase,
@@ -40,7 +41,6 @@ const usecases = [
   RefreshTokenUseCase,
   LogoutUsecase,
   PasswordRecoveryUseCase,
-  NewPasswordUseCase,
 ];
 
 const repos = [

@@ -33,8 +33,8 @@ export class NewPasswordUseCase implements ICommandHandler<NewPasswordCommand, v
     if (result) {
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
-        message: 'Invalid passwordHash',
-        extensions: [{ field: 'passwordHash', message: 'New password must be different' }],
+        message: 'Invalid newPassword',
+        extensions: [{ field: 'newPassword', message: 'New password must be different' }],
       });
     }
 

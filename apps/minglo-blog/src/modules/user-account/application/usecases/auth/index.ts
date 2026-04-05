@@ -4,4 +4,4 @@ export * from './refresh-token.usecase';
 export * from './login-user.usecase';
 export * from './logout.usecase';
 export * from './password-recovery.usecase';
-export * from './new-password.use.case';
+export * from './new-password.usecase';

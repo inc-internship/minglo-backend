@@ -28,6 +28,7 @@ import { UsersCleanupJob } from './application/jobs';
 import { SecurityController } from './api/security.controller';
 import { GetDevicesHandler } from './application/queries/get-devices.query';
 import { SessionQueryRepository } from './infrastructure/queries/session.query.repository';
+import { PasswordRecoveryCodeCleanupJob } from './application/jobs/password-recovery-code-cleanup-job.service';
 
 const services = [UserService, CryptoService, TokenService, SessionService, DeviceService];
 
@@ -51,7 +52,7 @@ const repos = [
   SessionQueryRepository,
 ];
 
-const jobs = [UsersCleanupJob];
+const jobs = [UsersCleanupJob, PasswordRecoveryCodeCleanupJob];
 
 @Module({
   imports: [EmailModule, JwtModule.register({})],

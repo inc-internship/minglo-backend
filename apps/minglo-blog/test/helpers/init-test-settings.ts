@@ -2,7 +2,7 @@ import { Test, TestingModuleBuilder } from '@nestjs/testing';
 import { initAppModule } from '../../src/init-app-module';
 import { appSetup } from '../../src/setup/app.setup';
 import { EmailService } from '@app/notifications';
-import { AuthTestManager } from '../managers/auth-test.manager';
+import { AuthTestManager } from '../managers';
 
 export const initTestSettings = async (
   addSettingsToModuleBuilder?: (moduleBuilder: TestingModuleBuilder) => void,

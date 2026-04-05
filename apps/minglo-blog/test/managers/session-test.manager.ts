@@ -9,7 +9,7 @@ export class SessionTestManager {
     expectedStatus: number = HttpStatus.OK,
   ): Promise<request.Response> {
     return request(this.app.getHttpServer())
-      .get('/api/v1/security/devices')
+      .get('/api/v1/sessions')
       .set('Authorization', `Bearer ${token}`)
       .expect(expectedStatus);
   }

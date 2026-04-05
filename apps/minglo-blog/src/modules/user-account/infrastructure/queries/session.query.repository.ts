@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../database/prisma.service';
-import { GetDevicesViewDto } from '../../api/view-dto/get-devices-view.dto';
+import { SessionViewDto } from '../../api/view-dto/session-view.dto';
 
 @Injectable()
 export class SessionQueryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getDevices(id: string) {
+  async getSession(id: string) {
     const devices = await this.prisma.session.findMany({
       where: {
         deletedAt: null,
@@ -16,6 +16,6 @@ export class SessionQueryRepository {
         },
       },
     });
-    return GetDevicesViewDto.mapToManyView(devices);
+    return SessionViewDto.mapToManyView(devices);
   }
 }

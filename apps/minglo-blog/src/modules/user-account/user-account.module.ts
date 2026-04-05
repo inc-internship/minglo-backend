@@ -25,7 +25,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { MeHandler } from './application/queries';
 import { UserQueryRepository } from './infrastructure/queries/user.query.repository';
 import { UsersCleanupJob } from './application/jobs';
-import { SecurityController } from './api/security.controller';
+import { SessionsController } from './api/sessions.controller';
 import { GetDevicesHandler } from './application/queries/get-devices.query';
 import { SessionQueryRepository } from './infrastructure/queries/session.query.repository';
 import { PasswordRecoveryCodeCleanupJob } from './application/jobs/password-recovery-code-cleanup-job.service';
@@ -56,7 +56,7 @@ const jobs = [UsersCleanupJob, PasswordRecoveryCodeCleanupJob];
 
 @Module({
   imports: [EmailModule, JwtModule.register({})],
-  controllers: [AuthController, SecurityController],
+  controllers: [AuthController, SessionsController],
   providers: [
     ...services,
     ...usecases,

@@ -5,7 +5,7 @@ import {
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { GetDevicesViewDto } from '../../../modules/user-account/api/view-dto/get-devices-view.dto';
+import { SessionViewDto } from '../../../modules/user-account/api/view-dto/session-view.dto';
 
 export function ApiSecurityGetDevicesDecorator() {
   return applyDecorators(
@@ -15,7 +15,7 @@ export function ApiSecurityGetDevicesDecorator() {
     ApiBearerAuth('access-token'),
     ApiOkResponse({
       description: 'Success',
-      type: GetDevicesViewDto,
+      type: SessionViewDto,
       isArray: true,
     }),
     ApiUnauthorizedResponse({

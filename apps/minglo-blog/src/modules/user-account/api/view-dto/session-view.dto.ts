@@ -1,7 +1,7 @@
 import { Session } from '../../../../../prisma/generated/prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class GetDevicesViewDto {
+export class SessionViewDto {
   @ApiProperty({
     example: '192.168.1.15',
     description: 'IP address of the device',
@@ -22,7 +22,7 @@ export class GetDevicesViewDto {
 
   @ApiProperty({
     example: 'My PC',
-    description: 'Custom device name if provided',
+    description: 'Device name',
   })
   deviceName: string;
 
@@ -44,8 +44,8 @@ export class GetDevicesViewDto {
   })
   osName: string;
 
-  static mapToView(session: Session): GetDevicesViewDto {
-    const dto: GetDevicesViewDto = new GetDevicesViewDto();
+  static mapToView(session: Session): SessionViewDto {
+    const dto: SessionViewDto = new SessionViewDto();
 
     dto.ip = session.ip;
     dto.lastActive = session.lastActive.toISOString();
@@ -58,7 +58,7 @@ export class GetDevicesViewDto {
     return dto;
   }
 
-  static mapToManyView(sessions: Session[]): GetDevicesViewDto[] {
+  static mapToManyView(sessions: Session[]): SessionViewDto[] {
     return sessions.map((session) => this.mapToView(session));
   }
 }

@@ -6,7 +6,7 @@ import {
   CreateUserUseCase,
   LoginUserUseCase,
   LogoutUsecase,
-  NewPasswordUsecase,
+  NewPasswordUseCase,
   PasswordRecoveryUseCase,
   RefreshTokenUseCase,
   ResendConfirmEmailUseCase,
@@ -29,6 +29,7 @@ import { UsersCleanupJob } from './application/jobs';
 const services = [UserService, CryptoService, TokenService, SessionService, DeviceService];
 
 const usecases = [
+  NewPasswordUseCase,
   CreateUserUseCase,
   LoginUserUseCase,
   ConfirmEmailUseCase,
@@ -37,7 +38,6 @@ const usecases = [
   RefreshTokenUseCase,
   LogoutUsecase,
   PasswordRecoveryUseCase,
-  NewPasswordUsecase,
 ];
 
 const repos = [UserRepository, SessionRepository, EmailConfirmationRepository, UserQueryRepository];

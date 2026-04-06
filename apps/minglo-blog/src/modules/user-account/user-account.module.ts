@@ -4,8 +4,9 @@ import { AuthController } from './api/auth.controller';
 import {
   ConfirmEmailUseCase,
   CreateUserUseCase,
+  DeleteSessionUseCase,
   LoginUserUseCase,
-  LogoutUsecase,
+  LogoutUseCase,
   NewPasswordUseCase,
   PasswordRecoveryUseCase,
   RefreshTokenUseCase,
@@ -40,8 +41,10 @@ const usecases = [
   ResendConfirmEmailUseCase,
   LoginUserUseCase,
   RefreshTokenUseCase,
-  LogoutUsecase,
+  LogoutUseCase,
   PasswordRecoveryUseCase,
+  NewPasswordUseCase,
+  DeleteSessionUseCase,
 ];
 
 const repos = [

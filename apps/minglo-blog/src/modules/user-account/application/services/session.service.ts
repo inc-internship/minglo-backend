@@ -14,6 +14,6 @@ export class SessionService {
   }
 
   async deleteDeviceById(publicId: string, deviceId: string): Promise<void> {
-    return await this.sessionRepositories.deleteDeviceById(publicId, deviceId);
+    await this.sessionRepositories.deleteDeviceById(publicId, deviceId);
   }
 }

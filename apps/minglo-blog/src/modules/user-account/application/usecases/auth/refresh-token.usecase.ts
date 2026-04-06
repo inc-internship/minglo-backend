@@ -2,8 +2,8 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { TokenService } from '../../services/token.service';
 import { SessionRepository } from '../../../infrastructure/session.repository';
 import { SessionEntity } from '../../../domains/entities/session.entity';
-import { ActiveUserDto } from '../../../../../core/decorators/auth/dto/active-user.dto';
 import { RefreshTokenResult } from '../../../api/types/refresh-token-result';
+import { ActiveUserDto } from '../../../../../core/decorators/auth/dto';
 
 export class RefreshTokenCommand {
   constructor(public readonly user: ActiveUserDto) {}

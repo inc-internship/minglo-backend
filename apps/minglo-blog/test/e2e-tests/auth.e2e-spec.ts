@@ -292,7 +292,7 @@ describe('Auth API (e2e)', () => {
     expect(recoveryEmailArgs.redirectUrl).toBe(dto.redirectUrl);
     expect(recoveryEmailArgs.code).toBeDefined();
   });
-  it('password-recovery: user does NOT exist — success 404 (security check)', async () => {
+  it('password-recovery: user does NOT exist — success 404 (session check)', async () => {
     const fakeDto = {
       email: 'non-existent-user@ghost.com',
       redirectUrl: 'https://minglo.blog/recovery',

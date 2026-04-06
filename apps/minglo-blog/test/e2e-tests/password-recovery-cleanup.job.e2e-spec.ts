@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { App } from 'supertest/types';
-import { AuthTestManager } from '../managers/auth-test.manager';
+import { AuthTestManager } from '../managers';
 import { EmailService } from '@app/notifications';
 import { PrismaService } from '../../src/database/prisma.service';
 import { initTestSettings } from '../helpers/init-test-settings';
@@ -17,8 +17,8 @@ describe('JOB password-recovery cleanup (e2e)', () => {
   beforeAll(async () => {
     const result = await initTestSettings();
     app = result.app;
-    authManager = new AuthTestManager(app);
     emailService = app.get(EmailService);
+    authManager = new AuthTestManager(app);
     prisma = app.get(PrismaService);
     job = app.get(PasswordRecoveryCodeCleanupJob);
   });

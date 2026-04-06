@@ -1,5 +1,5 @@
 import { DomainException } from '@app/exceptions';
-import { PasswordRecoveryEntity } from '../../src/modules/user-account/domains/entities/password-recovery.entity';
+import { PasswordRecoveryEntity } from '../../../src/modules/user-account/domains/entities/password-recovery.entity';
 import { sub } from 'date-fns';
 
 describe('PasswordRecoveries Unit Tests', () => {

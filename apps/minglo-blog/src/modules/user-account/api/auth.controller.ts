@@ -135,12 +135,12 @@ export class AuthController {
     @CurrentUser() user: ActiveUserDto,
   ): Promise<void> {
     await this.commandBus.execute<LogoutCommand, void>(new LogoutCommand(user));
+    this.logger.log(`user ${user.userId} logged out', 'logout`);
     res.clearCookie('refreshToken', {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
     });
-    this.logger.log(`user ${user.userId} logged out', 'logout`);
   }
 
   @Post('password-recovery')

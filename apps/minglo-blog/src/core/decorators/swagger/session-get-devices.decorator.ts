@@ -7,7 +7,7 @@ import {
 } from '@nestjs/swagger';
 import { SessionViewDto } from '../../../modules/user-account/api/view-dto/session-view.dto';
 
-export function ApiSecurityGetDevicesDecorator() {
+export function ApiSessionGetDevicesDecorator() {
   return applyDecorators(
     ApiOperation({
       summary: 'Returns all devices with active sessions for current user',
@@ -19,7 +19,7 @@ export function ApiSecurityGetDevicesDecorator() {
       isArray: true,
     }),
     ApiUnauthorizedResponse({
-      description: 'Unauthorized (Access token is invalid or expired)',
+      description: 'Unauthorized',
     }),
   );
 }

@@ -24,7 +24,6 @@ export class AppModule {
       .forRoutes({ path: '*path', method: RequestMethod.ALL });
   }
 
-  //todo: check or delete
   static async forRoot(mediaConfig: MediaConfig): Promise<DynamicModule> {
     return {
       module: AppModule,

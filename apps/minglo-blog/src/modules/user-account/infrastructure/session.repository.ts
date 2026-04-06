@@ -3,10 +3,15 @@ import { PrismaService } from '../../../database/prisma.service';
 import { SessionEntity } from '../domains/entities/session.entity';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
 import { BatchPayload } from '../../../../prisma/generated/prisma/internal/prismaNamespace';
+import { SessionFactory } from '../domains/factories/session.factory';
+import { UserEntity } from '../domains';
 
 @Injectable()
 export class SessionRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly sessionFactory: SessionFactory,
+  ) {}
 
   async save(session: SessionEntity): Promise<void> {
     await this.prisma.session.create({
@@ -45,6 +50,22 @@ export class SessionRepository {
     return SessionEntity.reconstitute(record);
   }
 
+  async findSessionByDeviceId(deviceId: string): Promise<UserEntity | null> {
+    const record = await this.prisma.session.findFirst({
+      where: {
+        deviceId: deviceId,
+        deletedAt: null,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    if (!record) return null;
+
+    return this.sessionFactory.fromSessionRecord(record);
+  }
+
   async updateLastActive(session: SessionEntity): Promise<void> {
     await this.prisma.session.update({
       where: { deviceId: session.deviceId },
@@ -67,7 +88,7 @@ export class SessionRepository {
     });
   }
 
-  async deleteDeviceById(publicId: string, deviceId: string): Promise<void> {
+  async deleteDeviceById(publicId: string, deviceId: string): Promise<number> {
     const result = await this.prisma.session.updateMany({
       where: {
         deviceId: deviceId,
@@ -81,12 +102,7 @@ export class SessionRepository {
         deletedAt: new Date(),
       },
     });
-    if (result.count === 0) {
-      throw new DomainException({
-        code: DomainExceptionCode.Unauthorized,
-        message: 'Device not found',
-      });
-    }
+    return result.count;
   }
 
   /* Возвращает массив id записей смены паролей с протухшим проверочным кодом */

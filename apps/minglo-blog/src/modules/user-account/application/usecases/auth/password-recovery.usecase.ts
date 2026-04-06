@@ -3,6 +3,7 @@ import { PasswordRecoveryInputDto } from '../../../api/input-dto';
 import { UserRepository } from '../../../infrastructure';
 import { LoggerService } from '@app/logger';
 import { PasswordRecoveryEvent } from '../../events';
+import { DomainException, DomainExceptionCode } from '@app/exceptions';
 
 export class PasswordRecoveryUseCaseCommand {
   constructor(public readonly body: PasswordRecoveryInputDto) {}
@@ -27,10 +28,12 @@ export class PasswordRecoveryUseCase implements ICommandHandler<
     const user = await this.userRepo.findByEmail(email);
 
     if (!user) {
-      this.logger.warn(`User not found, returning 204 silently`, 'execute');
-      return;
+      throw new DomainException({
+        code: DomainExceptionCode.NotFound,
+        message: 'Invalid email',
+        extensions: [{ field: 'email', message: 'User not found' }],
+      });
     }
-
     const recoveryData = user.generatePasswordRecovery();
 
     await this.userRepo.savePasswordRecovery(recoveryData);

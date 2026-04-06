@@ -1,6 +1,6 @@
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import { RegistrationConfirmationInputDto } from '../../src/modules/user-account/api/input-dto';
+import { RegistrationConfirmationInputDto } from '../../../src/modules/user-account/api/input-dto';
 
 describe('RegistrationConfirmationInputDto', () => {
   const validCode = 'b489bca8-98f3-453f-95cd-1170a018755b';

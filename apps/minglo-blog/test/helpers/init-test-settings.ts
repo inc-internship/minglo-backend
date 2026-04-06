@@ -1,9 +1,9 @@
 import { Test, TestingModuleBuilder } from '@nestjs/testing';
 import { initAppModule } from '../../src/init-app-module';
-import { UserTestManager } from '../managers/user-test.manager';
-import { UserTestDtoManager } from '../managers/user-test.dto-manager';
 import { appSetup } from '../../src/setup/app.setup';
 import { EmailService } from '@app/notifications';
+import { AuthTestManager } from '../managers';
+import { EmailServiceMock } from '../mocks';
 
 export const initTestSettings = async (
   addSettingsToModuleBuilder?: (moduleBuilder: TestingModuleBuilder) => void,
@@ -12,12 +12,9 @@ export const initTestSettings = async (
 
   const testingModuleBuilder: TestingModuleBuilder = Test.createTestingModule({
     imports: [DynamicAppModule],
-  });
-
-  testingModuleBuilder.overrideProvider(EmailService).useValue({
-    sendConfirmationEmail: jest.fn().mockResolvedValue(undefined),
-    sendPasswordRecoveryEmail: jest.fn().mockResolvedValue(undefined),
-  });
+  })
+    .overrideProvider(EmailService)
+    .useClass(EmailServiceMock);
 
   if (addSettingsToModuleBuilder) {
     addSettingsToModuleBuilder(testingModuleBuilder);
@@ -31,15 +28,13 @@ export const initTestSettings = async (
 
   await app.init();
 
-  const userTestManger = new UserTestManager(app);
-  const userTestDtoManager = new UserTestDtoManager(app);
+  const authTestManager = new AuthTestManager(app);
 
   const httpServer = app.getHttpServer();
 
   return {
     app,
     httpServer,
-    userTestManger,
-    userTestDtoManager,
+    authTestManager,
   };
 };

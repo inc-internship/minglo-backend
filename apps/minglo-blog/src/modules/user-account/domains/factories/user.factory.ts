@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CryptoService } from '../../application/services';
 import { EmailConfirmationEntity, UserEntity } from '../entities';
-import { EmailConfirmationWithUser, UserWithEmailConfirmation } from '../../../../../prisma/types';
+import {
+  EmailConfirmationWithUser,
+  PasswordRecoveryWithUser,
+  UserWithEmailConfirmation,
+} from '../../../../../prisma/types';
+import { PasswordRecoveryEntity } from '../entities/password-recovery.entity';
 
 type UserCreateArgs = {
   login: string;
@@ -44,6 +49,25 @@ export class UserFactory {
         code: record.code,
         expiresAt: record.expiresAt,
         confirmedAt: record.confirmedAt,
+      }),
+    });
+  }
+
+  /* Перегрузка prisma модели PasswordRecovery в доменную сущность UserEntity */
+  fromPasswordRecoveryRecord(record: PasswordRecoveryWithUser): UserEntity {
+    return UserEntity.reconstituteWithPasswordRecovery({
+      id: record.user.id,
+      publicId: record.user.publicId,
+      login: record.user.login,
+      email: record.user.email,
+      passwordHash: record.user.passwordHash,
+      emailConfirmed: record.user.emailConfirmed,
+      passwordRecoveries: PasswordRecoveryEntity.reconstitute({
+        id: record.id,
+        userId: record.userId,
+        recoveryCode: record.recoveryCode,
+        expiresAt: record.expiresAt,
+        confirmedAt: record.usedAt,
       }),
     });
   }

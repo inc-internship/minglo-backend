@@ -2,9 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   RefreshTokenCommand,
   RefreshTokenUseCase,
-} from '../../src/modules/user-account/application/usecases';
-import { TokenService } from '../../src/modules/user-account/application/services/token.service';
-import { SessionRepository } from '../../src/modules/user-account/infrastructure/session.repository';
+} from '../../../src/modules/user-account/application/usecases';
+import { TokenService } from '../../../src/modules/user-account/application/services/token.service';
+import { SessionRepository } from '../../../src/modules/user-account/infrastructure/session.repository';
 
 describe('RefreshTokenUseCase Unit Tests', () => {
   let useCase: RefreshTokenUseCase;

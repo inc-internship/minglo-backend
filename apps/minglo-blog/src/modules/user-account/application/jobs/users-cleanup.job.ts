@@ -16,6 +16,11 @@ export class UsersCleanupJob {
 
     const ids = await this.userRepo.findAllExpired();
 
+    if (ids.length === 0) {
+      this.logger.log(`Job finished, no expired users found`, UsersCleanupJob.name);
+      return;
+    }
+
     await this.userRepo.deleteManyByIds(ids);
 
     this.logger.log(`Job finished, deleted users amount: ${ids.length}`, UsersCleanupJob.name);

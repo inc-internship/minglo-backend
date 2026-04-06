@@ -182,4 +182,42 @@ export class UserRepository {
       },
     });
   }
+
+  /* Находит юзера по коду смены пароля */
+  async findByRecoveryCode(recoveryCode: string): Promise<UserEntity> {
+    const user = await this.prisma.passwordRecovery.findFirst({
+      where: {
+        recoveryCode,
+        deletedAt: null,
+        usedAt: null,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    if (!user) {
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: 'Invalid Code',
+        extensions: [{ field: 'code', message: 'Invalid recovery code' }],
+      });
+    }
+
+    return this.userFactory.fromPasswordRecoveryRecord(user);
+  }
+
+  /* Подтверждает смену пароля */
+  async confirmPasswordRecovery(user: UserEntity): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      await tx.user.update({
+        where: { id: user.id },
+        data: { passwordHash: user.passwordHash },
+      });
+      await tx.passwordRecovery.update({
+        where: { id: user.passwordRecoveries.id },
+        data: { usedAt: new Date() },
+      });
+    });
+  }
 }

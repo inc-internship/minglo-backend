@@ -8,9 +8,29 @@ import {
   RegistrationConfirmationResendInputDto,
 } from '../../src/modules/user-account/api/input-dto';
 import { NewPasswordInputDto } from '../../src/modules/user-account/api/input-dto/new-password.input-dto';
+import { EmailService } from '@app/notifications';
 
 export class AuthTestManager {
-  constructor(private readonly app: INestApplication) {}
+  constructor(
+    private readonly app: INestApplication,
+    private readonly emailService: jest.Mocked<EmailService>,
+  ) {}
+
+  async setupUser(customDto?: CreateUserInputDto) {
+    const dto = customDto || this.validDto();
+
+    await this.register(dto);
+    const lastCallIndex = this.emailService.sendConfirmationEmail.mock.calls.length - 1;
+    const { code } = this.emailService.sendConfirmationEmail.mock.calls[lastCallIndex][0];
+
+    await this.confirmRegistration({ code });
+    const { body } = await this.login(dto);
+
+    return {
+      accessToken: body.accessToken,
+      userDto: dto,
+    };
+  }
 
   async register(
     dto: Partial<CreateUserInputDto>,

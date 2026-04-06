@@ -22,9 +22,13 @@ import { AccessStrategy, RefreshStrategy } from './guards/strategy';
 import { SessionFactory } from './domains/factories/session.factory';
 import { DeviceService } from './application/services/device.service';
 import { JwtModule } from '@nestjs/jwt';
-import { MeQueryHandler } from './application/queries';
+import { MeHandler } from './application/queries';
 import { UserQueryRepository } from './infrastructure/queries/user.query.repository';
 import { UsersCleanupJob } from './application/jobs';
+import { SessionsController } from './api/sessions.controller';
+import { GetDevicesHandler } from './application/queries/get-devices.query';
+import { SessionQueryRepository } from './infrastructure/queries/session.query.repository';
+import { PasswordRecoveryCodeCleanupJob } from './application/jobs/password-recovery-code-cleanup-job.service';
 
 const services = [UserService, CryptoService, TokenService, SessionService, DeviceService];
 
@@ -40,13 +44,19 @@ const usecases = [
   PasswordRecoveryUseCase,
 ];
 
-const repos = [UserRepository, SessionRepository, EmailConfirmationRepository, UserQueryRepository];
+const repos = [
+  UserRepository,
+  SessionRepository,
+  EmailConfirmationRepository,
+  UserQueryRepository,
+  SessionQueryRepository,
+];
 
-const jobs = [UsersCleanupJob];
+const jobs = [UsersCleanupJob, PasswordRecoveryCodeCleanupJob];
 
 @Module({
   imports: [EmailModule, JwtModule.register({})],
-  controllers: [AuthController],
+  controllers: [AuthController, SessionsController],
   providers: [
     ...services,
     ...usecases,
@@ -56,7 +66,8 @@ const jobs = [UsersCleanupJob];
     AccessStrategy,
     RefreshStrategy,
     UserRegisteredHandler,
-    MeQueryHandler,
+    MeHandler,
+    GetDevicesHandler,
     PasswordRecoveryHandler,
     ...jobs,
   ],

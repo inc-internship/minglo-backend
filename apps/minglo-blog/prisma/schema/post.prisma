@@ -10,6 +10,8 @@ model Post {
   userId Int  @map("user_id")
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  postsMediaFiles PostMediaFile[]
+
   @@index([userId])
   @@index([deletedAt])
   @@map("posts")

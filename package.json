@@ -38,7 +38,7 @@
     "test:minglo-media-service:debug": "cross-env NODE_ENV=test node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand --project apps/minglo-blog",
     "test:minglo-media-service:e2e": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --config apps/minglo-media-service/test/jest-e2e.json --runInBand",
     "test:minglo-media-service:unit": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --config apps/minglo-media-service/test/jest-unit.json --runInBand",
-    "migrate:minglo-media-service:adddev": "cross-env NODE_ENV=development prisma migrate dev --config apps/minglo-media-service/prisma.config.ts",
+    "migrate:minglo-media-service:dev": "cross-env NODE_ENV=development prisma migrate dev --config apps/minglo-media-service/prisma.config.ts",
     "migrate:minglo-media-service:test": "cross-env NODE_ENV=test prisma migrate reset --force --config apps/minglo-media-service/prisma.config.ts",
     "migrate:minglo-media-service:deploy": "cross-env NODE_ENV=production prisma migrate deploy --config apps/minglo-media-service/prisma.config.ts",
     "migrate:minglo-media-service:reset": "cross-env NODE_ENV=development prisma migrate reset --config apps/minglo-media-service/prisma.config.ts",

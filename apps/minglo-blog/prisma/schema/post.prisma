@@ -1,0 +1,16 @@
+model Post {
+  id        Int       @id @default(autoincrement())
+  publicId  String    @unique @default(cuid()) @map("public_id")
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz
+
+  description String? @db.VarChar(500)
+
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([deletedAt])
+  @@map("posts")
+}

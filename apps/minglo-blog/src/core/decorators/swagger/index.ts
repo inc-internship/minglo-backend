@@ -7,4 +7,5 @@ export * from './auth-refresh-token.decorator';
 export * from './auth-logout.decorator';
 export * from './auth-password-recovery.decorator';
 export * from './auth-new-password.decorator';
-export * from './security-get-devices.decorator';
+export * from './session-get-devices.decorator';
+export * from './session-delete-device.decorator';

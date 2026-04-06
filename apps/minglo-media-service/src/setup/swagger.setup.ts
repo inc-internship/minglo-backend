@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
-const SwaggerTitle = 'Minglo API';
+const SwaggerTitle = 'Minglo Media Service API';
 const SWAGGER_PREFIX = 'swagger';
 
 export function swaggerSetup(app: INestApplication, isSwaggerEnabled: boolean) {
@@ -9,18 +9,9 @@ export function swaggerSetup(app: INestApplication, isSwaggerEnabled: boolean) {
     const config = new DocumentBuilder()
       .setTitle(SwaggerTitle)
       .setDescription(
-        `${SwaggerTitle} — backend service for a social media platform inspired by Instagram.`,
+        `${SwaggerTitle} — service for uploading, storing and managing media files (images) using S3 service.`,
       )
       .setVersion('1.0')
-      .addBearerAuth(
-        {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-          description: 'Enter JWT token',
-        },
-        'access-token',
-      )
       .build();
 
     const document = SwaggerModule.createDocument(app, config);

@@ -16,19 +16,19 @@ export function ApiSessionDeleteDeviceDecorator() {
 
     ApiBearerAuth('access-token'),
     ApiNoContentResponse({
-      description: 'The session has been successfully terminated',
+      description: 'Success',
     }),
 
     ApiUnauthorizedResponse({
-      description: 'Unauthorized (Access token is invalid or expired)',
+      description: 'Unauthorized',
     }),
 
     ApiForbiddenResponse({
-      description: 'Forbidden (You are trying to delete a device that does not belong to you)',
+      description: 'Forbidden',
     }),
 
     ApiNotFoundResponse({
-      description: 'Device not found',
+      description: 'Not found',
     }),
   );
 }

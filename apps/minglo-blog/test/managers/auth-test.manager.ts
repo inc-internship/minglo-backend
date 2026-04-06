@@ -9,19 +9,18 @@ import {
 } from '../../src/modules/user-account/api/input-dto';
 import { NewPasswordInputDto } from '../../src/modules/user-account/api/input-dto/new-password.input-dto';
 import { EmailService } from '@app/notifications';
+import { EmailServiceMock } from '../mocks';
 
 export class AuthTestManager {
-  constructor(
-    private readonly app: INestApplication,
-    private readonly emailService: jest.Mocked<EmailService>,
-  ) {}
+  constructor(private readonly app: INestApplication) {}
 
   async setupUser(customDto?: CreateUserInputDto) {
     const dto = customDto || this.validDto();
 
     await this.register(dto);
-    const lastCallIndex = this.emailService.sendConfirmationEmail.mock.calls.length - 1;
-    const { code } = this.emailService.sendConfirmationEmail.mock.calls[lastCallIndex][0];
+    const emailService = this.app.get<EmailServiceMock>(EmailService);
+    const lastCallIndex = emailService.sendConfirmationEmail.mock.calls.length - 1;
+    const { code } = emailService.sendConfirmationEmail.mock.calls[lastCallIndex][0];
 
     await this.confirmRegistration({ code });
     const { body } = await this.login(dto);

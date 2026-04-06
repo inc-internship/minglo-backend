@@ -33,7 +33,7 @@ export class DeleteSessionUseCase implements ICommandHandler<DeleteSessionComman
     if (session.publicId !== user.userId) {
       throw new DomainException({
         code: DomainExceptionCode.Forbidden,
-        message: 'Not your device',
+        message: 'Forbidden',
       });
     }
 

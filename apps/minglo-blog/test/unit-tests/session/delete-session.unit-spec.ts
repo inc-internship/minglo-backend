@@ -52,7 +52,7 @@ describe('DeleteSessionUseCase (Unit)', () => {
 
     await expect(useCase.execute(command)).rejects.toMatchObject({
       code: DomainExceptionCode.Forbidden,
-      message: 'Not your device',
+      message: 'Forbidden',
     });
   });
   it('должен успешно удалить сессию, если все данные верны', async () => {

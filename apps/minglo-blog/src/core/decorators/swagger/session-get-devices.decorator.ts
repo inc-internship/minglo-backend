@@ -19,7 +19,7 @@ export function ApiSessionGetDevicesDecorator() {
       isArray: true,
     }),
     ApiUnauthorizedResponse({
-      description: 'Unauthorized (Access token is invalid or expired)',
+      description: 'Unauthorized',
     }),
   );
 }

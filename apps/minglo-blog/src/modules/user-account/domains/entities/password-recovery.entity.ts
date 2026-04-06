@@ -1,0 +1,55 @@
+import { randomUUID } from 'node:crypto';
+import { add } from 'date-fns';
+import { DomainException, DomainExceptionCode } from '@app/exceptions';
+
+export class PasswordRecoveryEntity {
+  public id: number;
+  public recoveryCode: string;
+  public expiresAt: Date;
+  public usedAt: Date | null;
+
+  constructor(public userId: number) {}
+
+  static create(userId: number): PasswordRecoveryEntity {
+    const ec: PasswordRecoveryEntity = new this(userId);
+    ec.userId = userId;
+    ec.recoveryCode = randomUUID();
+    ec.expiresAt = add(new Date(), { minutes: 10 });
+    return ec;
+  }
+
+  /* Восстанавливает доменную сущность из БД */
+  static reconstitute(data: {
+    id: number;
+    recoveryCode: string;
+    userId: number;
+    expiresAt: Date;
+    confirmedAt: Date | null;
+  }): PasswordRecoveryEntity {
+    const ec: PasswordRecoveryEntity = new this(data.userId);
+    ec.id = data.id;
+    ec.userId = data.userId;
+    ec.recoveryCode = data.recoveryCode;
+    ec.expiresAt = data.expiresAt;
+    ec.usedAt = data.confirmedAt;
+    return ec;
+  }
+
+  /* Валидирует срок действия кода */
+  validate(): void {
+    if (this.expiresAt < new Date()) {
+      throw new DomainException({
+        code: DomainExceptionCode.ValidationError,
+        message: 'Expired code',
+        extensions: [{ field: 'code', message: 'Confirmation code expired' }],
+      });
+    }
+    if (this.usedAt !== null) {
+      throw new DomainException({
+        code: DomainExceptionCode.ValidationError,
+        message: 'Code already used',
+        extensions: [{ field: 'code', message: 'Confirmation code already used' }],
+      });
+    }
+  }
+}

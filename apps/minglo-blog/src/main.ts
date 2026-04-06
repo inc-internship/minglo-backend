@@ -1,3 +1,4 @@
+import '../../../newrelic.js';
 import { NestFactory } from '@nestjs/core';
 import { initAppModule } from './init-app-module';
 import { CoreConfig } from './core/core.config';
@@ -5,10 +6,11 @@ import { appSetup } from './setup/app.setup';
 import { proxySetup } from './setup/proxy.setup';
 import { cookiesSetup } from './setup/cookies.setup';
 import { corsSetup } from './setup/cors.setup';
+import { loggerSetup } from './setup/logger.setup';
 
 async function bootstrap() {
   const DynamicAppModule = await initAppModule();
-  const app = await NestFactory.create(DynamicAppModule);
+  const app = await NestFactory.create(DynamicAppModule, { bufferLogs: true });
 
   const coreConfig = app.get<CoreConfig>(CoreConfig);
 
@@ -23,11 +25,15 @@ async function bootstrap() {
     credentials: coreConfig.corsCredentials,
   });
 
-  const port = coreConfig.port;
+  const { logger } = await loggerSetup(app);
+
+  const { port, env } = coreConfig;
 
   await app.listen(port, () => {
-    console.log('Minglo starting listen port:', coreConfig.port);
-    console.log('Minglo environment (NODE_ENV):', coreConfig.env);
+    logger.log(
+      `Minglo-Blog app starting listen port: ${port}, environment (NODE_ENV): ${env}`,
+      'bootstrap',
+    );
   });
 }
 

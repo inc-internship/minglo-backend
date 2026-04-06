@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import { emailTemplates } from '@app/notifications/email/templates';
+import { emailTemplates } from '@app/notifications/email/templates/email-confirmation';
+import { LoggerService } from '@app/logger';
+import { passwordRecoveryTemplates } from '@app/notifications/email/templates/password-recovery';
 
 type ConfirmationEmail = {
   email: string;
@@ -10,18 +12,36 @@ type ConfirmationEmail = {
 
 @Injectable()
 export class EmailService {
-  constructor(private mailer: MailerService) {}
+  constructor(
+    private mailer: MailerService,
+    private logger: LoggerService,
+  ) {
+    this.logger.setContext(EmailService.name);
+  }
 
   async sendConfirmationEmail({ email, redirectUrl, code }: ConfirmationEmail): Promise<void> {
     try {
       await this.mailer.sendMail({
         to: email,
-        subject: 'Complete Registration',
+        subject: '[Minglo] Complete Registration',
         html: emailTemplates.confirmationEmail(redirectUrl, code),
       });
-    } catch (error) {
-      console.error('Failed to send confirmation email');
-      throw error;
+    } catch (exception) {
+      this.logger.error(exception, 'Failed to send confirmation email');
+      throw exception;
+    }
+  }
+
+  async sendPasswordRecoveryEmail({ email, redirectUrl, code }: ConfirmationEmail): Promise<void> {
+    try {
+      await this.mailer.sendMail({
+        to: email,
+        subject: '[Minglo] Complete password recovery email',
+        html: passwordRecoveryTemplates.passwordRecovery(redirectUrl, code),
+      });
+    } catch (exception) {
+      this.logger.error(exception, 'Failed to send password recovery email');
+      throw exception;
     }
   }
 }

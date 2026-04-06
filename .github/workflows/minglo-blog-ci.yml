@@ -18,13 +18,18 @@ jobs:
       MAIL_SERVICE: Gmail
       MAIL_ADDRESS: minglo.backend@gmail.com
       MAIL_PASS: ${{ secrets.MAIL_PASS_GITHUB }}
-      MAIL_FROM: '"Minglo" <minglo.backend@gmail.com>'
+      MAIL_FROM: 'minglo.blog (no-reply)'
       MINGLO_THROTTLE_TTL: 10
       MINGLO_THROTTLE_LIMIT: 5
       MINGLO_CORS: false
       MINGLO_CORS_CREDENTIALS: true
       MINGLO_COOKIE_PARSER: true
       MINGLO_TRUST_PROXY: false
+      LOGGER_LEVEL: error
+      ACCESS_SECRET: access-token-secret
+      MAX_AGE_ACCESS_TOKEN: 10
+      REFRESH_SECRET: refresh-token-secret
+      MAX_AGE_REFRESH_TOKEN: 20
 
     steps:
       - name: Checkout code

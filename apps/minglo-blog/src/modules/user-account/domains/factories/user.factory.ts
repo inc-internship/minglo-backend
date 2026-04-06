@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { CryptoService } from '../../application/services/crypto.service';
+import { CryptoService } from '../../application/services';
 import { EmailConfirmationEntity, UserEntity } from '../entities';
-import { EmailConfirmationWithUser } from '../../../../../prisma/types';
+import {
+  EmailConfirmationWithUser,
+  PassworRecoveryWithUser,
+  UserWithEmailConfirmation,
+} from '../../../../../prisma/types';
+import { PasswordRecoveryEntity } from '../entities/password-recovery.entity';
 
 type UserCreateArgs = {
   login: string;
@@ -31,9 +36,10 @@ export class UserFactory {
   }
 
   /* Перегрузка prisma модели emailConfirmation в доменную сущность UserEntity */
-  fromPersistenceWithConfirmation(record: EmailConfirmationWithUser): UserEntity {
+  fromEmailConfirmationRecord(record: EmailConfirmationWithUser): UserEntity {
     return UserEntity.reconstitute({
       id: record.user.id,
+      publicId: record.user.publicId,
       login: record.user.login,
       email: record.user.email,
       passwordHash: record.user.passwordHash,
@@ -42,6 +48,41 @@ export class UserFactory {
         id: record.id,
         code: record.code,
         expiresAt: record.expiresAt,
+        confirmedAt: record.confirmedAt,
+      }),
+    });
+  }
+
+  /* Перегрузка prisma модели PasswordRecovery в доменную сущность UserEntity */
+  fromPasswordRecoveryRecord(record: PassworRecoveryWithUser): UserEntity {
+    return UserEntity.reconstituteWithPasswordRecovery({
+      id: record.user.id,
+      publicId: record.user.publicId,
+      login: record.user.login,
+      email: record.user.email,
+      passwordHash: record.user.passwordHash,
+      emailConfirmed: record.user.emailConfirmed,
+      passwordRecoveries: PasswordRecoveryEntity.reconstitute({
+        id: record.id,
+        userId: record.userId,
+        recoveryCode: record.recoveryCode,
+        expiresAt: record.expiresAt,
+        confirmedAt: record.usedAt,
+      }),
+    });
+  }
+
+  /* Перегрузка prisma модели User с массивом emailConfirmations в доменную сущность для resend */
+  fromUserWithEmailConfirmations(record: UserWithEmailConfirmation): UserEntity {
+    return UserEntity.reconstitute({
+      id: record.id,
+      publicId: record.publicId,
+      login: record.login,
+      email: record.email,
+      passwordHash: record.passwordHash,
+      emailConfirmed: record.emailConfirmed,
+      emailConfirmation: EmailConfirmationEntity.reconstitute({
+        ...record.emailConfirmations[0],
       }),
     });
   }

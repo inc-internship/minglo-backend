@@ -1,24 +1,75 @@
 import { Module } from '@nestjs/common';
-import { UserService } from './application/services/user.service';
+import { CryptoService, UserService } from './application/services';
 import { AuthController } from './api/auth.controller';
-import { CreateUserUseCase, ConfirmEmailUseCase } from './application/usecases';
+import {
+  ConfirmEmailUseCase,
+  CreateUserUseCase,
+  LoginUserUseCase,
+  LogoutUsecase,
+  NewPasswordUseCase,
+  PasswordRecoveryUseCase,
+  RefreshTokenUseCase,
+  ResendConfirmEmailUseCase,
+} from './application/usecases';
 import { UserFactory } from './domains';
-import { CryptoService } from './application/services/crypto.service';
-import { UserRepository } from './infrastructure/user.repository';
-import { UserRegisteredHandler } from './application/events/user-registered.handler';
+import { EmailConfirmationRepository, UserRepository } from './infrastructure';
+import { PasswordRecoveryHandler, UserRegisteredHandler } from './application/events';
 import { EmailModule } from '@app/notifications';
+import { SessionRepository } from './infrastructure/session.repository';
+import { TokenService } from './application/services/token.service';
+import { SessionService } from './application/services/session.service';
+import { AccessStrategy, RefreshStrategy } from './guards/strategy';
+import { SessionFactory } from './domains/factories/session.factory';
+import { DeviceService } from './application/services/device.service';
+import { JwtModule } from '@nestjs/jwt';
+import { MeHandler } from './application/queries';
+import { UserQueryRepository } from './infrastructure/queries/user.query.repository';
+import { UsersCleanupJob } from './application/jobs';
+import { SessionsController } from './api/sessions.controller';
+import { GetDevicesHandler } from './application/queries/get-devices.query';
+import { SessionQueryRepository } from './infrastructure/queries/session.query.repository';
+import { PasswordRecoveryCodeCleanupJob } from './application/jobs/password-recovery-code-cleanup-job.service';
+
+const services = [UserService, CryptoService, TokenService, SessionService, DeviceService];
+
+const usecases = [
+  NewPasswordUseCase,
+  CreateUserUseCase,
+  LoginUserUseCase,
+  ConfirmEmailUseCase,
+  ResendConfirmEmailUseCase,
+  LoginUserUseCase,
+  RefreshTokenUseCase,
+  LogoutUsecase,
+  PasswordRecoveryUseCase,
+];
+
+const repos = [
+  UserRepository,
+  SessionRepository,
+  EmailConfirmationRepository,
+  UserQueryRepository,
+  SessionQueryRepository,
+];
+
+const jobs = [UsersCleanupJob, PasswordRecoveryCodeCleanupJob];
 
 @Module({
-  imports: [EmailModule],
-  controllers: [AuthController],
+  imports: [EmailModule, JwtModule.register({})],
+  controllers: [AuthController, SessionsController],
   providers: [
+    ...services,
+    ...usecases,
+    ...repos,
     UserFactory,
-    UserService,
-    CryptoService,
-    UserRepository,
-    CreateUserUseCase,
+    SessionFactory,
+    AccessStrategy,
+    RefreshStrategy,
     UserRegisteredHandler,
-    ConfirmEmailUseCase,
+    MeHandler,
+    GetDevicesHandler,
+    PasswordRecoveryHandler,
+    ...jobs,
   ],
 })
 export class UserAccountModule {}

@@ -95,6 +95,46 @@ spec:
                  secretKeyRef:
                    name: minglo-core-backend-production-config-secret
                    key: MINGLO_THROTTLE_LIMIT
+             - name: LOGGER_HOST
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: LOGGER_HOST
+             - name: LOGGER_URL_PATH
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: LOGGER_URL_PATH
+             - name: LOGGER_LEVEL
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: LOGGER_LEVEL
+             - name: LOGGER_LICENSE_KEY
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: LOGGER_LICENSE_KEY
+             - name: ACCESS_SECRET
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: ACCESS_SECRET
+             - name: MAX_AGE_ACCESS_TOKEN
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MAX_AGE_ACCESS_TOKEN
+             - name: REFRESH_SECRET
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: REFRESH_SECRET
+             - name: MAX_AGE_REFRESH_TOKEN
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MAX_AGE_REFRESH_TOKEN
              - name: MINGLO_PORT
                valueFrom:
                  secretKeyRef:

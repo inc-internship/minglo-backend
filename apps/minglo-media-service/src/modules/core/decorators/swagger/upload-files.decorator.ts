@@ -3,21 +3,45 @@ import {
   ApiBadRequestResponse,
   ApiBody,
   ApiConsumes,
+  ApiExtraModels,
   ApiOkResponse,
   ApiOperation,
+  getSchemaPath,
 } from '@nestjs/swagger';
-import { UploadFilesInputDto } from '../../../media/api/input-dto/upload-files.input-dto';
 import { ErrorResponseBody } from '@app/exceptions';
+import { MediaTypeInputDto } from '@app/media/api/input-dto';
 
 export function ApiUploadFilesDecorator() {
   return applyDecorators(
+    ApiExtraModels(MediaTypeInputDto),
     ApiOperation({
       summary: 'Upload image file',
       description: 'Массив изображений (png, jpg, webp) до 3 MB каждый.',
     }),
     ApiConsumes('multipart/form-data'),
     ApiBody({
-      type: UploadFilesInputDto,
+      schema: {
+        allOf: [
+          {
+            type: 'object',
+            properties: {
+              files: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                  format: 'binary',
+                },
+                minItems: 1,
+                maxItems: 10,
+              },
+            },
+            required: ['files'],
+          },
+          {
+            $ref: getSchemaPath(MediaTypeInputDto),
+          },
+        ],
+      },
     }),
     ApiBadRequestResponse({
       type: ErrorResponseBody,

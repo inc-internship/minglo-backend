@@ -25,16 +25,19 @@ export class MediaConfig {
   databaseUrl: string;
 
   @IsNotEmpty({ message: 'Set environment variable S3_BUCKET_NAME' })
-  bucketName: string;
+  s3bucketName: string;
 
   @IsNotEmpty({ message: 'Set environment variable S3_REGION' })
-  region: string;
+  s3region: string;
 
   @IsNotEmpty({ message: 'Set environment variable S3_ACCESS_KEY_ID' })
-  accessKeyId: string;
+  s3accessKeyId: string;
 
   @IsNotEmpty({ message: 'Set environment variable S3_SECRET_ACCESS_KEY' })
-  secretKey: string;
+  s3secretKey: string;
+
+  @IsNotEmpty({ message: 'Set environment variable S3_ENDPOINT' })
+  s3endpoint: string;
 
   @IsNotEmpty({ message: 'Set environment variable MEDIA_ACCESS_SECRET' })
   accessSecret: string;
@@ -77,14 +80,15 @@ export class MediaConfig {
     this.databaseUrl = this.configService.get('MEDIA_DB_URL');
     this.logger.log(`MEDIA_DB_URL is ${this.databaseUrl}`, 'constructor');
 
-    this.bucketName = this.configService.get('S3_BUCKET_NAME');
-    this.logger.log(`S3_BUCKET_NAME is ${this.bucketName}`, 'constructor');
+    this.s3bucketName = this.configService.get('S3_BUCKET_NAME');
+    this.logger.log(`S3_BUCKET_NAME is ${this.s3bucketName}`, 'constructor');
 
-    this.region = this.configService.get('S3_REGION');
-    this.logger.log(`S3_REGION is ${this.region}`, 'constructor');
+    this.s3region = this.configService.get('S3_REGION');
+    this.logger.log(`S3_REGION is ${this.s3region}`, 'constructor');
 
-    this.accessKeyId = this.configService.get('S3_ACCESS_KEY_ID');
-    this.secretKey = this.configService.get('S3_SECRET_ACCESS_KEY');
+    this.s3accessKeyId = this.configService.get('S3_ACCESS_KEY_ID');
+    this.s3secretKey = this.configService.get('S3_SECRET_ACCESS_KEY');
+    this.s3endpoint = this.configService.get('S3_ENDPOINT');
 
     this.accessSecret = this.configService.get('MEDIA_ACCESS_SECRET');
 

@@ -1,23 +1,34 @@
-import { Controller, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiUploadFilesDecorator } from '../../core/decorators/swagger';
-import { UploadFilesInputDto } from './input-dto/upload-files.input-dto';
 import { CommandBus } from '@nestjs/cqrs';
 import { ImageFilesValidationPipe } from '@app/media/pipes';
+import { LoggerService } from '@app/logger';
+import { MediaTypeInputDto } from '@app/media/api/input-dto';
+import { UploadImageCommand } from '../application/usecases/upload-image.usecase';
 
 @Controller('media')
 export class MediaController {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly logger: LoggerService,
+  ) {
+    this.logger.setContext(MediaController.name);
+  }
 
   //todo: Добавить авторизацию.
+  //todo: fix user_public_id.
   @Post('upload')
   @ApiUploadFilesDecorator()
   @UseInterceptors(FilesInterceptor('files', 10))
   async uploadFiles(
     @UploadedFiles(new ImageFilesValidationPipe())
-    files: UploadFilesInputDto,
+    files: Express.Multer.File[],
+    @Body() body: MediaTypeInputDto,
   ): Promise<void> {
-    //todo: добавить команду для сохранения файла в S3
-    console.log(files);
+    await this.commandBus.execute<UploadImageCommand, void>(
+      new UploadImageCommand(files, body.type, 'public_user_id'),
+    );
+    this.logger.log('Image upload to S3 completed', 'uploadFiles');
   }
 }

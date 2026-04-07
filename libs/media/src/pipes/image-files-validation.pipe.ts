@@ -24,9 +24,9 @@ export class ImageFilesValidationPipe implements PipeTransform {
   private readonly maxSizeInMB: number;
 
   constructor(private readonly options?: ImageValidationOptions) {
-    this.maxSize = options?.maxSize ?? 3 * 1024 * 1024; // 3 MB by default;
+    this.maxSize = options?.maxSize ?? 20 * 1024 * 1024; // default 20 Mb
     this.maxSizeInMB = Math.round(this.maxSize / (1024 * 1024));
-    this.allowedExtensions = options?.allowedExtensions ?? ['png', 'jpg', 'jpeg', 'webp'];
+    this.allowedExtensions = options?.allowedExtensions ?? ['png', 'jpg', 'jpeg'];
 
     this.parseFilePipe = new ParseFilePipe({
       validators: [

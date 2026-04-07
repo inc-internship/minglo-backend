@@ -43,6 +43,7 @@ import { RefreshGuard } from '../guards/refresh.guard';
 import { MeQuery } from '../application/queries';
 import { AccessTokenResponse } from './types';
 import { NewPasswordInputDto } from './input-dto/new-password.input-dto';
+import { RecaptchaGuard } from '../guards/captcha.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -145,6 +146,7 @@ export class AuthController {
 
   @Post('password-recovery')
   @ApiAuthPasswordRecoveryDecorator()
+  @UseGuards(RecaptchaGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async passwordRecovery(@Body() body: PasswordRecoveryInputDto): Promise<void> {
     await this.commandBus.execute<PasswordRecoveryUseCaseCommand, void>(

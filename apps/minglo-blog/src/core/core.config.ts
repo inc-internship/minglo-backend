@@ -68,6 +68,10 @@ export class CoreConfig {
   @IsNumber({}, { message: 'Set environment variable MINGLO_THROTTLE_LIMIT (number)' })
   throttleLimit: number;
 
+  // Recaptcha Secret
+  @IsString({ message: 'Set environment variable RECAPTCHA_SECRET' })
+  recaptchaSecret: string;
+
   constructor(private configService: ConfigService<any, true>) {
     this.env = this.configService.get('NODE_ENV');
     this.port = Number(this.configService.get('MINGLO_PORT'));
@@ -96,6 +100,7 @@ export class CoreConfig {
     ) as boolean;
     this.throttleTtl = Number(this.configService.get('MINGLO_THROTTLE_TTL'));
     this.throttleLimit = Number(this.configService.get('MINGLO_THROTTLE_LIMIT'));
+    this.recaptchaSecret = this.configService.get('RECAPTCHA_SECRET');
 
     configValidationUtility.validateConfig(this);
   }

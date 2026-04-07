@@ -15,7 +15,7 @@ describe('Session API (e2e)', () => {
     const result = await initTestSettings();
     app = result.app;
     emailService = app.get(EmailService);
-    authManager = new AuthTestManager(app, emailService);
+    authManager = new AuthTestManager(app);
     sessionManager = new SessionTestManager(app);
   });
 
@@ -82,5 +82,25 @@ describe('Session API (e2e)', () => {
       redirectUrl: 'https://minglo.blog/auth/confirm',
     });
     await sessionManager.deleteSession(userB.accessToken, deviceIdA, 403);
+  });
+
+  //Delete all other sessions for users
+  it('delete all other sessions for users 204', async () => {
+    const userA = await authManager.setupUser();
+    await authManager.login(userA.userDto, 200, {
+      ip: '127.0.2.2',
+      userAgent: 'Firefox/5.0 (Windows NT 11.0; Win64; x64)',
+    });
+    await authManager.login(userA.userDto, 200, {
+      ip: '127.0.3.5',
+      userAgent: 'Firefox/7.0 (Windows NT 11.0; Win64; x64)',
+    });
+    const { body: sessionA } = await sessionManager.getSession(userA.accessToken, 200);
+    expect(Array.isArray(sessionA)).toBe(true);
+    expect(sessionA).toHaveLength(3);
+    await sessionManager.deleteAllOtherSession(userA.accessToken, 204);
+    const { body: session } = await sessionManager.getSession(userA.accessToken, 200);
+    expect(Array.isArray(session)).toBe(true);
+    expect(session).toHaveLength(1);
   });
 });

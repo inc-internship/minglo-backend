@@ -15,7 +15,9 @@ export class NewPasswordUseCase implements ICommandHandler<NewPasswordCommand, v
     private readonly userRepo: UserRepository,
     private readonly cryptoService: CryptoService,
     private logger: LoggerService,
-  ) {}
+  ) {
+    this.logger.setContext(NewPasswordUseCase.name);
+  }
 
   async execute({ body }: NewPasswordCommand): Promise<void> {
     const { recoveryCode, newPassword } = body;

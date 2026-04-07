@@ -18,7 +18,9 @@ export class PasswordRecoveryUseCase implements ICommandHandler<
     private readonly userRepo: UserRepository,
     private eventBus: EventBus,
     private logger: LoggerService,
-  ) {}
+  ) {
+    this.logger.setContext(PasswordRecoveryUseCase.name);
+  }
 
   async execute({ body }: PasswordRecoveryUseCaseCommand): Promise<void> {
     const { email, redirectUrl } = body;

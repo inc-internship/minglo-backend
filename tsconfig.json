@@ -46,6 +46,12 @@
       "@app/logger/*": [
         "libs/logger/src/*"
       ],
+      "@app/media": [
+        "libs/media/src"
+      ],
+      "@app/media/*": [
+        "libs/media/src/*"
+      ],
       "@app/notifications": [
         "libs/notifications/src"
       ],

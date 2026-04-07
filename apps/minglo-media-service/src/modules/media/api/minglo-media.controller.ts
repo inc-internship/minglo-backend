@@ -1,9 +1,9 @@
 import { Controller, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { ImageFilesValidationPipe } from '../../core/pipes';
 import { ApiUploadFilesDecorator } from '../../core/decorators/swagger';
 import { UploadFilesInputDto } from './input-dto/upload-files.input-dto';
 import { CommandBus } from '@nestjs/cqrs';
+import { ImageFilesValidationPipe } from '@app/media/pipes';
 
 @Controller('media')
 export class MediaController {

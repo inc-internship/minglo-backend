@@ -5,6 +5,7 @@ import {
 } from '../../../src/modules/user-account/application/usecases';
 import { TokenService } from '../../../src/modules/user-account/application/services/token.service';
 import { SessionRepository } from '../../../src/modules/user-account/infrastructure/session.repository';
+import { LoggerService } from '@app/logger';
 
 describe('RefreshTokenUseCase Unit Tests', () => {
   let useCase: RefreshTokenUseCase;
@@ -14,6 +15,10 @@ describe('RefreshTokenUseCase Unit Tests', () => {
   const command = new RefreshTokenCommand({ userId: 'u1', deviceId: 'd1' });
 
   beforeEach(async () => {
+    const mockLogger = {
+      log: jest.fn(),
+      setContext: jest.fn(),
+    };
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RefreshTokenUseCase,
@@ -31,9 +36,9 @@ describe('RefreshTokenUseCase Unit Tests', () => {
             updateSessionTokens: jest.fn(),
           },
         },
+        { provide: LoggerService, useValue: mockLogger },
       ],
     }).compile();
-
     useCase = module.get(RefreshTokenUseCase);
     tokenService = module.get(TokenService);
     sessionRepository = module.get(SessionRepository);

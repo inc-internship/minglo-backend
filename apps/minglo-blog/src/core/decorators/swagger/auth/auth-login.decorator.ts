@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { LoginUserInputDto } from '../../../modules/user-account/api/input-dto';
-import { AccessTokenResponse } from '../../../modules/user-account/api/types';
+import { LoginUserInputDto } from '../../../../modules/user-account/api/input-dto';
+import { AccessTokenResponse } from '../../../../modules/user-account/api/types';
 
 export function ApiAuthLoginDecorator() {
   return applyDecorators(

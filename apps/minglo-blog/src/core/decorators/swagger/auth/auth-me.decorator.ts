@@ -5,18 +5,17 @@ import {
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { SessionViewDto } from '../../../modules/user-account/api/view-dto/session-view.dto';
+import { MeViewDto } from '../../../../modules/user-account/api/view-dto/me-view.dto';
 
-export function ApiSessionGetDevicesDecorator() {
+export function ApiAuthMeDecorator() {
   return applyDecorators(
     ApiOperation({
-      summary: 'Returns all devices with active sessions for current user',
+      summary: 'Get info about current user',
     }),
     ApiBearerAuth('access-token'),
     ApiOkResponse({
       description: 'Success',
-      type: SessionViewDto,
-      isArray: true,
+      type: MeViewDto,
     }),
     ApiUnauthorizedResponse({
       description: 'Unauthorized',

@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { MediaConfig } from '../../../core/media.config';
 import {
-  ImageUploadToS3Params,
-  ImageUploadToS3ParamsMany,
-  ImageUploadToS3Result,
-  ImageUploadToS3ResultMany,
+  UploadImageToS3Params,
+  UploadManyImagesToS3Params,
+  UploadedImageToS3Result,
+  UploadedManyImagesToS3Result,
 } from '../interfaces';
 import { randomUUID } from 'node:crypto';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
@@ -43,7 +43,7 @@ export class S3StorageService {
   /**
    * Uploads a single image to S3 and returns its URL and key
    */
-  async upload(params: ImageUploadToS3Params): Promise<ImageUploadToS3Result> {
+  async upload(params: UploadImageToS3Params): Promise<UploadedImageToS3Result> {
     const {
       file,
       optimizedBuffer: buffer,
@@ -88,7 +88,7 @@ export class S3StorageService {
    * Uploads multiple images to S3 with concurrency limit
    * Returns successful uploads and failed count
    */
-  async uploadMany(params: ImageUploadToS3ParamsMany): Promise<ImageUploadToS3ResultMany> {
+  async uploadMany(params: UploadManyImagesToS3Params): Promise<UploadedManyImagesToS3Result> {
     const { images, publicUserId, type } = params;
 
     const limit = pLimit(this.config.s3concurrency); // ограничение на кол-во одновременных запросов
@@ -99,7 +99,7 @@ export class S3StorageService {
     const results = await Promise.allSettled(tasks);
 
     const successful = results
-      .filter((r): r is PromiseFulfilledResult<ImageUploadToS3Result> => r.status === 'fulfilled')
+      .filter((r): r is PromiseFulfilledResult<UploadedImageToS3Result> => r.status === 'fulfilled')
       .map((r) => r.value);
 
     const failedCount = results.filter((r) => r.status === 'rejected').length;

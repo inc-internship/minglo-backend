@@ -10,7 +10,7 @@ export interface ResizeAndConvertManyParams {
   options?: ResizeOptions;
 }
 
-export interface ProcessImageResult {
+export interface ConvertImageResult {
   file: Express.Multer.File;
   optimizedBuffer: Buffer;
   optimizedWidth: number;
@@ -20,7 +20,7 @@ export interface ProcessImageResult {
   optimizedMimeTypeExtension: string;
 }
 
-export interface ProcessManyImagesResult {
-  successfulImages: ProcessImageResult[];
+export interface ConvertManyImagesResult {
+  convertedImages: ConvertImageResult[];
   failedCount: number;
 }

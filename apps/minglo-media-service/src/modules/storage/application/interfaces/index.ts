@@ -1,10 +1,10 @@
-import { ProcessImageResult } from '../../../media/application/interfaces';
+import { ConvertImageResult } from '../../../media/application/interfaces';
 import { MediaType } from '../../../../../prisma/generated/prisma/enums';
 
 /**
  * Params for uploading a single image to S3
  */
-export interface ImageUploadToS3Params extends ProcessImageResult {
+export interface UploadImageToS3Params extends ConvertImageResult {
   type: MediaType;
   publicUserId: string;
 }
@@ -12,8 +12,8 @@ export interface ImageUploadToS3Params extends ProcessImageResult {
 /**
  * Params for uploading multiple images to S3
  */
-export interface ImageUploadToS3ParamsMany {
-  images: ProcessImageResult[];
+export interface UploadManyImagesToS3Params {
+  images: ConvertImageResult[];
   type: MediaType;
   publicUserId: string;
 }
@@ -21,7 +21,7 @@ export interface ImageUploadToS3ParamsMany {
 /**
  * Result of single image upload
  */
-export interface ImageUploadToS3Result {
+export interface UploadedImageToS3Result {
   /* file public url */
   url: string;
   /* file path in bucket */
@@ -31,7 +31,7 @@ export interface ImageUploadToS3Result {
 /**
  * Result of multiple images upload
  */
-export interface ImageUploadToS3ResultMany {
-  images: ImageUploadToS3Result[];
+export interface UploadedManyImagesToS3Result {
+  uploadedImages: UploadedImageToS3Result[];
   failedCount: number;
 }

@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import sharp from 'sharp';
 import pLimit from 'p-limit';
 import {
-  ProcessImageResult,
-  ProcessManyImagesResult,
+  ConvertImageResult,
+  ConvertManyImagesResult,
   ResizeAndConvertManyParams,
   ResizeAndConvertParams,
 } from '../interfaces';
@@ -32,7 +32,7 @@ export class ImageProcessorService {
   async resizeAndConvertToWebp({
     file,
     options,
-  }: ResizeAndConvertParams): Promise<ProcessImageResult> {
+  }: ResizeAndConvertParams): Promise<ConvertImageResult> {
     const fileName = file.filename;
 
     try {
@@ -75,7 +75,7 @@ export class ImageProcessorService {
   async resizeAndConvertToWebpMany({
     files,
     options,
-  }: ResizeAndConvertManyParams): Promise<ProcessManyImagesResult> {
+  }: ResizeAndConvertManyParams): Promise<ConvertManyImagesResult> {
     const limit = pLimit(this.config.imageProcessingConcurrency); // ограничение на кол-во одновременных процессов
 
     // Ограничиваем параллельные вызовы
@@ -84,7 +84,7 @@ export class ImageProcessorService {
     const results = await Promise.allSettled(tasks);
 
     const successful = results
-      .filter((r): r is PromiseFulfilledResult<ProcessImageResult> => r.status === 'fulfilled')
+      .filter((r): r is PromiseFulfilledResult<ConvertImageResult> => r.status === 'fulfilled')
       .map((r) => r.value);
 
     const failedCount = results.filter((r) => r.status === 'rejected').length;
@@ -107,7 +107,7 @@ export class ImageProcessorService {
     );
 
     return {
-      successfulImages: successful,
+      convertedImages: successful,
       failedCount,
     };
   }

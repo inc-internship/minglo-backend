@@ -1,0 +1,114 @@
+import { LoggerService } from '@app/logger';
+import { Injectable } from '@nestjs/common';
+import sharp from 'sharp';
+import pLimit from 'p-limit';
+import {
+  ProcessImageResult,
+  ProcessManyImagesResult,
+  ResizeAndConvertManyParams,
+  ResizeAndConvertParams,
+} from '../interfaces';
+import { DomainException, DomainExceptionCode } from '@app/exceptions';
+import { MediaConfig } from '../../../core/media.config';
+
+/**
+ * Сервис для обработки изображений.
+ *
+ * Основные функции:
+ *  - Изменение размера изображения с сохранением пропорций
+ *  - Конвертация в формат .webp
+ *  - Обработка массивов изображений с логированием успешных и неудачных операций
+ */
+@Injectable()
+export class ImageProcessorService {
+  constructor(
+    private readonly logger: LoggerService,
+    private readonly config: MediaConfig,
+  ) {
+    this.logger.setContext(ImageProcessorService.name);
+  }
+
+  /* Уменьшает изображение с сохранением пропорций и конвертирует в .webp */
+  async resizeAndConvertToWebp({
+    file,
+    options,
+  }: ResizeAndConvertParams): Promise<ProcessImageResult> {
+    const fileName = file.filename;
+
+    try {
+      const buffer = await sharp(file.buffer)
+        .resize({
+          width: options?.width ?? 300,
+          height: options?.height ?? 300,
+          fit: options?.fit ?? 'inside',
+        })
+        .webp({ quality: 80 })
+        .toBuffer();
+
+      const { width, height } = await sharp(buffer).metadata();
+      const fileSize = buffer.length;
+
+      this.logger.log(`Processed image ${fileName} result: ${width}x${height}, size=${fileSize}`);
+
+      return {
+        file,
+        optimizedBuffer: buffer,
+        optimizedWidth: width,
+        optimizedHeight: height,
+        optimizedFileSize: fileSize,
+        optimizedFileExtension: 'webp',
+        optimizedMimeTypeExtension: 'image/webp',
+      };
+    } catch (error) {
+      this.logger.error(`Failed to process image ${fileName}`, error);
+      throw new DomainException({
+        code: DomainExceptionCode.InternalServerError,
+        message: 'Image processing failed',
+      });
+    }
+  }
+
+  /*
+   * Уменьшает массив изображений с сохранением пропорций и конвертирует в .webp
+   * Кол-во одновременных процессов ограничено до 2-х
+   */
+  async resizeAndConvertToWebpMany({
+    files,
+    options,
+  }: ResizeAndConvertManyParams): Promise<ProcessManyImagesResult> {
+    const limit = pLimit(this.config.imageProcessingConcurrency); // ограничение на кол-во одновременных процессов
+
+    // Ограничиваем параллельные вызовы
+    const tasks = files.map((file) => limit(() => this.resizeAndConvertToWebp({ file, options })));
+
+    const results = await Promise.allSettled(tasks);
+
+    const successful = results
+      .filter((r): r is PromiseFulfilledResult<ProcessImageResult> => r.status === 'fulfilled')
+      .map((r) => r.value);
+
+    const failedCount = results.filter((r) => r.status === 'rejected').length;
+
+    if (failedCount > 0) {
+      this.logger.warn(
+        `Batch images processing: ${successful.length} succeeded, ${failedCount} failed`,
+      );
+    }
+
+    if (!successful.length) {
+      throw new DomainException({
+        code: DomainExceptionCode.InternalServerError,
+        message: `All images processing failed, total images: ${failedCount} `,
+      });
+    }
+
+    this.logger.log(
+      `Batch images processing completed: ${successful.length} succeeded, ${failedCount} failed, total images: ${tasks.length} `,
+    );
+
+    return {
+      successfulImages: successful,
+      failedCount,
+    };
+  }
+}

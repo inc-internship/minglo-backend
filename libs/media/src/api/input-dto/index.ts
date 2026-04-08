@@ -1,1 +1,1 @@
-export * from './upload-files.input-dto';
+export * from './media-type.input-dto';

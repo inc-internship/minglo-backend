@@ -39,6 +39,12 @@ export class MediaConfig {
   @IsNotEmpty({ message: 'Set environment variable S3_ENDPOINT' })
   s3endpoint: string;
 
+  @IsNumber({}, { message: 'Set environment variable S3_CONCURRENCY' })
+  s3concurrency: number;
+
+  @IsNotEmpty({ message: 'Set environment variable IMAGE_PROCESSING_CONCURRENCY' })
+  imageProcessingConcurrency: number;
+
   @IsNotEmpty({ message: 'Set environment variable MEDIA_ACCESS_SECRET' })
   accessSecret: string;
 
@@ -89,6 +95,10 @@ export class MediaConfig {
     this.s3accessKeyId = this.configService.get('S3_ACCESS_KEY_ID');
     this.s3secretKey = this.configService.get('S3_SECRET_ACCESS_KEY');
     this.s3endpoint = this.configService.get('S3_ENDPOINT');
+    this.s3concurrency = Number(this.configService.get('S3_CONCURRENCY'));
+    this.imageProcessingConcurrency = Number(
+      this.configService.get('IMAGE_PROCESSING_CONCURRENCY'),
+    );
 
     this.accessSecret = this.configService.get('MEDIA_ACCESS_SECRET');
 

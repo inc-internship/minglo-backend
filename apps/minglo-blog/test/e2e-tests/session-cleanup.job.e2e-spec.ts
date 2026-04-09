@@ -68,7 +68,7 @@ describe('JOB password-recovery cleanup (e2e)', () => {
       where: {
         id: { in: [sessions[0].id, sessions[1].id] },
       },
-      data: { lastActive: new Date('2000-01-01') },
+      data: { expiresAt: new Date('2000-01-01') },
     });
 
     // as any - отключает проверку TS и вызвать приватный метод класса

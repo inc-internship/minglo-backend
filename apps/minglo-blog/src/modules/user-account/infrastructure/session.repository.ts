@@ -134,14 +134,11 @@ export class SessionRepository {
 
   /* Возвращает массив id записей сессий в которых не заходили неделю+ */
   async findInactiveSessionIds(): Promise<number[]> {
-    const aWeekAgo = new Date();
-    aWeekAgo.setDate(aWeekAgo.getDate() - 7);
-
+    const now = new Date();
     const result = await this.prisma.session.findMany({
       where: {
-        deletedAt: null,
-        lastActive: {
-          lt: aWeekAgo,
+        expiresAt: {
+          lt: now,
         },
       },
       select: { id: true },

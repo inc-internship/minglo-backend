@@ -10,6 +10,7 @@ import {
 } from '../interfaces';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
 import { MediaConfig } from '../../../core/media.config';
+import { MediaMimeType } from '@app/media/enums';
 
 /**
  * Сервис для обработки изображений.
@@ -57,7 +58,7 @@ export class ImageProcessorService {
         optimizedHeight: height,
         optimizedFileSize: fileSize,
         optimizedFileExtension: 'webp',
-        optimizedMimeTypeExtension: 'image/webp',
+        optimizedMimeTypeExtension: MediaMimeType.IMAGE_WEBP,
       };
     } catch (error) {
       this.logger.error(`Failed to process image ${fileName}`, error);

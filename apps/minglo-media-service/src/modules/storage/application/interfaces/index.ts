@@ -1,5 +1,16 @@
 import { ConvertImageResult } from '../../../media/application/interfaces';
-import { MediaType } from '../../../../../prisma/generated/prisma/enums';
+import { MediaMimeType, MediaType } from '@app/media/enums';
+
+interface MediaFile {
+  publicUserId: string;
+  type: MediaType;
+  mimeType: MediaMimeType;
+  url: string;
+  key: string;
+  width: number;
+  height: number;
+  fileSize: number;
+}
 
 /**
  * Params for uploading a single image to S3
@@ -21,12 +32,7 @@ export interface UploadManyImagesToS3Params {
 /**
  * Result of single image upload
  */
-export interface UploadedImageToS3Result {
-  /* file public url */
-  url: string;
-  /* file path in bucket */
-  key: string;
-}
+export type UploadedImageToS3Result = MediaFile;
 
 /**
  * Result of multiple images upload

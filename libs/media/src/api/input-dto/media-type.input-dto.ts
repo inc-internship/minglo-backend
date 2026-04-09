@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { MediaType } from '../../../../../apps/minglo-media-service/prisma/generated/prisma/enums';
-import { IsEnum } from 'class-validator';
+import { IsEnum, IsNotEmpty } from 'class-validator';
+import { MediaType } from '@app/media/enums';
 
 export class MediaTypeInputDto {
   @ApiProperty({
@@ -9,4 +9,8 @@ export class MediaTypeInputDto {
   })
   @IsEnum(MediaType)
   type: MediaType;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  publicUserId: string;
 }

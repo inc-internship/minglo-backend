@@ -1,23 +1,24 @@
 import { applyDecorators } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiCreatedResponse,
   ApiExtraModels,
   ApiOperation,
-  getSchemaPath,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ErrorResponseBody } from '@app/exceptions';
 import { MediaTypeInputDto } from '@app/media/api/input-dto';
 import { UploadImageResultDto } from '@app/media/dto';
 
-export function ApiUploadFilesDecorator() {
+export function ApiPostsUploadImageDecorator() {
   return applyDecorators(
+    ApiBearerAuth('access-token'),
     ApiExtraModels(MediaTypeInputDto),
     ApiOperation({
-      summary: 'Upload image file',
-      description: 'Массив изображений (png, jpg, webp) до 3 MB каждый.',
+      summary: 'Upload images for new post',
     }),
     ApiConsumes('multipart/form-data'),
     ApiBody({
@@ -34,12 +35,10 @@ export function ApiUploadFilesDecorator() {
                 },
                 minItems: 1,
                 maxItems: 10,
+                description: '20 Mb max file size',
               },
             },
             required: ['files'],
-          },
-          {
-            $ref: getSchemaPath(MediaTypeInputDto),
           },
         ],
       },
@@ -50,6 +49,9 @@ export function ApiUploadFilesDecorator() {
     ApiCreatedResponse({
       type: UploadImageResultDto,
       description: 'Success',
+    }),
+    ApiUnauthorizedResponse({
+      description: 'Unauthorized',
     }),
   );
 }

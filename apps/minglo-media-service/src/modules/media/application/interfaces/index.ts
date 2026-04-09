@@ -1,4 +1,5 @@
 import { ResizeOptions } from 'sharp';
+import { MediaMimeType } from '@app/media/enums';
 
 export interface ResizeAndConvertParams {
   file: Express.Multer.File;
@@ -17,7 +18,7 @@ export interface ConvertImageResult {
   optimizedHeight: number;
   optimizedFileSize: number;
   optimizedFileExtension: string;
-  optimizedMimeTypeExtension: string;
+  optimizedMimeTypeExtension: MediaMimeType;
 }
 
 export interface ConvertManyImagesResult {

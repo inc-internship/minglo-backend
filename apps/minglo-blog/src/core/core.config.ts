@@ -68,6 +68,11 @@ export class CoreConfig {
   @IsNumber({}, { message: 'Set environment variable MINGLO_THROTTLE_LIMIT (number)' })
   throttleLimit: number;
 
+  @IsString({
+    message: 'Set environment variable MEDIA_SERVICE_URL, example: http://localhost:3002',
+  })
+  mediaServiceUrl: string;
+
   constructor(private configService: ConfigService<any, true>) {
     this.env = this.configService.get('NODE_ENV');
     this.port = Number(this.configService.get('MINGLO_PORT'));
@@ -96,6 +101,7 @@ export class CoreConfig {
     ) as boolean;
     this.throttleTtl = Number(this.configService.get('MINGLO_THROTTLE_TTL'));
     this.throttleLimit = Number(this.configService.get('MINGLO_THROTTLE_LIMIT'));
+    this.mediaServiceUrl = this.configService.get('MEDIA_SERVICE_URL');
 
     configValidationUtility.validateConfig(this);
   }

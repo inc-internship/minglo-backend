@@ -1,8 +1,11 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { LoggerService } from '@app/logger';
-import { MediaType } from '../../../../../prisma/generated/prisma/enums';
 import { S3StorageService } from '../../../storage/application/services';
-import { UploadParams } from '../../../storage/application/interfaces';
+import { ImageProcessorService } from '../services';
+import { MediaRepository } from '../../infrstructure/media.repository';
+import { MediaFileFactory } from '../../domains/factory/media-file.factory';
+import { MediaType } from '@app/media/enums';
+import { UploadImageResultDto } from '@app/media/dto';
 
 export class UploadImageCommand {
   constructor(
@@ -13,29 +16,51 @@ export class UploadImageCommand {
 }
 
 @CommandHandler(UploadImageCommand)
-export class UploadImageUseCase implements ICommandHandler<UploadImageCommand, void> {
+export class UploadImageUseCase implements ICommandHandler<
+  UploadImageCommand,
+  UploadImageResultDto
+> {
   constructor(
     private readonly storageService: S3StorageService,
+    private readonly imageProcessor: ImageProcessorService,
+    private readonly factory: MediaFileFactory,
+    private readonly mediaRepo: MediaRepository,
     private readonly logger: LoggerService,
   ) {
     this.logger.setContext(UploadImageUseCase.name);
   }
 
-  async execute({ files, type, publicUserId }: UploadImageCommand) {
-    this.logger.log(`Images upload begin`, 'execute');
+  async execute({ files, type, publicUserId }: UploadImageCommand): Promise<UploadImageResultDto> {
+    this.logger.log(`Images conversion begin`, 'execute');
 
-    const mappedFilesData = files.map((file): UploadParams => {
-      return {
-        buffer: file.buffer,
-        mimetype: file.mimetype,
+    const { convertedImages, failedCount: convertFailedCount } =
+      await this.imageProcessor.resizeAndConvertToWebpMany({
+        files,
+      });
+
+    this.logger.log(`Images upload to S3 begin`, 'execute');
+
+    const { uploadedImages, failedCount: uploadFailedCount } = await this.storageService.uploadMany(
+      {
+        images: convertedImages,
+        type,
         publicUserId,
-      };
+      },
+    );
+
+    const entities = uploadedImages.map((i) => {
+      return this.factory.create(i);
     });
 
-    //todo: добавить конвертацию изображений в webp и ресайз
+    const ids = await this.mediaRepo.createMany(entities);
+    const failedCount = convertFailedCount + uploadFailedCount;
 
-    const result = await this.storageService.upload(mappedFilesData, type);
-    console.table(result);
-    this.logger.log(`Images upload completed, total amount: ${mappedFilesData.length}`, 'execute');
+    this.logger.log(`Images saved to Media database`, 'execute');
+    this.logger.log(`Upload images to S3 finished`, 'execute');
+
+    return {
+      ids,
+      failedCount,
+    };
   }
 }

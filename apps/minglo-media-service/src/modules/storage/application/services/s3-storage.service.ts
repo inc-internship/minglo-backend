@@ -49,6 +49,9 @@ export class S3StorageService {
       optimizedBuffer: buffer,
       optimizedFileExtension: extension,
       optimizedMimeTypeExtension: mimetype,
+      optimizedWidth: width,
+      optimizedHeight: height,
+      optimizedFileSize: fileSize,
       publicUserId,
       type,
     } = params;
@@ -72,8 +75,14 @@ export class S3StorageService {
       // file public url for clients
       const url = `https://${this.bucket}.${this.endpointPath}/${key}`;
       return {
+        publicUserId,
+        type,
+        mimeType: mimetype,
         url,
         key,
+        width,
+        height,
+        fileSize,
       };
     } catch (error) {
       this.logger.error(`Failed to upload image to S3 ${file.filename}`, error);
@@ -122,7 +131,7 @@ export class S3StorageService {
     );
 
     return {
-      images: successful,
+      uploadedImages: successful,
       failedCount,
     };
   }

@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 const SwaggerTitle = 'Minglo API';
-const SWAGGER_PREFIX = 'swagger';
+const SWAGGER_PREFIX = 'api/v1';
 
 export function swaggerSetup(app: INestApplication, isSwaggerEnabled: boolean) {
   if (isSwaggerEnabled) {

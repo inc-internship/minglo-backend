@@ -7,10 +7,11 @@ import { AccessGuard } from '../guards/access.guard';
 import {
   ApiSessionDeleteDeviceDecorator,
   ApiSessionGetDevicesDecorator,
+  ApiSessionTerminateAllOtherSessionsDecorator,
 } from '../../../core/decorators/swagger';
 import { GetDevicesQuery } from '../application/queries/get-devices.query';
 import { SessionViewDto } from './view-dto/session-view.dto';
-import { DeleteSessionCommand } from '../application/usecases';
+import { DeleteSessionCommand, TerminateAllOtherSessionsCommand } from '../application/usecases';
 
 @Controller('sessions')
 export class SessionsController {
@@ -35,13 +36,24 @@ export class SessionsController {
   @ApiSessionDeleteDeviceDecorator()
   @UseGuards(AccessGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteDevice(
+  async deleteSession(
     @CurrentUser() user: ActiveUserDto,
     @Param('deviceId') deviceId: string,
   ): Promise<void> {
-    this.logger.log('delete device', 'deleteDevice');
+    this.logger.log(`'delete session by ${deviceId}', 'deleteSession'`);
     return this.commandBus.execute<DeleteSessionCommand, void>(
       new DeleteSessionCommand(user, deviceId),
+    );
+  }
+
+  @Delete()
+  @ApiSessionTerminateAllOtherSessionsDecorator()
+  @UseGuards(AccessGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteSessions(@CurrentUser() user: ActiveUserDto): Promise<void> {
+    this.logger.log(`'delete All other session usersId${user.userId}', 'deleteSessions'`);
+    return this.commandBus.execute<TerminateAllOtherSessionsCommand, void>(
+      new TerminateAllOtherSessionsCommand(user),
     );
   }
 }

@@ -7,7 +7,7 @@ import {
   ApiTooManyRequestsResponse,
 } from '@nestjs/swagger';
 import { ErrorResponseBody } from '@app/exceptions';
-import { NewPasswordInputDto } from '../../../modules/user-account/api/input-dto/new-password.input-dto';
+import { NewPasswordInputDto } from '../../../../modules/user-account/api/input-dto/new-password.input-dto';
 
 export function ApiAuthNewPasswordDecorator() {
   return applyDecorators(

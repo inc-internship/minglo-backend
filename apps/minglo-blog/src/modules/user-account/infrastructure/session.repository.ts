@@ -13,6 +13,7 @@ export class SessionRepository {
     private readonly sessionFactory: SessionFactory,
   ) {}
 
+  /* сохраняем инстанс сессии в бд */
   async save(session: SessionEntity): Promise<void> {
     await this.prisma.session.create({
       data: {
@@ -30,6 +31,7 @@ export class SessionRepository {
     });
   }
 
+  /* ищем сессию по publicId deviceId */
   async findSessionByDeviceIdAndUserId(publicId: string, deviceId: string): Promise<SessionEntity> {
     const record = await this.prisma.session.findFirst({
       where: {
@@ -50,6 +52,7 @@ export class SessionRepository {
     return SessionEntity.reconstitute(record);
   }
 
+  /* ищем сессию чисто по deviceId */
   async findSessionByDeviceId(deviceId: string): Promise<UserEntity | null> {
     const record = await this.prisma.session.findFirst({
       where: {
@@ -66,6 +69,7 @@ export class SessionRepository {
     return this.sessionFactory.fromSessionRecord(record);
   }
 
+  /* обновляем активность юзера */
   async updateLastActive(session: SessionEntity): Promise<void> {
     await this.prisma.session.update({
       where: { deviceId: session.deviceId },
@@ -75,6 +79,7 @@ export class SessionRepository {
     });
   }
 
+  /* обновляем данные рефреш токена в бд */
   async updateSessionTokens(session: SessionEntity): Promise<void> {
     await this.prisma.session.update({
       where: {
@@ -88,6 +93,7 @@ export class SessionRepository {
     });
   }
 
+  /* удаляем конкретныую сессию юзера */
   async deleteDeviceById(publicId: string, deviceId: string): Promise<number> {
     const result = await this.prisma.session.updateMany({
       where: {
@@ -122,6 +128,49 @@ export class SessionRepository {
     return this.prisma.passwordRecovery.deleteMany({
       where: {
         id: { in: ids },
+      },
+    });
+  }
+
+  /* Возвращает массив id записей сессий в которых не заходили неделю+ */
+  async findInactiveSessionIds(): Promise<number[]> {
+    const now = new Date();
+    const result = await this.prisma.session.findMany({
+      where: {
+        expiresAt: {
+          lt: now,
+        },
+      },
+      select: { id: true },
+    });
+
+    return result.map((u) => u.id);
+  }
+
+  /* Удаляет не активные сессии из БД */
+  async deleteManySessionsByIds(ids: number[]): Promise<BatchPayload> {
+    return this.prisma.session.deleteMany({
+      where: {
+        id: { in: ids },
+      },
+    });
+  }
+
+  /* Удаляем все сессии юзера кроме текущей */
+  async deleteAllOtherSessionUser(publicId: string, currentDeviceId: string): Promise<void> {
+    await this.prisma.session.updateMany({
+      where: {
+        user: {
+          publicId: publicId,
+          deletedAt: null,
+        },
+        deletedAt: null,
+        deviceId: {
+          not: currentDeviceId,
+        },
+      },
+      data: {
+        deletedAt: new Date(),
       },
     });
   }

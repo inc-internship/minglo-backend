@@ -7,7 +7,7 @@ import {
   ApiOperation,
   ApiTooManyRequestsResponse,
 } from '@nestjs/swagger';
-import { CreateUserInputDto } from '../../../modules/user-account/api/input-dto';
+import { CreateUserInputDto } from '../../../../modules/user-account/api/input-dto';
 import { ErrorResponseBody } from '@app/exceptions';
 
 export function ApiAuthRegistration() {

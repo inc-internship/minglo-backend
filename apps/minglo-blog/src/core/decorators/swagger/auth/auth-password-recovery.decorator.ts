@@ -5,7 +5,7 @@ import {
   ApiOperation,
   ApiTooManyRequestsResponse,
 } from '@nestjs/swagger';
-import { PasswordRecoveryInputDto } from '../../../modules/user-account/api/input-dto';
+import { PasswordRecoveryInputDto } from '../../../../modules/user-account/api/input-dto';
 
 export function ApiAuthPasswordRecoveryDecorator() {
   return applyDecorators(

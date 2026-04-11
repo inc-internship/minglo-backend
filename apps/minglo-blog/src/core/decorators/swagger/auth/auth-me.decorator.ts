@@ -5,7 +5,7 @@ import {
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { MeViewDto } from '../../../modules/user-account/api/view-dto/me-view.dto';
+import { MeViewDto } from '../../../../modules/user-account/api/view-dto/me-view.dto';
 
 export function ApiAuthMeDecorator() {
   return applyDecorators(

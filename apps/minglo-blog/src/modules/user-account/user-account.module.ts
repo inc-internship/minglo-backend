@@ -11,6 +11,7 @@ import {
   PasswordRecoveryUseCase,
   RefreshTokenUseCase,
   ResendConfirmEmailUseCase,
+  TerminateAllOtherSessionsUseCase,
 } from './application/usecases';
 import { UserFactory } from './domains';
 import { EmailConfirmationRepository, UserRepository } from './infrastructure';
@@ -25,14 +26,17 @@ import { DeviceService } from './application/services/device.service';
 import { JwtModule } from '@nestjs/jwt';
 import { MeHandler } from './application/queries';
 import { UserQueryRepository } from './infrastructure/queries/user.query.repository';
-import { UsersCleanupJob } from './application/jobs';
+import {
+  PasswordRecoveryCodeCleanupJob,
+  SessionCleanupJob,
+  UsersCleanupJob,
+} from './application/jobs';
 import { SessionsController } from './api/sessions.controller';
 import { GetDevicesHandler } from './application/queries/get-devices.query';
 import { SessionQueryRepository } from './infrastructure/queries/session.query.repository';
 import { RecaptchaService } from './application/services/recaptcha.service';
 import { RecaptchaGuard } from './guards/captcha.guard';
 import { HttpModule } from '@nestjs/axios';
-import { PasswordRecoveryCodeCleanupJob } from './application/jobs/password-recovery-code-cleanup-job.service';
 
 const services = [
   UserService,
@@ -55,6 +59,7 @@ const usecases = [
   PasswordRecoveryUseCase,
   NewPasswordUseCase,
   DeleteSessionUseCase,
+  TerminateAllOtherSessionsUseCase,
 ];
 
 const repos = [
@@ -65,7 +70,7 @@ const repos = [
   SessionQueryRepository,
 ];
 
-const jobs = [UsersCleanupJob, PasswordRecoveryCodeCleanupJob];
+const jobs = [UsersCleanupJob, PasswordRecoveryCodeCleanupJob, SessionCleanupJob];
 
 @Module({
   imports: [EmailModule, JwtModule.register({}), HttpModule],

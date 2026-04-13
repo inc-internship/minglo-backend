@@ -26,7 +26,9 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand, Login
     private readonly sessionFactory: SessionFactory,
     private readonly sessionRepository: SessionRepository,
     private logger: LoggerService,
-  ) {}
+  ) {
+    this.logger.setContext(LoginUserUseCase.name);
+  }
 
   async execute({ dto, meta }: LoginUserCommand): Promise<LoginResult> {
     const { email, password } = dto;

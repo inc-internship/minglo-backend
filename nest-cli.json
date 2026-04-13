@@ -6,7 +6,9 @@
     "deleteOutDir": true,
     "webpack": true,
     "tsConfigPath": "apps/minglo-blog/tsconfig.app.json",
-    "assets": ["apps/minglo-blog/src/newrelic.js"]
+    "assets": [
+      "apps/minglo-blog/src/newrelic.js"
+    ]
   },
   "monorepo": true,
   "root": "apps/minglo-blog",
@@ -54,6 +56,15 @@
       "sourceRoot": "apps/minglo-blog/src",
       "compilerOptions": {
         "tsConfigPath": "apps/minglo-blog/tsconfig.app.json"
+      }
+    },
+    "minglo-media-service": {
+      "type": "application",
+      "root": "apps/minglo-media-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/minglo-media-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/minglo-media-service/tsconfig.app.json"
       }
     },
     "notifications": {

@@ -34,8 +34,18 @@ import {
 import { SessionsController } from './api/sessions.controller';
 import { GetDevicesHandler } from './application/queries/get-devices.query';
 import { SessionQueryRepository } from './infrastructure/queries/session.query.repository';
+import { RecaptchaService } from './application/services/recaptcha.service';
+import { RecaptchaGuard } from './guards/captcha.guard';
+import { HttpModule } from '@nestjs/axios';
 
-const services = [UserService, CryptoService, TokenService, SessionService, DeviceService];
+const services = [
+  UserService,
+  CryptoService,
+  TokenService,
+  SessionService,
+  DeviceService,
+  RecaptchaService,
+];
 
 const usecases = [
   NewPasswordUseCase,
@@ -63,13 +73,14 @@ const repos = [
 const jobs = [UsersCleanupJob, PasswordRecoveryCodeCleanupJob, SessionCleanupJob];
 
 @Module({
-  imports: [EmailModule, JwtModule.register({})],
+  imports: [EmailModule, JwtModule.register({}), HttpModule],
   controllers: [AuthController, SessionsController],
   providers: [
     ...services,
     ...usecases,
     ...repos,
     UserFactory,
+    RecaptchaGuard,
     SessionFactory,
     AccessStrategy,
     RefreshStrategy,

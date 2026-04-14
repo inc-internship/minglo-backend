@@ -1,6 +1,8 @@
 import { applyDecorators } from '@nestjs/common';
 import {
   ApiBody,
+  ApiForbiddenResponse,
+  ApiHeader,
   ApiNoContentResponse,
   ApiOperation,
   ApiTooManyRequestsResponse,
@@ -13,12 +15,19 @@ export function ApiAuthPasswordRecoveryDecorator() {
       summary: 'Password recovery',
       description: "Sends a password recovery link to the user's email if the account exists.",
     }),
+    ApiHeader({
+      name: 'x-recaptcha-bypass',
+      required: false,
+    }),
     ApiBody({
       type: PasswordRecoveryInputDto,
       description: 'User email and redirect URL for password reset',
     }),
     ApiNoContentResponse({
       description: 'If the email exists, a recovery link has been sent.',
+    }),
+    ApiForbiddenResponse({
+      description: 'Recaptcha validation failed',
     }),
     ApiTooManyRequestsResponse({
       description: 'Too many attempts from the same IP address. Please try again later.',

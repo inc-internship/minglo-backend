@@ -13,7 +13,7 @@ import {
   LoginUserCommand,
   LogoutCommand,
   NewPasswordCommand,
-  PasswordRecoveryUseCaseCommand,
+  PasswordRecoveryCommand,
   RefreshTokenCommand,
   ResendConfirmEmailCommand,
 } from '../application/usecases';
@@ -149,9 +149,7 @@ export class AuthController {
   @UseGuards(RecaptchaGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async passwordRecovery(@Body() body: PasswordRecoveryInputDto): Promise<void> {
-    await this.commandBus.execute<PasswordRecoveryUseCaseCommand, void>(
-      new PasswordRecoveryUseCaseCommand(body),
-    );
+    await this.commandBus.execute<PasswordRecoveryCommand, void>(new PasswordRecoveryCommand(body));
     this.logger.log(`Password-recovery success', 'password-recovery`);
   }
 

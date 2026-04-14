@@ -16,6 +16,10 @@ export class PasswordRecoveryInputDto {
   @IsUrl()
   redirectUrl: string;
 
+  @ApiProperty({
+    description: 'CAPTCHA verification token to prevent automated requests.',
+    example: 'recaptcha_token',
+  })
   @IsString()
   @IsNotEmpty()
   captchaValue: string;

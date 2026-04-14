@@ -72,6 +72,10 @@ export class CoreConfig {
   @IsString({ message: 'Set environment variable RECAPTCHA_SECRET' })
   recaptchaSecret: string;
 
+  // Recaptcha Secret
+  @IsString({ message: 'Set environment variable RECAPTCHA_BYPASS_SECRET' })
+  recaptchaBypassSecret: string;
+
   constructor(private configService: ConfigService<any, true>) {
     this.env = this.configService.get('NODE_ENV');
     this.port = Number(this.configService.get('MINGLO_PORT'));
@@ -101,6 +105,7 @@ export class CoreConfig {
     this.throttleTtl = Number(this.configService.get('MINGLO_THROTTLE_TTL'));
     this.throttleLimit = Number(this.configService.get('MINGLO_THROTTLE_LIMIT'));
     this.recaptchaSecret = this.configService.get('RECAPTCHA_SECRET');
+    this.recaptchaBypassSecret = this.configService.get('RECAPTCHA_BYPASS_SECRET');
 
     configValidationUtility.validateConfig(this);
   }

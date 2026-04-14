@@ -4,6 +4,7 @@ import {
   ApiForbiddenResponse,
   ApiHeader,
   ApiNoContentResponse,
+  ApiNotFoundResponse,
   ApiOperation,
   ApiTooManyRequestsResponse,
 } from '@nestjs/swagger';
@@ -25,6 +26,9 @@ export function ApiAuthPasswordRecoveryDecorator() {
     }),
     ApiNoContentResponse({
       description: 'If the email exists, a recovery link has been sent.',
+    }),
+    ApiNotFoundResponse({
+      description: 'If the email not-exists',
     }),
     ApiForbiddenResponse({
       description: 'Recaptcha validation failed',

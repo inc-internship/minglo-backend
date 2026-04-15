@@ -8,6 +8,7 @@ import request from 'supertest';
 import { PrismaService } from '../../src/database/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'node:crypto';
+import { RecaptchaService } from '../../src/modules/user-account/application/services/recaptcha.service';
 
 describe('Auth API (e2e)', () => {
   let app: INestApplication<App>;
@@ -19,6 +20,8 @@ describe('Auth API (e2e)', () => {
     app = result.app;
     authTestManager = result.authTestManager;
     emailService = app.get(EmailService);
+    const recaptchaService = app.get(RecaptchaService);
+    jest.spyOn(recaptchaService, 'validate').mockResolvedValue(true);
   });
 
   afterAll(async () => {
@@ -282,7 +285,11 @@ describe('Auth API (e2e)', () => {
     expect(body.accessToken).toBeDefined();
     expect(headers['set-cookie']).toBeDefined();
 
-    await authTestManager.passwordRecovery({ email: dto.email, redirectUrl: dto.redirectUrl });
+    await authTestManager.passwordRecovery({
+      email: dto.email,
+      redirectUrl: dto.redirectUrl,
+      captchaValue: 'fdsfsdfd',
+    });
 
     expect(emailService.sendPasswordRecoveryEmail).toHaveBeenCalledTimes(1);
 
@@ -296,6 +303,7 @@ describe('Auth API (e2e)', () => {
     const fakeDto = {
       email: 'non-existent-user@ghost.com',
       redirectUrl: 'https://minglo.blog/recovery',
+      captchaValue: 'fdsfsdfd',
     };
 
     const response = await authTestManager.passwordRecovery(fakeDto, 404);
@@ -311,7 +319,11 @@ describe('Auth API (e2e)', () => {
     const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
     await authTestManager.confirmRegistration({ code });
     await authTestManager.login(dto);
-    await authTestManager.passwordRecovery({ email: dto.email, redirectUrl: dto.redirectUrl });
+    await authTestManager.passwordRecovery({
+      email: dto.email,
+      redirectUrl: dto.redirectUrl,
+      captchaValue: 'fdsfsdfd',
+    });
     const recoveryEmailArgs = emailService.sendPasswordRecoveryEmail.mock.calls[0][0];
     const recoveryCode = recoveryEmailArgs.code;
 
@@ -328,7 +340,11 @@ describe('Auth API (e2e)', () => {
     const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
     await authTestManager.confirmRegistration({ code });
     await authTestManager.login(dto);
-    await authTestManager.passwordRecovery({ email: dto.email, redirectUrl: dto.redirectUrl });
+    await authTestManager.passwordRecovery({
+      email: dto.email,
+      redirectUrl: dto.redirectUrl,
+      captchaValue: 'fdsfsdfd',
+    });
 
     await authTestManager.newPassword(
       { newPassword: 'QweRty123', recoveryCode: randomUUID() },

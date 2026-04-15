@@ -68,6 +68,14 @@ export class CoreConfig {
   @IsNumber({}, { message: 'Set environment variable MINGLO_THROTTLE_LIMIT (number)' })
   throttleLimit: number;
 
+  // Recaptcha Secret
+  @IsString({ message: 'Set environment variable RECAPTCHA_SECRET' })
+  recaptchaSecret: string;
+
+  // Recaptcha Secret
+  @IsString({ message: 'Set environment variable RECAPTCHA_BYPASS_SECRET' })
+  recaptchaBypassSecret: string;
+
   @IsString({
     message: 'Set environment variable MEDIA_SERVICE_URL, example: http://localhost:3002',
   })
@@ -101,6 +109,8 @@ export class CoreConfig {
     ) as boolean;
     this.throttleTtl = Number(this.configService.get('MINGLO_THROTTLE_TTL'));
     this.throttleLimit = Number(this.configService.get('MINGLO_THROTTLE_LIMIT'));
+    this.recaptchaSecret = this.configService.get('RECAPTCHA_SECRET');
+    this.recaptchaBypassSecret = this.configService.get('RECAPTCHA_BYPASS_SECRET');
     this.mediaServiceUrl = this.configService.get('MEDIA_SERVICE_URL');
 
     configValidationUtility.validateConfig(this);

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsValidEmail } from '@app/decorators/validation/is-valid-email.decorator';
-import { IsUrl } from 'class-validator';
+import { IsNotEmpty, IsString, IsUrl } from 'class-validator';
 
 export class PasswordRecoveryInputDto {
   @ApiProperty({
@@ -15,4 +15,12 @@ export class PasswordRecoveryInputDto {
   })
   @IsUrl()
   redirectUrl: string;
+
+  @ApiProperty({
+    description: 'CAPTCHA verification token to prevent automated requests.',
+    example: 'recaptcha_token',
+  })
+  @IsString()
+  @IsNotEmpty()
+  captchaValue: string;
 }

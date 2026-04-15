@@ -5,6 +5,7 @@ import { EmailService } from '@app/notifications';
 import { PrismaService } from '../../src/database/prisma.service';
 import { initTestSettings } from '../helpers/init-test-settings';
 import { deleteAllData } from '../helpers/delete-all-data';
+import { RecaptchaService } from '../../src/modules/user-account/application/services/recaptcha.service';
 import { PasswordRecoveryCodeCleanupJob } from '../../src/modules/user-account/application/jobs/password-recovery-code-cleanup-job';
 
 describe('JOB password-recovery cleanup (e2e)', () => {
@@ -21,6 +22,8 @@ describe('JOB password-recovery cleanup (e2e)', () => {
     authManager = new AuthTestManager(app);
     prisma = app.get(PrismaService);
     job = app.get(PasswordRecoveryCodeCleanupJob);
+    const recaptchaService = app.get(RecaptchaService);
+    jest.spyOn(recaptchaService, 'validate').mockResolvedValue(true);
   });
 
   afterAll(async () => {
@@ -39,7 +42,11 @@ describe('JOB password-recovery cleanup (e2e)', () => {
     const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
     await authManager.confirmRegistration({ code });
 
-    await authManager.passwordRecovery({ email: dto.email, redirectUrl: dto.redirectUrl });
+    await authManager.passwordRecovery({
+      email: dto.email,
+      redirectUrl: dto.redirectUrl,
+      captchaValue: 'fdsfsdfd',
+    });
     expect(emailService.sendPasswordRecoveryEmail).toHaveBeenCalledTimes(1);
 
     // протухаем код подтверждения
@@ -70,7 +77,11 @@ describe('JOB password-recovery cleanup (e2e)', () => {
     await authManager.register(dto);
     const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
     await authManager.confirmRegistration({ code });
-    await authManager.passwordRecovery({ email: dto.email, redirectUrl: dto.redirectUrl });
+    await authManager.passwordRecovery({
+      email: dto.email,
+      redirectUrl: dto.redirectUrl,
+      captchaValue: 'fdsfsdfd',
+    });
     expect(emailService.sendPasswordRecoveryEmail).toHaveBeenCalledTimes(1);
 
     // as any - отключает проверку TS и вызвать приватный метод класса
@@ -91,7 +102,11 @@ describe('JOB password-recovery cleanup (e2e)', () => {
     await authManager.register(dto);
     const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
     await authManager.confirmRegistration({ code });
-    await authManager.passwordRecovery({ email: dto.email, redirectUrl: dto.redirectUrl });
+    await authManager.passwordRecovery({
+      email: dto.email,
+      redirectUrl: dto.redirectUrl,
+      captchaValue: 'fdsfsdfd',
+    });
 
     await authManager.register(validDto);
     const { code: body } = emailService.sendConfirmationEmail.mock.calls[1][0];
@@ -99,6 +114,7 @@ describe('JOB password-recovery cleanup (e2e)', () => {
     await authManager.passwordRecovery({
       email: validDto.email,
       redirectUrl: validDto.redirectUrl,
+      captchaValue: 'fdsfsdfd',
     });
 
     // протухаем только первого
@@ -138,7 +154,11 @@ describe('JOB password-recovery cleanup (e2e)', () => {
     const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
     await authManager.confirmRegistration({ code });
 
-    await authManager.passwordRecovery({ email: dto.email, redirectUrl: dto.redirectUrl });
+    await authManager.passwordRecovery({
+      email: dto.email,
+      redirectUrl: dto.redirectUrl,
+      captchaValue: 'fdsfsdfd',
+    });
     expect(emailService.sendPasswordRecoveryEmail).toHaveBeenCalledTimes(1);
 
     // протухаем код подтверждения

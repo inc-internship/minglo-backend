@@ -135,6 +135,16 @@ spec:
                  secretKeyRef:
                    name: minglo-core-backend-production-config-secret
                    key: MAX_AGE_REFRESH_TOKEN
+             - name: RECAPTCHA_SECRET
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: RECAPTCHA_SECRET
+             - name: RECAPTCHA_BYPASS_SECRET
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: RECAPTCHA_BYPASS_SECRET
              - name: MINGLO_PORT
                valueFrom:
                  secretKeyRef:

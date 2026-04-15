@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { MediaController } from './api';
+import { MediaController, MediaTcpController } from './api';
 import { ImageProcessorService } from './application/services';
 import { UploadImageUseCase } from './application/usecases';
 import { S3StorageService } from '../storage/application/services';
@@ -9,16 +9,21 @@ import { MEDIA_ACCESS_TOKEN_STRATEGY_INJECT_TOKEN } from '@app/media/constants';
 import { MediaConfig } from '../core/media.config';
 import { JwtService } from '@nestjs/jwt';
 import { MediaJwtStrategy } from './guards/media-jwt.strategy';
+import { SwaggerMediaTcpController } from './api/minglo-media-tcp.swagger-controller';
+import { GetMediaFilesMetaDataQueryHandler } from './application/queries';
+import { MediaQueryRepository } from './infrstructure/query';
 
 @Module({
   imports: [],
-  controllers: [MediaController],
+  controllers: [MediaController, MediaTcpController, SwaggerMediaTcpController],
   providers: [
     S3StorageService,
     ImageProcessorService,
     UploadImageUseCase,
     MediaRepository,
     MediaFileFactory,
+    MediaQueryRepository,
+    GetMediaFilesMetaDataQueryHandler,
     {
       provide: MEDIA_ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
       useFactory: (config: MediaConfig): JwtService => {

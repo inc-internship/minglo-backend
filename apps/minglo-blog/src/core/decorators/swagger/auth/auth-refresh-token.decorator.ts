@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { AccessTokenResponse } from '../../../modules/user-account/api/types';
+import { AccessTokenResponse } from '../../../../modules/user-account/api/types';
 
 export function ApiAuthRefreshTokenDecorator() {
   return applyDecorators(

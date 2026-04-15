@@ -1,23 +1,23 @@
 import { applyDecorators } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiOkResponse,
+  ApiNoContentResponse,
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { SessionViewDto } from '../../../modules/user-account/api/view-dto/session-view.dto';
 
-export function ApiSessionGetDevicesDecorator() {
+export function ApiSessionTerminateAllOtherSessionsDecorator() {
   return applyDecorators(
     ApiOperation({
-      summary: 'Returns all devices with active sessions for current user',
+      summary: 'Terminate all other sessions',
+      description: 'Deletes all active sessions for user, except for the current device session.',
     }),
+
     ApiBearerAuth('access-token'),
-    ApiOkResponse({
+    ApiNoContentResponse({
       description: 'Success',
-      type: SessionViewDto,
-      isArray: true,
     }),
+
     ApiUnauthorizedResponse({
       description: 'Unauthorized',
     }),

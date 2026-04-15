@@ -15,7 +15,9 @@ export class NewPasswordUseCase implements ICommandHandler<NewPasswordCommand, v
     private readonly userRepo: UserRepository,
     private readonly cryptoService: CryptoService,
     private logger: LoggerService,
-  ) {}
+  ) {
+    this.logger.setContext(NewPasswordUseCase.name);
+  }
 
   async execute({ body }: NewPasswordCommand): Promise<void> {
     const { recoveryCode, newPassword } = body;
@@ -34,7 +36,9 @@ export class NewPasswordUseCase implements ICommandHandler<NewPasswordCommand, v
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
         message: 'Invalid newPassword',
-        extensions: [{ field: 'newPassword', message: 'New password must be different' }],
+        extensions: [
+          { field: 'newPassword', message: 'New password must not match the old password.' },
+        ],
       });
     }
 

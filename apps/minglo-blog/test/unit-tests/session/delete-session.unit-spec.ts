@@ -18,6 +18,7 @@ describe('DeleteSessionUseCase (Unit)', () => {
     };
     const mockLogger = {
       log: jest.fn(),
+      setContext: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({

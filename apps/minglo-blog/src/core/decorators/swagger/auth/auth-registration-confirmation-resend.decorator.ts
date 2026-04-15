@@ -7,7 +7,7 @@ import {
   ApiTooManyRequestsResponse,
 } from '@nestjs/swagger';
 import { ErrorResponseBody } from '@app/exceptions';
-import { RegistrationConfirmationResendInputDto } from '../../../modules/user-account/api/input-dto';
+import { RegistrationConfirmationResendInputDto } from '../../../../modules/user-account/api/input-dto';
 
 export function ApiAuthRegistrationConfirmationResend() {
   return applyDecorators(

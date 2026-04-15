@@ -5,7 +5,7 @@ import { EmailService } from '@app/notifications';
 import { PrismaService } from '../../src/database/prisma.service';
 import { initTestSettings } from '../helpers/init-test-settings';
 import { deleteAllData } from '../helpers/delete-all-data';
-import { PasswordRecoveryCodeCleanupJob } from '../../src/modules/user-account/application/jobs/password-recovery-code-cleanup-job.service';
+import { PasswordRecoveryCodeCleanupJob } from '../../src/modules/user-account/application/jobs/password-recovery-code-cleanup-job';
 
 describe('JOB password-recovery cleanup (e2e)', () => {
   let app: INestApplication<App>;

@@ -2,6 +2,8 @@ import { ActiveUserDto } from '../../../../../core/decorators/auth/dto';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SessionRepository } from '../../../infrastructure/session.repository';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
+import { LoginUserUseCase } from './login-user.usecase';
+import { LoggerService } from '@app/logger';
 
 export class LogoutCommand {
   constructor(public readonly user: ActiveUserDto) {}
@@ -9,7 +11,12 @@ export class LogoutCommand {
 
 @CommandHandler(LogoutCommand)
 export class LogoutUseCase implements ICommandHandler<LogoutCommand, void> {
-  constructor(private readonly sessionRepository: SessionRepository) {}
+  constructor(
+    private readonly sessionRepository: SessionRepository,
+    private logger: LoggerService,
+  ) {
+    this.logger.setContext(LoginUserUseCase.name);
+  }
 
   async execute(command: LogoutCommand): Promise<void> {
     const { user } = command;

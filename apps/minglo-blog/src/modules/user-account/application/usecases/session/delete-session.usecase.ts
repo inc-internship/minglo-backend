@@ -16,7 +16,9 @@ export class DeleteSessionUseCase implements ICommandHandler<DeleteSessionComman
   constructor(
     private readonly sessionRepository: SessionRepository,
     private logger: LoggerService,
-  ) {}
+  ) {
+    this.logger.setContext(DeleteSessionUseCase.name);
+  }
 
   async execute(command: DeleteSessionCommand): Promise<void> {
     const { user, deviceId } = command;

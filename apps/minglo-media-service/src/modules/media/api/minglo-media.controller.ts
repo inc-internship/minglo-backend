@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Post,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
@@ -15,7 +16,9 @@ import { LoggerService } from '@app/logger';
 import { MediaTypeInputDto } from '@app/media/api/input-dto';
 import { UploadImageCommand } from '../application/usecases';
 import { UploadImageResultDto } from '@app/media/dto';
+import { MediaJwtGuard } from '../guards';
 
+@UseGuards(MediaJwtGuard)
 @Controller('media')
 export class MediaController {
   constructor(
@@ -25,7 +28,6 @@ export class MediaController {
     this.logger.setContext(MediaController.name);
   }
 
-  //todo: Добавить token.
   @Post('upload')
   @ApiUploadFilesDecorator()
   @UseInterceptors(FilesInterceptor('files', 10))

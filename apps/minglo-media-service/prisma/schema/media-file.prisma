@@ -15,7 +15,7 @@ model MediaFile {
   height   Int?
   fileSize Int? @map("file_size")
 
-  // null = ещё не использован в посте // todo: можно завязаться на id сущности.
+  // null = ещё не использован в посте
   // заполняется когда Posts module забирает файл при создании поста
   usedAt DateTime? @map("used_at") @db.Timestamptz
 

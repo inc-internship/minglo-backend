@@ -1,6 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IsArray, IsBoolean, IsEnum, IsNumber, IsString, ValidateIf } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  ValidateIf,
+} from 'class-validator';
 import { configValidationUtility, Environments } from '@app/dynamic-config';
 
 @Injectable()
@@ -81,6 +89,12 @@ export class CoreConfig {
   })
   mediaServiceUrl: string;
 
+  @IsNotEmpty({ message: 'Set environment variable MEDIA_ACCESS_SECRET' })
+  mediaAccessSecret: string;
+
+  @IsNotEmpty({ message: 'Set environment variable MEDIA_ACCESS_TOKEN_EXP_IN' })
+  mediaAccessTokenExpIn: number;
+
   constructor(private configService: ConfigService<any, true>) {
     this.env = this.configService.get('NODE_ENV');
     this.port = Number(this.configService.get('MINGLO_PORT'));
@@ -112,6 +126,8 @@ export class CoreConfig {
     this.recaptchaSecret = this.configService.get('RECAPTCHA_SECRET');
     this.recaptchaBypassSecret = this.configService.get('RECAPTCHA_BYPASS_SECRET');
     this.mediaServiceUrl = this.configService.get('MEDIA_SERVICE_URL');
+    this.mediaAccessTokenExpIn = Number(this.configService.get('MEDIA_ACCESS_TOKEN_EXP_IN'));
+    this.mediaAccessSecret = this.configService.get('MEDIA_ACCESS_SECRET');
 
     configValidationUtility.validateConfig(this);
   }

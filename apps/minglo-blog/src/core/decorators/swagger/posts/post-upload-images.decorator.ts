@@ -13,7 +13,7 @@ import { ErrorResponseBody } from '@app/exceptions';
 import { MediaTypeInputDto } from '@app/media/api/input-dto';
 import { UploadImageResultDto } from '@app/media/dto';
 
-export function ApiPostsUploadImageDecorator() {
+export function ApiPostsUploadImagesDecorator() {
   return applyDecorators(
     ApiBearerAuth('access-token'),
     ApiExtraModels(MediaTypeInputDto),

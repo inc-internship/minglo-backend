@@ -39,8 +39,8 @@ export class ImageProcessorService {
     try {
       const buffer = await sharp(file.buffer)
         .resize({
-          width: options?.width ?? 300,
-          height: options?.height ?? 300,
+          width: options?.width ?? 504,
+          height: options?.height ?? 504,
           fit: options?.fit ?? 'inside',
         })
         .webp({ quality: 80 })

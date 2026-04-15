@@ -1,1 +1,1 @@
-export * from './post-upload-image.decorator';
+export * from './post-upload-images.decorator';

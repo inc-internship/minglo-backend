@@ -8,3 +8,7 @@ export enum MediaMimeType {
   IMAGE_PNG = 'IMAGE_PNG',
   IMAGE_WEBP = 'IMAGE_WEBP',
 }
+
+export enum MediaAuthorizedServices {
+  MINGLO_BLOG = 'minglo-blog',
+}

@@ -48,6 +48,9 @@ export class MediaConfig {
   @IsNotEmpty({ message: 'Set environment variable MEDIA_ACCESS_SECRET' })
   accessSecret: string;
 
+  @IsNotEmpty({ message: 'Set environment variable MEDIA_ACCESS_TOKEN_EXP_IN' })
+  accessTokenExpIn: number;
+
   // Throttler
   @ValidateIf((o) => o.throttleTtl !== undefined)
   @IsNumber({}, { message: 'Set environment variable MEDIA_THROTTLE_TTL (seconds)' })
@@ -113,6 +116,8 @@ export class MediaConfig {
     this.swagger = configValidationUtility.convertToBoolean(
       this.configService.get('MEDIA_SWAGGER'),
     ) as boolean;
+
+    this.accessTokenExpIn = Number(this.configService.get('MEDIA_ACCESS_TOKEN_EXP_IN'));
 
     configValidationUtility.validateConfig(this);
     this.logger.log(`MediaServiceConfig successfully validated`, 'constructor');

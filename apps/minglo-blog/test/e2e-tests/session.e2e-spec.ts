@@ -44,6 +44,16 @@ describe('Session API (e2e)', () => {
     const { body: devices } = await sessionManager.getSession(accessToken, 200);
     expect(Array.isArray(devices)).toBe(true);
     expect(devices).toHaveLength(2);
+
+    const currentSessions = devices.filter((d) => d.isCurrent === true);
+    expect(currentSessions).toHaveLength(1);
+
+    expect(currentSessions[0].ip).toBe('127.0.0.1');
+
+    const otherSessions = devices.filter((d) => d.isCurrent === false);
+    expect(otherSessions).toHaveLength(1);
+    expect(otherSessions[0].ip).toBe('127.0.2.2');
+    expect(otherSessions[0].browserName).toContain('Firefox');
   });
 
   // delete session

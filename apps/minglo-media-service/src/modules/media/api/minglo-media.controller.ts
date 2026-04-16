@@ -17,7 +17,9 @@ import { MediaTypeInputDto } from '@app/media/api/input-dto';
 import { UploadImageCommand } from '../application/usecases';
 import { UploadImageResultDto } from '@app/media/dto';
 import { MediaJwtGuard } from '../guards';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Media HTTP')
 @UseGuards(MediaJwtGuard)
 @Controller('media')
 export class MediaController {

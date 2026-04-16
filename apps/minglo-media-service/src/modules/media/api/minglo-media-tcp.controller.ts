@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { UploadsMetadataInputDto } from './input-dto/uploads-metadata.input-dto';
+import { ConsumeMediaFilesInputDto } from './input-dto/consume-media-files-input.dto';
 import { LoggerService } from '@app/logger';
 import { CommandBus } from '@nestjs/cqrs';
 import { MediaFileMetaDataViewDto } from './view-dto';
@@ -22,7 +22,7 @@ export class MediaTcpController {
    */
   @MessagePattern({ cmd: 'consume_media_files' })
   async consumeMediaFiles(
-    @Payload() dto: UploadsMetadataInputDto,
+    @Payload() dto: ConsumeMediaFilesInputDto,
   ): Promise<MediaFileMetaDataViewDto[]> {
     const { publicUserId, uploadIds } = dto;
 

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ArrayNotEmpty, IsArray, IsNotEmpty, IsString } from 'class-validator';
 
-export class UploadsMetadataInputDto {
+export class ConsumeMediaFilesInputDto {
   @ApiProperty({
     description: 'List of uploaded image IDs',
     example: ['uploadId1', 'uploadId2'],

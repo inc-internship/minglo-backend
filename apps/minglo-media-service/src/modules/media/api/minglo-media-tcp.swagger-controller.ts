@@ -1,6 +1,6 @@
 import { Controller, Post } from '@nestjs/common';
 import { Payload } from '@nestjs/microservices';
-import { UploadsMetadataInputDto } from './input-dto/uploads-metadata.input-dto';
+import { ConsumeMediaFilesInputDto } from './input-dto/consume-media-files-input.dto';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MediaFileMetaDataViewDto } from './view-dto';
 
@@ -13,9 +13,9 @@ export class SwaggerMediaTcpController {
     description:
       ' Used by Posts module during post creation flow. Returns metadata for uploaded media files.',
   })
-  @ApiBody({ type: UploadsMetadataInputDto })
+  @ApiBody({ type: ConsumeMediaFilesInputDto })
   async getUploadsMetadata(
-    @Payload() dto: UploadsMetadataInputDto,
+    @Payload() dto: ConsumeMediaFilesInputDto,
   ): Promise<MediaFileMetaDataViewDto[]> {
     console.log(dto);
     return [];

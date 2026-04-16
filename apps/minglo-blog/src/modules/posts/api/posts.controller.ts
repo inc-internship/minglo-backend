@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   HttpCode,
   HttpStatus,
@@ -13,10 +14,15 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { CurrentUser } from '../../../core/decorators/auth/current-user.decorator';
 import { ActiveUserDto } from '../../../core/decorators/auth/dto';
 import { ImageFilesValidationPipe } from '@app/media/pipes';
-import { ApiPostsUploadImagesDecorator } from '../../../core/decorators/swagger/posts';
+import {
+  ApiPostsUploadImagesDecorator,
+  ApiCreatePostDecorator,
+} from '../../../core/decorators/swagger/posts';
 import { UploadImageResultDto } from '@app/media/dto';
 import { CommandBus } from '@nestjs/cqrs';
 import { UploadPostImagesCommand } from '../application/usecases';
+import { CreatePostInputDto } from './input-dto';
+import { CreatePostViewDto } from './view-dto';
 
 @Controller('posts')
 export class PostsController {
@@ -38,5 +44,17 @@ export class PostsController {
     @CurrentUser() user: ActiveUserDto,
   ): Promise<UploadImageResultDto> {
     return this.commandBus.execute(new UploadPostImagesCommand(files, user));
+  }
+
+  @Post()
+  @ApiCreatePostDecorator()
+  @UseGuards(AccessGuard)
+  @HttpCode(HttpStatus.CREATED)
+  async create(
+    @Body() body: CreatePostInputDto,
+    @CurrentUser() user: ActiveUserDto,
+  ): Promise<CreatePostViewDto> {
+    console.log(body, user);
+    return { id: 'created_postId' };
   }
 }

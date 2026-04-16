@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { LoggerService } from '@app/logger';
-import { MediaRepository } from '../../infrstructure/media.repository';
+import { MediaRepository } from '../../infrstructure';
 
 export class MarkMediaFilesDeletedCommand {
   constructor(public keys: string[]) {}

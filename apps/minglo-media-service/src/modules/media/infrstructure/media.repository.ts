@@ -33,4 +33,26 @@ export class MediaRepository {
       PrismaExceptionMapper.map(error);
     }
   }
+
+  /**
+   * Soft-deletes multiple media files by their keys.
+   * Sets `deletedAt` timestamp for records that are not already deleted.
+   */
+  async softDeleteMany(keys: string[], deletedAt: Date): Promise<number> {
+    try {
+      const result = await this.prisma.mediaFile.updateMany({
+        where: {
+          key: { in: keys },
+          deletedAt: null,
+        },
+        data: {
+          deletedAt: deletedAt,
+        },
+      });
+
+      return result.count;
+    } catch (error) {
+      PrismaExceptionMapper.map(error);
+    }
+  }
 }

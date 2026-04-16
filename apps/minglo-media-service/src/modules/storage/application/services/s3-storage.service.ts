@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { DeleteObjectsCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { MediaConfig } from '../../../core/media.config';
 import {
   UploadImageToS3Params,
@@ -128,11 +128,64 @@ export class S3StorageService {
 
     this.logger.log(
       `Batch images upload to S3: ${successful.length} succeeded, ${failedCount} failed, total images: ${tasks.length}`,
+      'uploadMany',
     );
 
     return {
       uploadedImages: successful,
       failedCount,
     };
+  }
+
+  /**
+   * Deletes multiple objects from S3 by keys.
+   * Uses batch DeleteObjects API (up to 1000 keys per request).
+   */
+  async deleteMany(keys: string[]): Promise<void> {
+    if (!keys.length) return;
+
+    try {
+      // В s3 есть ограничение на 1000 объектов максимум 1000 объектов за один DeleteObjectsRequest
+      // поэтому разделяем ключи на несколько частей
+      const chunks = this.chunk(keys, 1000);
+
+      for (const chunk of chunks) {
+        await this.s3Client.send(
+          new DeleteObjectsCommand({
+            Bucket: this.bucket,
+            Delete: {
+              Objects: chunk.map((Key) => ({ Key })),
+              Quiet: true,
+            },
+          }),
+        );
+      }
+
+      this.logger.log(`Deleted ${keys.length} files from S3`, 'deleteMany');
+    } catch (error) {
+      this.logger.error(`Failed to delete media files`, error);
+      throw new DomainException({
+        code: DomainExceptionCode.InternalServerError,
+        message: `S3 batch delete failed`,
+      });
+    }
+  }
+
+  /**
+   * Splits an array into smaller chunks of a given size.
+   * Used to avoid S3 API limits (e.g. max 1000 keys per request).
+   *
+   * @param arr - Input array to split
+   * @param size - Maximum size of each chunk
+   * @returns Array of chunked arrays
+   */
+  private chunk<T>(arr: T[], size: number): T[][] {
+    const result: T[][] = [];
+
+    for (let i = 0; i < arr.length; i += size) {
+      result.push(arr.slice(i, i + size));
+    }
+
+    return result;
   }
 }

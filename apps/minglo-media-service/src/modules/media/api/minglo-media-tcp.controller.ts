@@ -29,6 +29,7 @@ export class MediaTcpController {
 
     this.logger.log(
       `consume_media_files start user: ${publicUserId} | uploadIds count=${uploadIds.length}`,
+      'consumeMediaFiles',
     );
 
     return this.commandBus.execute<ConsumeMediaFilesUsecase, MediaFileMetaDataViewDto[]>(
@@ -46,7 +47,10 @@ export class MediaTcpController {
   ): Promise<MarkDeletedResultViewDto> {
     const { keys } = dto;
 
-    this.logger.log(`mark_media_files_deleted start, requested keys: ${keys.join(', ')}`);
+    this.logger.log(
+      `mark_media_files_deleted start, requested keys: ${keys.join(', ')}`,
+      'markMediaFilesDeleted',
+    );
 
     await this.commandBus.execute<MarkMediaFilesDeletedCommand, void>(
       new MarkMediaFilesDeletedCommand(keys),

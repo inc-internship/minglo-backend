@@ -18,6 +18,7 @@ export class MediaTcpController {
   /**
    * Consumes media files by upload IDs:
    * Used by Posts module during post creation flow.
+   * Returns metadata for uploaded media files.
    */
   @MessagePattern({ cmd: 'consume_media_files' })
   async consumeMediaFiles(

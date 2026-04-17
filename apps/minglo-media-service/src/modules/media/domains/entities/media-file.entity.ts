@@ -20,7 +20,7 @@ export class MediaFileEntity {
   public type: MediaType;
 
   /** Mime type of the file */
-  public mimeType?: MediaMimeType;
+  public mimeType: MediaMimeType;
 
   /** Publicly accessible URL */
   public url: string;
@@ -29,13 +29,13 @@ export class MediaFileEntity {
   public key: string;
 
   /** Image width (optional) */
-  public width?: number;
+  public width: number;
 
   /** Image height (optional) */
-  public height?: number;
+  public height: number;
 
   /** File size in bytes (optional) */
-  public fileSize?: number;
+  public fileSize: number;
 
   /** Optional timestamp when file was used */
   public usedAt?: Date;
@@ -51,12 +51,12 @@ export class MediaFileEntity {
     publicId?: string;
     publicUserId: string;
     type: MediaType;
-    mimeType?: MediaMimeType;
+    mimeType: MediaMimeType;
     url: string;
     key: string;
-    width?: number;
-    height?: number;
-    fileSize?: number;
+    width: number;
+    height: number;
+    fileSize: number;
     usedAt?: Date;
     createdAt?: Date;
     updatedAt?: Date;
@@ -88,13 +88,13 @@ export class MediaFileEntity {
       id: file.id,
       publicId: file.publicId,
       publicUserId: file.publicUserId,
-      type: file.type.toUpperCase() as MediaType,
-      mimeType: file.mimeType?.split('/').join('_').toUpperCase() as MediaMimeType,
+      type: file.type as unknown as MediaType,
+      mimeType: file.mimeType as unknown as MediaMimeType,
       url: file.url,
       key: file.key,
-      width: file.width ?? undefined,
-      height: file?.height ?? undefined,
-      fileSize: file.fileSize ?? undefined,
+      width: file.width,
+      height: file?.height,
+      fileSize: file.fileSize,
       usedAt: file.usedAt ?? undefined,
       createdAt: file.createdAt,
       updatedAt: file.updatedAt,

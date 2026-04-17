@@ -4,6 +4,7 @@ import { MediaFileEntity } from '../domains/entities';
 import { PrismaExceptionMapper } from '@app/exceptions';
 import { MediaFileFactory } from '../domains/factory/media-file.factory';
 import { BatchPayload } from '../../../../prisma/generated/prisma/internal/prismaNamespace';
+import { MediaMimeType } from '../../../../prisma/generated/prisma/enums';
 
 @Injectable()
 export class MediaRepository {
@@ -17,7 +18,7 @@ export class MediaRepository {
     const data = mediaFiles.map((f) => ({
       publicUserId: f.publicUserId,
       type: f.type,
-      mimeType: f.mimeType,
+      mimeType: f.mimeType as unknown as MediaMimeType,
       url: f.url,
       key: f.key,
       width: f.width,

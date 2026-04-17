@@ -24,4 +24,23 @@ export class UserQueryRepository {
     }
     return MeViewDto.mapToView(findUser);
   }
+
+  /* Находить userID по publicId */
+  async findIdByPublicId(publicId: string): Promise<number> {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        publicId,
+        deletedAt: null,
+      },
+    });
+
+    if (!user) {
+      throw new DomainException({
+        code: DomainExceptionCode.NotFound,
+        message: 'User not found',
+      });
+    }
+
+    return user.id;
+  }
 }

@@ -1,1 +1,1 @@
-export * from './media-file-metadata.view-dto';
+export * from './mark-deleted-result.view-dto';

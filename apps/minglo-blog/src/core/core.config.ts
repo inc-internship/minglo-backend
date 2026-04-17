@@ -95,6 +95,12 @@ export class CoreConfig {
   @IsNotEmpty({ message: 'Set environment variable MEDIA_ACCESS_TOKEN_EXP_IN' })
   mediaAccessTokenExpIn: number;
 
+  @IsNotEmpty({ message: 'Set environment variable MEDIA_SERVICE_HOST' })
+  mediaTcpHost: string;
+
+  @IsNumber({}, { message: 'Set environment variable MEDIA_TCP_PORT' })
+  mediaTcpPort: number;
+
   constructor(private configService: ConfigService<any, true>) {
     this.env = this.configService.get('NODE_ENV');
     this.port = Number(this.configService.get('MINGLO_PORT'));
@@ -128,6 +134,8 @@ export class CoreConfig {
     this.mediaServiceUrl = this.configService.get('MEDIA_SERVICE_URL');
     this.mediaAccessTokenExpIn = Number(this.configService.get('MEDIA_ACCESS_TOKEN_EXP_IN'));
     this.mediaAccessSecret = this.configService.get('MEDIA_ACCESS_SECRET');
+    this.mediaTcpHost = this.configService.get('MEDIA_SERVICE_HOST');
+    this.mediaTcpPort = Number(this.configService.get('MEDIA_TCP_PORT'));
 
     configValidationUtility.validateConfig(this);
   }

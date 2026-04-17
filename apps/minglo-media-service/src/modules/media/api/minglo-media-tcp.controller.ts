@@ -3,9 +3,9 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 import { ConsumeMediaFilesInputDto, MarkMediaFilesDeletedInputDTO } from './input-dto';
 import { LoggerService } from '@app/logger';
 import { CommandBus } from '@nestjs/cqrs';
-import { MediaFileMetaDataViewDto } from './view-dto';
-import { ConsumeMediaFilesUsecase, MarkMediaFilesDeletedCommand } from '../application/usecases';
-import { MarkDeletedResultViewDto } from './view-dto/mark-deleted-result.view-dto';
+import { ConsumeMediaFilesCommand, MarkMediaFilesDeletedCommand } from '../application/usecases';
+import { MarkDeletedResultViewDto } from './view-dto';
+import { MediaFileMetaDataViewDto } from '@app/media/api/view-dto';
 
 @Controller()
 export class MediaTcpController {
@@ -32,8 +32,8 @@ export class MediaTcpController {
       'consumeMediaFiles',
     );
 
-    return this.commandBus.execute<ConsumeMediaFilesUsecase, MediaFileMetaDataViewDto[]>(
-      new ConsumeMediaFilesUsecase(publicUserId, uploadIds),
+    return this.commandBus.execute<ConsumeMediaFilesCommand, MediaFileMetaDataViewDto[]>(
+      new ConsumeMediaFilesCommand(publicUserId, uploadIds),
     );
   }
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../database/prisma.service';
 import { User } from '../../../../prisma/generated/prisma/client';
-import { UserEntity as UserEntity, UserFactory } from '../domains';
+import { UserEntity, UserFactory } from '../domains';
 import { DomainException, DomainExceptionCode, PrismaExceptionMapper } from '@app/exceptions';
 import { PasswordRecoveryEntity } from '../domains/entities/password-recovery.entity';
 import { BatchPayload } from '../../../../prisma/generated/prisma/internal/prismaNamespace';
@@ -157,7 +157,7 @@ export class UserRepository {
         data: { emailConfirmed: true },
       });
       await tx.emailConfirmation.update({
-        where: { id: user.emailConfirmation.id },
+        where: { id: user.emailConfirmation?.id },
         data: { confirmedAt: new Date() },
       });
     });

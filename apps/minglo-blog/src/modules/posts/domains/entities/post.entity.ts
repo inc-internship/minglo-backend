@@ -50,7 +50,7 @@ export class PostEntity {
       });
     }
 
-    if (media.length < 1 && media.length > 10) {
+    if (media.length < 1 || media.length > 10) {
       throw new DomainException({
         code: DomainExceptionCode.InternalServerError,
         message: 'Post must have form 1 to 10 media files',

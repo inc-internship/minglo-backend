@@ -82,7 +82,7 @@ export class AuthTestManager {
       .post('/api/v1/auth/login')
       .set('x-forwarded-for', ip)
       .set('user-agent', ua)
-      .send(dto)
+      .send({ email: dto.email, password: dto.password })
       .expect(expectedStatus);
   }
 

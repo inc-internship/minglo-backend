@@ -5,12 +5,14 @@ import { MediaCoreModule, MediaModule } from './modules';
 import { MediaConfig } from './modules/core/media.config';
 import { MediaTestModule } from './modules/testing/testing.module';
 import { MediaTestController } from './modules/testing/api/testing.controller';
+import { ExceptionsModule } from '@app/exceptions';
 
 @Module({
   imports: [
     DynamicConfigModule,
     MediaCoreModule,
     LoggerModule.forRoot('MINGLO-MEDIA'),
+    ExceptionsModule,
     MediaModule,
   ],
   controllers: [],

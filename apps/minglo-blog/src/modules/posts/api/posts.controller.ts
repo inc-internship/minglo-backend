@@ -20,7 +20,7 @@ import {
 } from '../../../core/decorators/swagger/posts';
 import { UploadImageResultDto } from '@app/media/dto';
 import { CommandBus } from '@nestjs/cqrs';
-import { UploadPostImagesCommand } from '../application/usecases';
+import { CreatePostCommand, UploadPostImagesCommand } from '../application/usecases';
 import { CreatePostInputDto } from './input-dto';
 import { CreatePostViewDto } from './view-dto';
 
@@ -54,7 +54,7 @@ export class PostsController {
     @Body() body: CreatePostInputDto,
     @CurrentUser() user: ActiveUserDto,
   ): Promise<CreatePostViewDto> {
-    console.log(body, user);
-    return { id: 'created_postId' };
+    this.logger.log(`Create new post process initiated for user: ${user.userId}`, 'create');
+    return this.commandBus.execute(new CreatePostCommand(body, user.userId));
   }
 }

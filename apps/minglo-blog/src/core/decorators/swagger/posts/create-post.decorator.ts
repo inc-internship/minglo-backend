@@ -24,6 +24,7 @@ export function ApiCreatePostDecorator() {
     }),
     ApiBadRequestResponse({
       type: ErrorResponseBody,
+      description: 'Validation error',
     }),
     ApiCreatedResponse({
       type: CreatedPostViewDto,

@@ -24,19 +24,20 @@ import { AccessStrategy, RefreshStrategy } from './guards/strategy';
 import { SessionFactory } from './domains/factories/session.factory';
 import { DeviceService } from './application/services/device.service';
 import { JwtModule } from '@nestjs/jwt';
-import { MeHandler } from './application/queries';
-import { UserQueryRepository } from './infrastructure/queries/user.query.repository';
+import { GetTotalRegisteredUserCountQueryHandler, MeHandler } from './application/queries';
+import { UserQueryRepository } from './infrastructure/queries';
 import {
   PasswordRecoveryCodeCleanupJob,
   SessionCleanupJob,
   UsersCleanupJob,
 } from './application/jobs';
 import { SessionsController } from './api/sessions.controller';
-import { GetDevicesHandler } from './application/queries/get-devices.query';
-import { SessionQueryRepository } from './infrastructure/queries/session.query.repository';
+import { GetDevicesHandler } from './application/queries';
+import { SessionQueryRepository } from './infrastructure/queries';
 import { RecaptchaService } from './application/services/recaptcha.service';
 import { RecaptchaGuard } from './guards/captcha.guard';
 import { HttpModule } from '@nestjs/axios';
+import { UsersController } from './api/users.controller';
 
 const services = [
   UserService,
@@ -70,15 +71,18 @@ const repos = [
   SessionQueryRepository,
 ];
 
+const queries = [GetTotalRegisteredUserCountQueryHandler, MeHandler];
+
 const jobs = [UsersCleanupJob, PasswordRecoveryCodeCleanupJob, SessionCleanupJob];
 
 @Module({
   imports: [EmailModule, JwtModule.register({}), HttpModule],
-  controllers: [AuthController, SessionsController],
+  controllers: [AuthController, SessionsController, UsersController],
   providers: [
     ...services,
     ...usecases,
     ...repos,
+    ...queries,
     UserFactory,
     RecaptchaGuard,
     SessionFactory,

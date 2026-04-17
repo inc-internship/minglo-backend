@@ -24,4 +24,18 @@ export class UserQueryRepository {
     }
     return MeViewDto.mapToView(findUser);
   }
+
+  /**
+   * Returns the total number of registered users.
+   * - excludes soft-deleted users (`deletedAt IS NULL`)
+   * - includes only users with confirmed email (`emailConfirmed = true`)
+   */
+  async getTotalRegisteredCount(): Promise<number> {
+    return this.prisma.user.count({
+      where: {
+        deletedAt: null,
+        emailConfirmed: true,
+      },
+    });
+  }
 }

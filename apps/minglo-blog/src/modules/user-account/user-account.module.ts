@@ -94,5 +94,6 @@ const jobs = [UsersCleanupJob, PasswordRecoveryCodeCleanupJob, SessionCleanupJob
     PasswordRecoveryHandler,
     ...jobs,
   ],
+  exports: [UserQueryRepository],
 })
 export class UserAccountModule {}

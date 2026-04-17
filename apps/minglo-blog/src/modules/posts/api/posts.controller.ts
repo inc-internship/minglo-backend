@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   HttpCode,
   HttpStatus,
@@ -13,10 +14,15 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { CurrentUser } from '../../../core/decorators/auth/current-user.decorator';
 import { ActiveUserDto } from '../../../core/decorators/auth/dto';
 import { ImageFilesValidationPipe } from '@app/media/pipes';
-import { ApiPostsUploadImagesDecorator } from '../../../core/decorators/swagger/posts';
+import {
+  ApiPostsUploadImagesDecorator,
+  ApiCreatePostDecorator,
+} from '../../../core/decorators/swagger/posts';
 import { UploadImageResultDto } from '@app/media/dto';
 import { CommandBus } from '@nestjs/cqrs';
-import { UploadPostImagesCommand } from '../application/usecases';
+import { CreatePostCommand, UploadPostImagesCommand } from '../application/usecases';
+import { CreatePostInputDto } from './input-dto';
+import { CreatedPostViewDto } from './view-dto';
 
 @Controller('posts')
 export class PostsController {
@@ -32,11 +38,31 @@ export class PostsController {
   @UseGuards(AccessGuard)
   @UseInterceptors(FilesInterceptor('files', 10))
   @HttpCode(HttpStatus.CREATED)
-  async uploadImage(
+  async uploadMediaFile(
     @UploadedFiles(new ImageFilesValidationPipe())
     files: Express.Multer.File[],
     @CurrentUser() user: ActiveUserDto,
   ): Promise<UploadImageResultDto> {
-    return this.commandBus.execute(new UploadPostImagesCommand(files, user));
+    this.logger.log(
+      `New media upload request received from user: ${user.userId}`,
+      'uploadMediaFile',
+    );
+    return this.commandBus.execute<UploadPostImagesCommand, UploadImageResultDto>(
+      new UploadPostImagesCommand(files, user),
+    );
+  }
+
+  @Post()
+  @ApiCreatePostDecorator()
+  @UseGuards(AccessGuard)
+  @HttpCode(HttpStatus.CREATED)
+  async create(
+    @Body() body: CreatePostInputDto,
+    @CurrentUser() user: ActiveUserDto,
+  ): Promise<CreatedPostViewDto> {
+    this.logger.log(`New post creation request received from user: ${user.userId}`, 'create');
+    return this.commandBus.execute<CreatePostCommand, CreatedPostViewDto>(
+      new CreatePostCommand(body, user.userId),
+    );
   }
 }

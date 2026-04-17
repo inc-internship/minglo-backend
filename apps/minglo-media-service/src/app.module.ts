@@ -6,6 +6,7 @@ import { MediaConfig } from './modules/core/media.config';
 import { MediaTestModule } from './modules/testing/testing.module';
 import { MediaTestController } from './modules/testing/api/testing.controller';
 import { ExceptionsModule } from '@app/exceptions';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ExceptionsModule } from '@app/exceptions';
     LoggerModule.forRoot('MINGLO-MEDIA'),
     ExceptionsModule,
     MediaModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [],
   providers: [AsyncLocalStorageService],

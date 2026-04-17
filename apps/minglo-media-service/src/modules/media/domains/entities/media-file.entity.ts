@@ -1,5 +1,6 @@
 import { CreateMediaFileDto } from '../dto/create-media-file.dto';
 import { MediaMimeType, MediaType } from '@app/media/enums';
+import { MediaFile } from '../../../../../prisma/generated/prisma/client';
 
 /**
  * Media file entity
@@ -19,7 +20,7 @@ export class MediaFileEntity {
   public type: MediaType;
 
   /** Mime type of the file */
-  public mimeType?: MediaMimeType;
+  public mimeType: MediaMimeType;
 
   /** Publicly accessible URL */
   public url: string;
@@ -28,13 +29,13 @@ export class MediaFileEntity {
   public key: string;
 
   /** Image width (optional) */
-  public width?: number;
+  public width: number;
 
   /** Image height (optional) */
-  public height?: number;
+  public height: number;
 
   /** File size in bytes (optional) */
-  public fileSize?: number;
+  public fileSize: number;
 
   /** Optional timestamp when file was used */
   public usedAt?: Date;
@@ -43,22 +44,24 @@ export class MediaFileEntity {
   public createdAt?: Date;
   public updatedAt?: Date;
   public deletedAt?: Date;
+  public s3DeletedAt?: Date;
 
   constructor(props: {
     id?: number;
     publicId?: string;
     publicUserId: string;
     type: MediaType;
-    mimeType?: MediaMimeType;
+    mimeType: MediaMimeType;
     url: string;
     key: string;
-    width?: number;
-    height?: number;
-    fileSize?: number;
+    width: number;
+    height: number;
+    fileSize: number;
     usedAt?: Date;
     createdAt?: Date;
     updatedAt?: Date;
     deletedAt?: Date;
+    s3DeletedAt?: Date;
   }) {
     Object.assign(this, props);
   }
@@ -77,5 +80,26 @@ export class MediaFileEntity {
       height: dto.height,
       fileSize: dto.fileSize,
     });
+  }
+
+  /* Восстанавливает доменную сущность из БД */
+  static reconstitute(file: MediaFile): MediaFileEntity {
+    return {
+      id: file.id,
+      publicId: file.publicId,
+      publicUserId: file.publicUserId,
+      type: file.type as unknown as MediaType,
+      mimeType: file.mimeType as unknown as MediaMimeType,
+      url: file.url,
+      key: file.key,
+      width: file.width,
+      height: file?.height,
+      fileSize: file.fileSize,
+      usedAt: file.usedAt ?? undefined,
+      createdAt: file.createdAt,
+      updatedAt: file.updatedAt,
+      deletedAt: file.deletedAt ?? undefined,
+      s3DeletedAt: file.s3DeletedAt ?? undefined,
+    };
   }
 }

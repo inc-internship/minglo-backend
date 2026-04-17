@@ -1,5 +1,6 @@
 import { CreateMediaFileDto } from '../dto/create-media-file.dto';
 import { MediaMimeType, MediaType } from '@app/media/enums';
+import { MediaFile } from '../../../../../prisma/generated/prisma/client';
 
 /**
  * Media file entity
@@ -43,6 +44,7 @@ export class MediaFileEntity {
   public createdAt?: Date;
   public updatedAt?: Date;
   public deletedAt?: Date;
+  public s3DeletedAt?: Date;
 
   constructor(props: {
     id?: number;
@@ -59,6 +61,7 @@ export class MediaFileEntity {
     createdAt?: Date;
     updatedAt?: Date;
     deletedAt?: Date;
+    s3DeletedAt?: Date;
   }) {
     Object.assign(this, props);
   }
@@ -77,5 +80,26 @@ export class MediaFileEntity {
       height: dto.height,
       fileSize: dto.fileSize,
     });
+  }
+
+  /* Восстанавливает доменную сущность из БД */
+  static reconstitute(file: MediaFile): MediaFileEntity {
+    return {
+      id: file.id,
+      publicId: file.publicId,
+      publicUserId: file.publicUserId,
+      type: file.type.toUpperCase() as MediaType,
+      mimeType: file.mimeType?.split('/').join('_').toUpperCase() as MediaMimeType,
+      url: file.url,
+      key: file.key,
+      width: file.width ?? undefined,
+      height: file?.height ?? undefined,
+      fileSize: file.fileSize ?? undefined,
+      usedAt: file.usedAt ?? undefined,
+      createdAt: file.createdAt,
+      updatedAt: file.updatedAt,
+      deletedAt: file.deletedAt ?? undefined,
+      s3DeletedAt: file.s3DeletedAt ?? undefined,
+    };
   }
 }

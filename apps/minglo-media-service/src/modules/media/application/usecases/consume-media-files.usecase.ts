@@ -4,7 +4,7 @@ import { MediaFileMetaDataViewDto } from '../../api/view-dto';
 import { PrismaMediaService } from '../../../../database';
 import { DomainException, DomainExceptionCode, PrismaExceptionMapper } from '@app/exceptions';
 
-export class ConsumeMediaFilesCommand {
+export class ConsumeMediaFilesUsecase {
   constructor(
     public publicUserId: string,
     public uploadIds: string[],
@@ -15,9 +15,9 @@ export class ConsumeMediaFilesCommand {
  * Consumes (locks) media files and returns their metadata.
  * Ensures files are owned by user, not deleted, and not previously used.
  */
-@CommandHandler(ConsumeMediaFilesCommand)
+@CommandHandler(ConsumeMediaFilesUsecase)
 export class ConsumeMediaFilesUseCase implements ICommandHandler<
-  ConsumeMediaFilesCommand,
+  ConsumeMediaFilesUsecase,
   MediaFileMetaDataViewDto[]
 > {
   constructor(
@@ -29,7 +29,7 @@ export class ConsumeMediaFilesUseCase implements ICommandHandler<
   async execute({
     publicUserId,
     uploadIds,
-  }: ConsumeMediaFilesCommand): Promise<MediaFileMetaDataViewDto[]> {
+  }: ConsumeMediaFilesUsecase): Promise<MediaFileMetaDataViewDto[]> {
     try {
       const now = new Date();
 

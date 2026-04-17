@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MediaFileEntity } from '../entities';
 import { CreateMediaFileDto } from '../dto/create-media-file.dto';
+import { MediaFile } from '../../../../../prisma/generated/prisma/client';
 
 /**
  * Factory для создания MediaFileEntity
@@ -14,5 +15,9 @@ export class MediaFileFactory {
    */
   create(dto: CreateMediaFileDto): MediaFileEntity {
     return MediaFileEntity.create(dto);
+  }
+
+  mapFromModel(file: MediaFile): MediaFileEntity {
+    return MediaFileEntity.reconstitute(file);
   }
 }

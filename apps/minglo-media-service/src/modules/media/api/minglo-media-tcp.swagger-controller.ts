@@ -2,8 +2,8 @@ import { Controller, Delete, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { Payload } from '@nestjs/microservices';
 import { ConsumeMediaFilesInputDto, MarkMediaFilesDeletedInputDTO } from './input-dto';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { MediaFileMetaDataViewDto } from './view-dto';
-import { MarkDeletedResultViewDto } from './view-dto/mark-deleted-result.view-dto';
+import { MarkDeletedResultViewDto } from './view-dto';
+import { MediaFileMetaDataViewDto } from '@app/media/api/view-dto';
 
 @Controller()
 @ApiTags('Media TCP')

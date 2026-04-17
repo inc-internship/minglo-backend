@@ -1,4 +1,4 @@
-import { MediaFile } from '../../../../../prisma/generated/prisma/client';
+import { MediaFile } from '../../../../../apps/minglo-media-service/prisma/generated/prisma/client';
 
 export class MediaFileMetaDataViewDto {
   publicId: string;

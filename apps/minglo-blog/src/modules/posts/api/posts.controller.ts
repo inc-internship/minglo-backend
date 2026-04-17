@@ -22,7 +22,7 @@ import { UploadImageResultDto } from '@app/media/dto';
 import { CommandBus } from '@nestjs/cqrs';
 import { CreatePostCommand, UploadPostImagesCommand } from '../application/usecases';
 import { CreatePostInputDto } from './input-dto';
-import { CreatePostViewDto } from './view-dto';
+import { CreatedPostViewDto } from './view-dto';
 
 @Controller('posts')
 export class PostsController {
@@ -38,12 +38,18 @@ export class PostsController {
   @UseGuards(AccessGuard)
   @UseInterceptors(FilesInterceptor('files', 10))
   @HttpCode(HttpStatus.CREATED)
-  async uploadImage(
+  async uploadMediaFile(
     @UploadedFiles(new ImageFilesValidationPipe())
     files: Express.Multer.File[],
     @CurrentUser() user: ActiveUserDto,
   ): Promise<UploadImageResultDto> {
-    return this.commandBus.execute(new UploadPostImagesCommand(files, user));
+    this.logger.log(
+      `New media upload request received from user: ${user.userId}`,
+      'uploadMediaFile',
+    );
+    return this.commandBus.execute<UploadPostImagesCommand, UploadImageResultDto>(
+      new UploadPostImagesCommand(files, user),
+    );
   }
 
   @Post()
@@ -53,8 +59,10 @@ export class PostsController {
   async create(
     @Body() body: CreatePostInputDto,
     @CurrentUser() user: ActiveUserDto,
-  ): Promise<CreatePostViewDto> {
-    this.logger.log(`Create new post process initiated for user: ${user.userId}`, 'create');
-    return this.commandBus.execute(new CreatePostCommand(body, user.userId));
+  ): Promise<CreatedPostViewDto> {
+    this.logger.log(`New post creation request received from user: ${user.userId}`, 'create');
+    return this.commandBus.execute<CreatePostCommand, CreatedPostViewDto>(
+      new CreatePostCommand(body, user.userId),
+    );
   }
 }

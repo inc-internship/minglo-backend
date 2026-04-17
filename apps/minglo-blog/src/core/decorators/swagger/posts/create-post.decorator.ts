@@ -9,7 +9,7 @@ import {
 } from '@nestjs/swagger';
 import { ErrorResponseBody } from '@app/exceptions';
 import { CreatePostInputDto } from '../../../../modules/posts/api/input-dto';
-import { CreatePostViewDto } from '../../../../modules/posts/api/view-dto';
+import { CreatedPostViewDto } from '../../../../modules/posts/api/view-dto';
 
 export function ApiCreatePostDecorator() {
   return applyDecorators(
@@ -26,8 +26,11 @@ export function ApiCreatePostDecorator() {
       type: ErrorResponseBody,
     }),
     ApiCreatedResponse({
-      type: CreatePostViewDto,
+      type: CreatedPostViewDto,
       description: 'Success',
+      example: {
+        id: 'created_post_id',
+      },
     }),
     ApiUnauthorizedResponse({
       description: 'Unauthorized',

@@ -11,10 +11,10 @@ model PostMediaFile {
   url String
   key String // внутренний S3 ключ, никогда не возвращается фронту
 
-  mimeType MediaMimeType? @map("mime_type")
-  width    Int?
-  height   Int?
-  fileSize Int?
+  mimeType MediaMimeType @map("mime_type")
+  width    Int
+  height   Int
+  fileSize Int
   order    Int
 
   @@unique([postId, order])

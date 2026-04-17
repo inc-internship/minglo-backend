@@ -1,1 +1,1 @@
-export * from './create-post.view-dto';
+export * from './created-post.view-dto';

@@ -6,6 +6,8 @@ import { JwtService } from '@nestjs/jwt';
 import { CoreConfig } from '../../core/core.config';
 import { CreatePostUseCase, UploadPostImagesUseCase } from './application/usecases';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { PostsRepository } from './infrastructure/posts.repository';
+import { UserAccountModule } from '../user-account/user-account.module';
 
 @Module({
   imports: [
@@ -23,11 +25,13 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         inject: [CoreConfig],
       },
     ]),
+    UserAccountModule,
   ],
   controllers: [PostsController],
   providers: [
     UploadPostImagesUseCase,
     CreatePostUseCase,
+    PostsRepository,
     {
       provide: MEDIA_ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
       useFactory: (config: CoreConfig): JwtService => {

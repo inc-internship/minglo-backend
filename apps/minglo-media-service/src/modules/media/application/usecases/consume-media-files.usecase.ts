@@ -1,10 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { LoggerService } from '@app/logger';
-import { MediaFileMetaDataViewDto } from '../../api/view-dto';
 import { PrismaMediaService } from '../../../../database';
 import { DomainException, DomainExceptionCode, PrismaExceptionMapper } from '@app/exceptions';
+import { MediaFileMetaDataViewDto } from '@app/media/api/view-dto';
 
-export class ConsumeMediaFilesUsecase {
+export class ConsumeMediaFilesCommand {
   constructor(
     public publicUserId: string,
     public uploadIds: string[],
@@ -15,9 +15,9 @@ export class ConsumeMediaFilesUsecase {
  * Consumes (locks) media files and returns their metadata.
  * Ensures files are owned by user, not deleted, and not previously used.
  */
-@CommandHandler(ConsumeMediaFilesUsecase)
+@CommandHandler(ConsumeMediaFilesCommand)
 export class ConsumeMediaFilesUseCase implements ICommandHandler<
-  ConsumeMediaFilesUsecase,
+  ConsumeMediaFilesCommand,
   MediaFileMetaDataViewDto[]
 > {
   constructor(
@@ -29,7 +29,7 @@ export class ConsumeMediaFilesUseCase implements ICommandHandler<
   async execute({
     publicUserId,
     uploadIds,
-  }: ConsumeMediaFilesUsecase): Promise<MediaFileMetaDataViewDto[]> {
+  }: ConsumeMediaFilesCommand): Promise<MediaFileMetaDataViewDto[]> {
     try {
       const now = new Date();
 

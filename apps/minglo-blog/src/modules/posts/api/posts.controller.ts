@@ -93,11 +93,13 @@ export class PostsController {
     @CurrentUser() user: ActiveUserDto,
     @Param('postId') postId: string,
     @Body() body: UpdatePostInputDto,
-  ): Promise<PostViewDto> {
+  ): Promise<void> {
     this.logger.log(
       `Update post request received, postId: ${postId}, userId: ${user.userId}`,
       'update',
     );
-    return this.commandBus.execute(new UpdatePostCommand(postId, user.userId, body.description));
+    return this.commandBus.execute<UpdatePostCommand, void>(
+      new UpdatePostCommand(postId, user.userId, body.description),
+    );
   }
 }

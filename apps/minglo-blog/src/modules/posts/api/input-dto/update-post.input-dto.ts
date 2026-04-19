@@ -1,15 +1,16 @@
-import { IsOptional, IsString, MaxLength } from 'class-validator';
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, MaxLength, ValidateIf } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 import { createPostConstraints } from '../../domains/constraints';
 
 export class UpdatePostInputDto {
-  @ApiPropertyOptional({
-    description: 'Post text content',
+  @ApiProperty({
+    description: 'Post text content ot null',
     maxLength: createPostConstraints.description.maxLength,
+    nullable: true,
     example: 'My trip to Lisbon in Portugal',
   })
-  @IsOptional()
+  @ValidateIf((o) => o.description !== null)
   @IsString()
-  @MaxLength(500)
+  @MaxLength(createPostConstraints.description.maxLength)
   description: string | null;
 }

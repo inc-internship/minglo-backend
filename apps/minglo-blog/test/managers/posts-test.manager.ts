@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { CreatePostInputDto } from '../../src/modules/posts/api/input-dto';
+import { CreatePostInputDto, UpdatePostInputDto } from '../../src/modules/posts/api/input-dto';
 
 export class PostsTestManager {
   constructor(private readonly app: INestApplication) {}
@@ -22,6 +22,19 @@ export class PostsTestManager {
     expectedStatus: number = HttpStatus.OK,
   ): Promise<request.Response> {
     return request(this.app.getHttpServer()).get(`/api/v1/posts/${postId}`).expect(expectedStatus);
+  }
+
+  async updatePost(
+    postId: string,
+    dto: Partial<UpdatePostInputDto>,
+    accessToken: string,
+    expectedStatus: number = HttpStatus.NO_CONTENT,
+  ): Promise<request.Response> {
+    return request(this.app.getHttpServer())
+      .put(`/api/v1/posts/${postId}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(dto)
+      .expect(expectedStatus);
   }
 
   validCreatePostDto(override: Partial<CreatePostInputDto> = {}): CreatePostInputDto {

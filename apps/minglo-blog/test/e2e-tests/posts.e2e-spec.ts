@@ -129,6 +129,113 @@ describe('Posts API (e2e)', () => {
     });
   });
 
+  describe('PUT /posts/:postId', () => {
+    it('401 — should return Unauthorized without token', async () => {
+      await postsTestManager.updatePost(
+        'any-id',
+        { description: 'new' },
+        '',
+        HttpStatus.UNAUTHORIZED,
+      );
+    });
+
+    it('404 — should return NotFound for non-existent postId', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+
+      await postsTestManager.updatePost(
+        'non-existent-id',
+        { description: 'new' },
+        accessToken,
+        HttpStatus.NOT_FOUND,
+      );
+    });
+
+    it('403 — should return Forbidden when user is not the post owner', async () => {
+      const { accessToken: ownerToken } = await authTestManager.setupUser();
+      const { accessToken: otherToken } = await authTestManager.setupUser(
+        authTestManager.validDto({ login: 'otherUser1', email: 'other@gmail.com' }),
+      );
+
+      const createResponse = await postsTestManager.createPost(
+        postsTestManager.validCreatePostDto(),
+        ownerToken,
+      );
+
+      await postsTestManager.updatePost(
+        createResponse.body.id,
+        { description: 'hacked' },
+        otherToken,
+        HttpStatus.FORBIDDEN,
+      );
+    });
+
+    it('400 — should return BadRequest if description exceeds 500 chars', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+
+      const createResponse = await postsTestManager.createPost(
+        postsTestManager.validCreatePostDto(),
+        accessToken,
+      );
+
+      await postsTestManager.updatePost(
+        createResponse.body.id,
+        { description: 'a'.repeat(501) },
+        accessToken,
+        HttpStatus.BAD_REQUEST,
+      );
+    });
+
+    it('204 — should update post description successfully', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+
+      const createResponse = await postsTestManager.createPost(
+        postsTestManager.validCreatePostDto(),
+        accessToken,
+      );
+      const postId = createResponse.body.id;
+
+      await postsTestManager.updatePost(
+        postId,
+        { description: 'Updated description' },
+        accessToken,
+      );
+
+      const getResponse = await postsTestManager.getPostById(postId);
+      expect(getResponse.body.description).toBe('Updated description');
+    });
+
+    it('400 — should return BadRequest if description is omitted', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+
+      const createResponse = await postsTestManager.createPost(
+        postsTestManager.validCreatePostDto(),
+        accessToken,
+      );
+
+      await postsTestManager.updatePost(
+        createResponse.body.id,
+        {},
+        accessToken,
+        HttpStatus.BAD_REQUEST,
+      );
+    });
+
+    it('204 — should set description to null when explicitly passed as null', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+
+      const createResponse = await postsTestManager.createPost(
+        postsTestManager.validCreatePostDto({ description: 'initial' }),
+        accessToken,
+      );
+      const postId = createResponse.body.id;
+
+      await postsTestManager.updatePost(postId, { description: null }, accessToken);
+
+      const getResponse = await postsTestManager.getPostById(postId);
+      expect(getResponse.body.description).toBeNull();
+    });
+  });
+
   describe('GET /posts/:postId', () => {
     it('404 — should return NotFound for non-existent postId', async () => {
       await postsTestManager.getPostById('non-existent-id', HttpStatus.NOT_FOUND);

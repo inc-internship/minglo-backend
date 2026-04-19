@@ -12,7 +12,7 @@ export class PostQueryRepository {
   ) {}
 
   async findByPublicIdOrFail(publicId: string): Promise<PostViewDto> {
-    const post = await this.prisma.post.findUniqueOrThrow({
+    const post = await this.prisma.post.findUnique({
       where: { publicId, deletedAt: null },
       include: {
         user: true,

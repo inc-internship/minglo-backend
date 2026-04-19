@@ -128,4 +128,74 @@ describe('Posts API (e2e)', () => {
       );
     });
   });
+
+  describe('GET /posts/:postId', () => {
+    it('404 — should return NotFound for non-existent postId', async () => {
+      await postsTestManager.getPostById('non-existent-id', HttpStatus.NOT_FOUND);
+    });
+
+    it('200 — should return post by id', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+
+      const createResponse = await postsTestManager.createPost(
+        postsTestManager.validCreatePostDto(),
+        accessToken,
+      );
+
+      const postId = createResponse.body.id;
+
+      const response = await postsTestManager.getPostById(postId);
+
+      expect(response.body).toMatchObject({
+        id: postId,
+        description: null,
+        images: expect.any(Array),
+        owner: expect.objectContaining({
+          id: expect.any(String),
+          login: expect.any(String),
+        }),
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+      });
+    });
+
+    it('200 — should return post with description when set', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+      const description = 'My awesome post description';
+
+      const createResponse = await postsTestManager.createPost(
+        postsTestManager.validCreatePostDto({ description }),
+        accessToken,
+      );
+
+      const postId = createResponse.body.id;
+
+      const response = await postsTestManager.getPostById(postId);
+
+      expect(response.body.description).toBe(description);
+    });
+
+    it('200 — should return post with images array containing media file data', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+
+      const createResponse = await postsTestManager.createPost(
+        postsTestManager.validCreatePostDto(),
+        accessToken,
+      );
+
+      const postId = createResponse.body.id;
+
+      const response = await postsTestManager.getPostById(postId);
+
+      expect(response.body.images).toHaveLength(1);
+      expect(response.body.images[0]).toMatchObject({
+        id: expect.any(String),
+        url: expect.any(String),
+        width: expect.any(Number),
+        height: expect.any(Number),
+        mimeType: expect.any(String),
+        fileSize: expect.any(Number),
+      });
+    });
+  });
 });

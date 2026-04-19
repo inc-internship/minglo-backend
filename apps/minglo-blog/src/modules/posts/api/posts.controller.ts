@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -20,11 +21,12 @@ import {
   ApiCreatePostDecorator,
   ApiGetPostByIdDecorator,
   ApiPostsUploadImagesDecorator,
+  ApiUpdatePostDecorator,
 } from '../../../core/decorators/swagger/posts';
 import { UploadImageResultDto } from '@app/media/dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreatePostCommand, UploadPostImagesCommand } from '../application/usecases';
-import { CreatePostInputDto } from './input-dto';
+import { CreatePostInputDto, UpdatePostInputDto } from './input-dto';
 import { CreatedPostViewDto, PostViewDto } from './view-dto';
 import { GetPostByIdQuery } from '../application/query';
 
@@ -77,5 +79,17 @@ export class PostsController {
   async getPostById(@Param('postId') postId: string): Promise<PostViewDto> {
     this.logger.log(`Get post data request received, postId: ${postId}`, 'create');
     return this.queryBus.execute<GetPostByIdQuery, PostViewDto>(new GetPostByIdQuery(postId));
+  }
+
+  @Put(':postId')
+  @ApiUpdatePostDecorator()
+  @UseGuards(AccessGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async update(
+    @Param('postId') postId: string,
+    @Body() body: UpdatePostInputDto,
+  ): Promise<PostViewDto> {
+    this.logger.log(`Update post request received, postId: ${postId}`, 'update');
+    return this.commandBus.execute({ body });
   }
 }

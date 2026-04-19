@@ -6,8 +6,8 @@ export class PostViewDto {
   @ApiProperty()
   id: string;
 
-  @ApiProperty({ nullable: true })
-  description: string;
+  @ApiProperty({ nullable: true, example: 'string' })
+  description: string | null;
 
   @ApiProperty({
     type: () => [PostMediaFileViewDto],
@@ -19,9 +19,15 @@ export class PostViewDto {
   })
   owner: PostOwnerViewDto;
 
-  @ApiProperty()
-  createdAt: Date;
+  @ApiProperty({
+    type: String,
+    format: 'date-time',
+  })
+  createdAt: string;
 
-  @ApiProperty()
-  updatedAt: Date;
+  @ApiProperty({
+    type: String,
+    format: 'date-time',
+  })
+  updatedAt: string;
 }

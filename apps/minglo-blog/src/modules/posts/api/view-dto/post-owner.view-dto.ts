@@ -1,12 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { PostOwner } from '../../../../../prisma/types';
 
 export class PostOwnerViewDto {
   @ApiProperty()
-  id: string;
+  public id: string;
   @ApiProperty()
-  login: string;
-  @ApiProperty()
-  firstName: string;
-  @ApiProperty()
-  lastName: string;
+  public login: string;
+
+  private constructor(owner: PostOwner) {
+    this.id = owner.publicId;
+    this.login = owner.login;
+  }
+
+  static create(owner: PostOwner): PostOwnerViewDto {
+    return new this(owner);
+  }
 }

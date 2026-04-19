@@ -8,6 +8,9 @@ import { CreatePostUseCase, UploadPostImagesUseCase } from './application/usecas
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PostsRepository } from './infrastructure/posts.repository';
 import { UserAccountModule } from '../user-account/user-account.module';
+import { GetPostByIdQueryHandler } from './application/query';
+import { PostQueryRepository } from './infrastructure/query';
+import { PostViewMapper } from './application/mappers';
 
 @Module({
   imports: [
@@ -30,8 +33,11 @@ import { UserAccountModule } from '../user-account/user-account.module';
   controllers: [PostsController],
   providers: [
     UploadPostImagesUseCase,
+    GetPostByIdQueryHandler,
     CreatePostUseCase,
     PostsRepository,
+    PostQueryRepository,
+    PostViewMapper,
     {
       provide: MEDIA_ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
       useFactory: (config: CoreConfig): JwtService => {

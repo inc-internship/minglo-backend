@@ -41,3 +41,13 @@ export type UserWithSession = Prisma.UserGetPayload<{
     };
   };
 }>;
+
+export type PostWithMediaFileAndUserData = Prisma.PostGetPayload<{
+  include: {
+    user: true;
+    postsMediaFiles: true;
+  };
+}>;
+
+export type PostOwner = Prisma.UserGetPayload<object>;
+export type PostMediaFile = Prisma.PostMediaFileGetPayload<object>;

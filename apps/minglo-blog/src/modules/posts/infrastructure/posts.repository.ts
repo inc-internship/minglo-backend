@@ -52,4 +52,11 @@ export class PostsRepository {
       data: { description },
     });
   }
+
+  async softDelete(id: number): Promise<void> {
+    await this.prisma.post.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+  }
 }

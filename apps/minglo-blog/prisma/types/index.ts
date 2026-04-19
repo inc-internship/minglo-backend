@@ -51,3 +51,15 @@ export type PostWithMediaFileAndUserData = Prisma.PostGetPayload<{
 
 export type PostOwner = Prisma.UserGetPayload<object>;
 export type PostMediaFile = Prisma.PostMediaFileGetPayload<object>;
+
+export type PostForUpdate = Prisma.PostGetPayload<{
+  select: {
+    id: true;
+    userId: true;
+    user: {
+      select: {
+        publicId: true;
+      };
+    };
+  };
+}>;

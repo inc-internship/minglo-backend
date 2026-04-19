@@ -25,7 +25,11 @@ import {
 } from '../../../core/decorators/swagger/posts';
 import { UploadImageResultDto } from '@app/media/dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CreatePostCommand, UploadPostImagesCommand } from '../application/usecases';
+import {
+  CreatePostCommand,
+  UploadPostImagesCommand,
+  UpdatePostCommand,
+} from '../application/usecases';
 import { CreatePostInputDto, UpdatePostInputDto } from './input-dto';
 import { CreatedPostViewDto, PostViewDto } from './view-dto';
 import { GetPostByIdQuery } from '../application/query';
@@ -86,10 +90,14 @@ export class PostsController {
   @UseGuards(AccessGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(
+    @CurrentUser() user: ActiveUserDto,
     @Param('postId') postId: string,
     @Body() body: UpdatePostInputDto,
   ): Promise<PostViewDto> {
-    this.logger.log(`Update post request received, postId: ${postId}`, 'update');
-    return this.commandBus.execute({ body });
+    this.logger.log(
+      `Update post request received, postId: ${postId}, userId: ${user.userId}`,
+      'update',
+    );
+    return this.commandBus.execute(new UpdatePostCommand(postId, user.userId, body.description));
   }
 }

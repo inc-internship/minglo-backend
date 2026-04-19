@@ -4,7 +4,11 @@ import { PostsController } from './api/posts.controller';
 import { MEDIA_ACCESS_TOKEN_STRATEGY_INJECT_TOKEN, MEDIA_SERVICE } from '@app/media/constants';
 import { JwtService } from '@nestjs/jwt';
 import { CoreConfig } from '../../core/core.config';
-import { CreatePostUseCase, UploadPostImagesUseCase } from './application/usecases';
+import {
+  CreatePostUseCase,
+  UpdatePostUseCase,
+  UploadPostImagesUseCase,
+} from './application/usecases';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PostsRepository } from './infrastructure/posts.repository';
 import { UserAccountModule } from '../user-account/user-account.module';
@@ -35,6 +39,7 @@ import { PostViewMapper } from './application/mappers';
     UploadPostImagesUseCase,
     GetPostByIdQueryHandler,
     CreatePostUseCase,
+    UpdatePostUseCase,
     PostsRepository,
     PostQueryRepository,
     PostViewMapper,

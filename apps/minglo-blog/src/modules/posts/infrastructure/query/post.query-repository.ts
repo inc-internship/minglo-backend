@@ -16,7 +16,11 @@ export class PostQueryRepository {
       where: { publicId, deletedAt: null },
       include: {
         user: true,
-        postsMediaFiles: true,
+        postsMediaFiles: {
+          orderBy: {
+            order: 'asc',
+          },
+        },
       },
     });
 

@@ -37,6 +37,17 @@ export class PostsTestManager {
       .expect(expectedStatus);
   }
 
+  async deletePost(
+    postId: string,
+    accessToken: string,
+    expectedStatus: number = HttpStatus.NO_CONTENT,
+  ): Promise<request.Response> {
+    return request(this.app.getHttpServer())
+      .delete(`/api/v1/posts/${postId}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .expect(expectedStatus);
+  }
+
   validCreatePostDto(override: Partial<CreatePostInputDto> = {}): CreatePostInputDto {
     return {
       uploadIds: ['upload-id-1'],

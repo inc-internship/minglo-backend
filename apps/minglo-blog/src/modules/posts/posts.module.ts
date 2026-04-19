@@ -16,6 +16,7 @@ import { UserAccountModule } from '../user-account/user-account.module';
 import { GetPostByIdQueryHandler } from './application/query';
 import { PostQueryRepository } from './infrastructure/query';
 import { PostViewMapper } from './application/mappers';
+import { PostsCleanupJob } from './application/jobs';
 
 const usecases = [UploadPostImagesUseCase, CreatePostUseCase, UpdatePostUseCase, DeletePostUseCase];
 
@@ -54,6 +55,7 @@ const usecases = [UploadPostImagesUseCase, CreatePostUseCase, UpdatePostUseCase,
       },
       inject: [CoreConfig],
     },
+    PostsCleanupJob,
   ],
 })
 export class PostsModule {}

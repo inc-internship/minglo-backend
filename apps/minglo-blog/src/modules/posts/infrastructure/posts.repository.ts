@@ -3,6 +3,7 @@ import { PrismaService } from '../../../database/prisma.service';
 import { PostEntity } from '../domains/entities';
 import { MediaMimeType } from '../../../../prisma/generated/prisma/enums';
 import { PostForUpdate } from '../../../../prisma/types';
+import { BatchPayload } from '../../../../prisma/generated/prisma/internal/prismaNamespace';
 
 @Injectable()
 export class PostsRepository {
@@ -57,6 +58,29 @@ export class PostsRepository {
     await this.prisma.post.update({
       where: { id },
       data: { deletedAt: new Date() },
+    });
+  }
+
+  /* Возвращает массив id удаленных постов */
+  async findAllDeleted(): Promise<number[]> {
+    const deletedPosts = await this.prisma.post.findMany({
+      where: {
+        deletedAt: {
+          not: null,
+        },
+      },
+      select: { id: true },
+    });
+
+    return deletedPosts.map((dp) => dp.id);
+  }
+
+  /* Удаляет посты из БД */
+  async deleteManyByIds(ids: number[]): Promise<BatchPayload> {
+    return this.prisma.post.deleteMany({
+      where: {
+        id: { in: ids },
+      },
     });
   }
 }

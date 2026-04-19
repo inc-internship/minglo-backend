@@ -75,7 +75,7 @@ export class PostsController {
   @ApiGetPostByIdDecorator()
   @HttpCode(HttpStatus.OK)
   async getPostById(@Param('postId') postId: string): Promise<PostViewDto> {
-    this.logger.log(`Get post data request received, postId: ${postId}`, 'create');
+    this.logger.log(`Get post data request received, postId: ${postId}`, 'getPostById');
     return this.queryBus.execute<GetPostByIdQuery, PostViewDto>(new GetPostByIdQuery(postId));
   }
 }

@@ -287,6 +287,163 @@ describe('Posts API (e2e)', () => {
     });
   });
 
+  describe('GET /posts/user/:userId', () => {
+    it('200 — should return empty list for non-existent userId', async () => {
+      const response = await postsTestManager.getUserPosts('non-existent-user-id');
+
+      expect(response.body).toMatchObject({
+        items: [],
+        hasNextPage: false,
+        nextCursor: null,
+      });
+    });
+
+    it('200 — should return empty list when user has no posts', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+      const { body: me } = await authTestManager.me(accessToken);
+
+      const response = await postsTestManager.getUserPosts(me.publicId);
+
+      expect(response.body).toMatchObject({
+        items: [],
+        hasNextPage: false,
+        nextCursor: null,
+      });
+    });
+
+    it('200 — should return correct response shape', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+      const { body: me } = await authTestManager.me(accessToken);
+
+      await postsTestManager.createPost(postsTestManager.validCreatePostDto(), accessToken);
+
+      const response = await postsTestManager.getUserPosts(me.publicId);
+
+      expect(response.body).toMatchObject({
+        items: expect.any(Array),
+        hasNextPage: false,
+        nextCursor: null,
+      });
+      expect(response.body.items).toHaveLength(1);
+      expect(response.body.items[0]).toMatchObject({
+        id: expect.any(String),
+        description: null,
+        images: expect.any(Array),
+        owner: expect.objectContaining({
+          id: me.publicId,
+          login: me.login,
+        }),
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+      });
+    });
+
+    it('200 — should not return other users posts', async () => {
+      const { accessToken: ownerToken } = await authTestManager.setupUser();
+      const { accessToken: otherToken } = await authTestManager.setupUser(
+        authTestManager.validDto({ login: 'otherUser1', email: 'other@gmail.com' }),
+      );
+      const { body: me } = await authTestManager.me(ownerToken);
+
+      await postsTestManager.createPost(postsTestManager.validCreatePostDto(), ownerToken);
+      await postsTestManager.createPost(postsTestManager.validCreatePostDto(), otherToken);
+
+      const response = await postsTestManager.getUserPosts(me.publicId);
+
+      expect(response.body.items).toHaveLength(1);
+      expect(response.body.items[0].owner.id).toBe(me.publicId);
+    });
+
+    it('200 — should not return deleted posts', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+      const { body: me } = await authTestManager.me(accessToken);
+
+      const createResponse = await postsTestManager.createPost(
+        postsTestManager.validCreatePostDto(),
+        accessToken,
+      );
+      await postsTestManager.deletePost(createResponse.body.id, accessToken);
+
+      const response = await postsTestManager.getUserPosts(me.publicId);
+
+      expect(response.body.items).toHaveLength(0);
+      expect(response.body.hasNextPage).toBe(false);
+    });
+
+    it('200 — should return posts ordered by createdAt desc', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+      const { body: me } = await authTestManager.me(accessToken);
+
+      const first = await postsTestManager.createPost(
+        postsTestManager.validCreatePostDto({ description: 'first' }),
+        accessToken,
+      );
+      const second = await postsTestManager.createPost(
+        postsTestManager.validCreatePostDto({ description: 'second' }),
+        accessToken,
+      );
+
+      const response = await postsTestManager.getUserPosts(me.publicId);
+
+      expect(response.body.items[0].id).toBe(second.body.id);
+      expect(response.body.items[1].id).toBe(first.body.id);
+    });
+
+    it('200 — should return hasNextPage true and nextCursor when more posts exist', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+      const { body: me } = await authTestManager.me(accessToken);
+
+      for (let i = 0; i < 9; i++) {
+        await postsTestManager.createPost(postsTestManager.validCreatePostDto(), accessToken);
+      }
+
+      const response = await postsTestManager.getUserPosts(me.publicId);
+
+      expect(response.body.items).toHaveLength(8);
+      expect(response.body.hasNextPage).toBe(true);
+      expect(response.body.nextCursor).toBeTruthy();
+    });
+
+    it('200 — should return remaining posts on second page using cursor', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+      const { body: me } = await authTestManager.me(accessToken);
+
+      for (let i = 0; i < 9; i++) {
+        await postsTestManager.createPost(postsTestManager.validCreatePostDto(), accessToken);
+      }
+
+      const firstPage = await postsTestManager.getUserPosts(me.publicId);
+      const cursor = firstPage.body.nextCursor;
+
+      const secondPage = await postsTestManager.getUserPosts(me.publicId, cursor);
+
+      expect(secondPage.body.items).toHaveLength(1);
+      expect(secondPage.body.hasNextPage).toBe(false);
+      expect(secondPage.body.nextCursor).toBeNull();
+    });
+
+    it('200 — second page items should not overlap with first page', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+      const { body: me } = await authTestManager.me(accessToken);
+
+      for (let i = 0; i < 9; i++) {
+        await postsTestManager.createPost(postsTestManager.validCreatePostDto(), accessToken);
+      }
+
+      const firstPage = await postsTestManager.getUserPosts(me.publicId);
+      const secondPage = await postsTestManager.getUserPosts(
+        me.publicId,
+        firstPage.body.nextCursor,
+      );
+
+      const firstPageIds = firstPage.body.items.map((p: { id: string }) => p.id);
+      const secondPageIds = secondPage.body.items.map((p: { id: string }) => p.id);
+      const overlap = firstPageIds.filter((id: string) => secondPageIds.includes(id));
+
+      expect(overlap).toHaveLength(0);
+    });
+  });
+
   describe('GET /posts/:postId', () => {
     it('404 — should return NotFound for non-existent postId', async () => {
       await postsTestManager.getPostById('non-existent-id', HttpStatus.NOT_FOUND);

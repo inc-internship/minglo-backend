@@ -444,6 +444,24 @@ describe('Posts API (e2e)', () => {
     });
   });
 
+  describe('GET /posts/latest', () => {
+    it('200 — should return at most 4 posts ordered by createdAt desc', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+
+      for (let i = 0; i < 6; i++) {
+        await postsTestManager.createPost(postsTestManager.validCreatePostDto(), accessToken);
+      }
+
+      const response = await postsTestManager.getLatestPosts();
+
+      expect(response.body).toHaveLength(4);
+      const dates = response.body.map((p: { createdAt: string }) =>
+        new Date(p.createdAt).getTime(),
+      );
+      expect(dates).toEqual([...dates].sort((a, b) => b - a));
+    });
+  });
+
   describe('GET /posts/:postId', () => {
     it('404 — should return NotFound for non-existent postId', async () => {
       await postsTestManager.getPostById('non-existent-id', HttpStatus.NOT_FOUND);

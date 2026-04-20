@@ -59,6 +59,10 @@ export class PostsTestManager {
       .expect(expectedStatus);
   }
 
+  async getLatestPosts(expectedStatus: number = HttpStatus.OK): Promise<request.Response> {
+    return request(this.app.getHttpServer()).get('/api/v1/posts/latest').expect(expectedStatus);
+  }
+
   validCreatePostDto(override: Partial<CreatePostInputDto> = {}): CreatePostInputDto {
     return {
       uploadIds: ['upload-id-1'],

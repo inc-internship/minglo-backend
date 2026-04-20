@@ -67,4 +67,24 @@ export class PostQueryRepository {
       hasNextPage,
     };
   }
+
+  async findLatestPosts(limit: number = 4): Promise<PostViewDto[]> {
+    const posts = await this.prisma.post.findMany({
+      where: {
+        deletedAt: null,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: limit,
+      include: {
+        user: true,
+        postsMediaFiles: {
+          orderBy: { order: 'asc' },
+        },
+      },
+    });
+
+    return this.mapper.toViewList(posts);
+  }
 }

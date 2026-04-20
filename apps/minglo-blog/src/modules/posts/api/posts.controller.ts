@@ -22,6 +22,7 @@ import { ImageFilesValidationPipe } from '@app/media/pipes';
 import {
   ApiCreatePostDecorator,
   ApiDeletePostDecorator,
+  ApiGetLatestPostsDecorator,
   ApiGetPostByIdDecorator,
   ApiGetUserPostsPaginatedDecorator,
   ApiPostsUploadImagesDecorator,
@@ -37,7 +38,11 @@ import {
 } from '../application/usecases';
 import { CreatePostInputDto, GetUserPostsQueryInputDto, UpdatePostInputDto } from './input-dto';
 import { CreatedPostViewDto, PostsWithCursorViewDto, PostViewDto } from './view-dto';
-import { GetPostByIdQuery, GetUserPostsPaginatedQuery } from '../application/query';
+import {
+  GetLatestPostsQuery,
+  GetPostByIdQuery,
+  GetUserPostsPaginatedQuery,
+} from '../application/query';
 
 @Controller('posts')
 export class PostsController {
@@ -96,6 +101,13 @@ export class PostsController {
     return this.queryBus.execute<GetUserPostsPaginatedQuery, PostsWithCursorViewDto>(
       new GetUserPostsPaginatedQuery(userId, query.cursor),
     );
+  }
+
+  @Get('latest')
+  @ApiGetLatestPostsDecorator()
+  @HttpCode(HttpStatus.OK)
+  async getLatest(): Promise<PostViewDto[]> {
+    return this.queryBus.execute<GetLatestPostsQuery, PostViewDto[]>(new GetLatestPostsQuery());
   }
 
   @Get(':postId')

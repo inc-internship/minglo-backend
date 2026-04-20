@@ -14,4 +14,8 @@ export class PostViewMapper {
       updatedAt: post.updatedAt.toISOString(),
     };
   }
+
+  toViewList(posts: PostWithMediaFileAndUserData[]): PostViewDto[] {
+    return posts.map((post) => this.toView(post));
+  }
 }

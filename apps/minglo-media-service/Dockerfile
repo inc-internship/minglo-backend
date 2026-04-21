@@ -28,7 +28,7 @@ RUN pnpm install
 COPY --chown=node . .
 
 # Устанавливаем Prisma client
-RUN pnpm run prisma:minglo-blog:generate:prod
+RUN pnpm run prisma:minglo-media-service:generate:prod
 
 RUN pnpm run build:${SERVICE}
 

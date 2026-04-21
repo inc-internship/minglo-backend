@@ -1,5 +1,15 @@
-import { MediaFile } from '../../../../../apps/minglo-media-service/prisma/generated/prisma/client';
 import { MediaMimeType } from '@app/media/enums';
+
+interface MediaFileRecord {
+  publicId: string;
+  url: string;
+  key: string;
+  mimeType: string;
+  width: number;
+  height: number;
+  fileSize: number;
+  usedAt: Date | null;
+}
 
 export class MediaFileMetaDataViewDto {
   publicId: string;
@@ -11,7 +21,7 @@ export class MediaFileMetaDataViewDto {
   fileSize: number;
   usedAt: Date | null;
 
-  static mapToViewDto(file: MediaFile): MediaFileMetaDataViewDto {
+  static mapToViewDto(file: MediaFileRecord): MediaFileMetaDataViewDto {
     return {
       publicId: file.publicId,
       url: file.url,

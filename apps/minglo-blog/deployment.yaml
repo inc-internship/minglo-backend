@@ -145,6 +145,31 @@ spec:
                  secretKeyRef:
                    name: minglo-core-backend-production-config-secret
                    key: RECAPTCHA_BYPASS_SECRET
+             - name: MEDIA_SERVICE_URL
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MEDIA_SERVICE_URL
+             - name: MEDIA_ACCESS_SECRET
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MEDIA_ACCESS_SECRET
+             - name: MEDIA_ACCESS_TOKEN_EXP_IN
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MEDIA_ACCESS_TOKEN_EXP_IN
+             - name: MEDIA_SERVICE_HOST
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MEDIA_SERVICE_HOST
+             - name: MEDIA_TCP_PORT
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MEDIA_TCP_PORT
              - name: MINGLO_PORT
                valueFrom:
                  secretKeyRef:

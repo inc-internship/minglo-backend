@@ -39,5 +39,6 @@ RUN sed -i 's/\r$//' ./apps/minglo-media-service/docker-entrypoint.sh && \
 # Bind to all network interfaces so that it can be mapped to the host OS
 
 EXPOSE ${PORT}
+EXPOSE 2496
 
 ENTRYPOINT ["./apps/minglo-media-service/docker-entrypoint.sh"]

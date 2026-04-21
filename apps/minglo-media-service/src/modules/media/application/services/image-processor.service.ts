@@ -37,26 +37,25 @@ export class ImageProcessorService {
     const fileName = file.filename;
 
     try {
-      const buffer = await sharp(file.buffer)
+      const { data, info } = await sharp(file.buffer)
         .resize({
           width: options?.width ?? 504,
           height: options?.height ?? 504,
           fit: options?.fit ?? 'inside',
         })
         .webp({ quality: 80 })
-        .toBuffer();
+        .toBuffer({ resolveWithObject: true });
 
-      const { width, height } = await sharp(buffer).metadata();
-      const fileSize = buffer.length;
-
-      this.logger.log(`Processed image ${fileName} result: ${width}x${height}, size=${fileSize}`);
+      this.logger.log(
+        `Processed image ${fileName} result: ${info.width}x${info.height}, size=${info.size}`,
+      );
 
       return {
         file,
-        optimizedBuffer: buffer,
-        optimizedWidth: width,
-        optimizedHeight: height,
-        optimizedFileSize: fileSize,
+        optimizedBuffer: data,
+        optimizedWidth: info.width,
+        optimizedHeight: info.height,
+        optimizedFileSize: info.size,
         optimizedFileExtension: 'webp',
         optimizedMimeTypeExtension: MediaMimeType.IMAGE_WEBP,
       };

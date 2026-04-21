@@ -13,12 +13,13 @@ import {
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PostsRepository } from './infrastructure/posts.repository';
 import { UserAccountModule } from '../user-account/user-account.module';
-import { GetPostByIdQueryHandler } from './application/query';
+import { GetPostByIdQueryHandler, GetUserPostsPaginatedQueryHandler } from './application/query';
 import { PostQueryRepository } from './infrastructure/query';
 import { PostViewMapper } from './application/mappers';
 import { PostsCleanupJob } from './application/jobs';
 
 const usecases = [UploadPostImagesUseCase, CreatePostUseCase, UpdatePostUseCase, DeletePostUseCase];
+const queries = [GetPostByIdQueryHandler, GetUserPostsPaginatedQueryHandler];
 
 @Module({
   imports: [
@@ -41,7 +42,7 @@ const usecases = [UploadPostImagesUseCase, CreatePostUseCase, UpdatePostUseCase,
   controllers: [PostsController],
   providers: [
     ...usecases,
-    GetPostByIdQueryHandler,
+    ...queries,
     PostsRepository,
     PostQueryRepository,
     PostViewMapper,

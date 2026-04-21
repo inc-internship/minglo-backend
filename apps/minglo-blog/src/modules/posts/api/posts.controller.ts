@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -22,6 +23,7 @@ import {
   ApiCreatePostDecorator,
   ApiDeletePostDecorator,
   ApiGetPostByIdDecorator,
+  ApiGetUserPostsPaginatedDecorator,
   ApiPostsUploadImagesDecorator,
   ApiUpdatePostDecorator,
 } from '../../../core/decorators/swagger/posts';
@@ -29,13 +31,13 @@ import { UploadImageResultDto } from '@app/media/dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   CreatePostCommand,
-  UploadPostImagesCommand,
-  UpdatePostCommand,
   DeletePostCommand,
+  UpdatePostCommand,
+  UploadPostImagesCommand,
 } from '../application/usecases';
-import { CreatePostInputDto, UpdatePostInputDto } from './input-dto';
-import { CreatedPostViewDto, PostViewDto } from './view-dto';
-import { GetPostByIdQuery } from '../application/query';
+import { CreatePostInputDto, GetUserPostsQueryInputDto, UpdatePostInputDto } from './input-dto';
+import { CreatedPostViewDto, PostsWithCursorViewDto, PostViewDto } from './view-dto';
+import { GetPostByIdQuery, GetUserPostsPaginatedQuery } from '../application/query';
 
 @Controller('posts')
 export class PostsController {
@@ -77,6 +79,22 @@ export class PostsController {
     this.logger.log(`New post creation request received from user: ${user.userId}`, 'create');
     return this.commandBus.execute<CreatePostCommand, CreatedPostViewDto>(
       new CreatePostCommand(body, user.userId),
+    );
+  }
+
+  @Get('user/:userId')
+  @ApiGetUserPostsPaginatedDecorator()
+  @HttpCode(HttpStatus.OK)
+  async getUsersPostsPaginated(
+    @Param('userId') userId: string,
+    @Query() query: GetUserPostsQueryInputDto,
+  ): Promise<PostsWithCursorViewDto> {
+    this.logger.log(
+      `Get user posts request received, userId: ${userId}, cursor: ${query.cursor ?? 'none'}`,
+      'getUsersPostsPaginated',
+    );
+    return this.queryBus.execute<GetUserPostsPaginatedQuery, PostsWithCursorViewDto>(
+      new GetUserPostsPaginatedQuery(userId, query.cursor),
     );
   }
 

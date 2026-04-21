@@ -48,6 +48,17 @@ export class PostsTestManager {
       .expect(expectedStatus);
   }
 
+  async getUserPosts(
+    userId: string,
+    cursor?: string,
+    expectedStatus: number = HttpStatus.OK,
+  ): Promise<request.Response> {
+    return request(this.app.getHttpServer())
+      .get(`/api/v1/posts/user/${userId}`)
+      .query(cursor ? { cursor } : {})
+      .expect(expectedStatus);
+  }
+
   validCreatePostDto(override: Partial<CreatePostInputDto> = {}): CreatePostInputDto {
     return {
       uploadIds: ['upload-id-1'],

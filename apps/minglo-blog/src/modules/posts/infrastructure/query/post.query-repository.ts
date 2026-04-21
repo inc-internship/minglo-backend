@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PostViewDto } from '../../api/view-dto';
+import { PostsWithCursorViewDto, PostViewDto } from '../../api/view-dto';
 import { PrismaService } from '../../../../database/prisma.service';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
 import { PostViewMapper } from '../../application/mappers';
@@ -33,5 +33,42 @@ export class PostQueryRepository {
     }
 
     return this.mapper.toView(post);
+  }
+
+  async findUserPosts(
+    userId: string,
+    cursor?: string,
+    limit: number = 8,
+  ): Promise<PostsWithCursorViewDto> {
+    const posts = await this.prisma.post.findMany({
+      where: {
+        user: { publicId: userId },
+        deletedAt: null,
+      },
+      include: {
+        user: true,
+        postsMediaFiles: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: limit + 1,
+      ...(cursor && {
+        skip: 1,
+        cursor: { publicId: cursor },
+      }),
+    });
+
+    const hasNextPage = posts.length > limit;
+
+    const items = hasNextPage ? posts.slice(0, limit) : posts;
+
+    const nextCursor = hasNextPage ? items[items.length - 1].publicId : null;
+
+    return {
+      items: this.mapper.toViewList(items),
+      nextCursor,
+      hasNextPage,
+    };
   }
 }

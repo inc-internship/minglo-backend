@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   UploadedFiles,
   UseGuards,
@@ -15,19 +17,22 @@ import { CurrentUser } from '../../../core/decorators/auth/current-user.decorato
 import { ActiveUserDto } from '../../../core/decorators/auth/dto';
 import { ImageFilesValidationPipe } from '@app/media/pipes';
 import {
-  ApiPostsUploadImagesDecorator,
   ApiCreatePostDecorator,
+  ApiGetPostByIdDecorator,
+  ApiPostsUploadImagesDecorator,
 } from '../../../core/decorators/swagger/posts';
 import { UploadImageResultDto } from '@app/media/dto';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreatePostCommand, UploadPostImagesCommand } from '../application/usecases';
 import { CreatePostInputDto } from './input-dto';
-import { CreatedPostViewDto } from './view-dto';
+import { CreatedPostViewDto, PostViewDto } from './view-dto';
+import { GetPostByIdQuery } from '../application/query';
 
 @Controller('posts')
 export class PostsController {
   constructor(
     private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
     private readonly logger: LoggerService,
   ) {
     this.logger.setContext(PostsController.name);
@@ -64,5 +69,13 @@ export class PostsController {
     return this.commandBus.execute<CreatePostCommand, CreatedPostViewDto>(
       new CreatePostCommand(body, user.userId),
     );
+  }
+
+  @Get(':postId')
+  @ApiGetPostByIdDecorator()
+  @HttpCode(HttpStatus.OK)
+  async getPostById(@Param('postId') postId: string): Promise<PostViewDto> {
+    this.logger.log(`Get post data request received, postId: ${postId}`, 'getPostById');
+    return this.queryBus.execute<GetPostByIdQuery, PostViewDto>(new GetPostByIdQuery(postId));
   }
 }

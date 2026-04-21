@@ -259,7 +259,6 @@ describe('Auth API (e2e)', () => {
     const prisma = app.get(PrismaService);
     const session = await prisma.session.findUnique({
       where: {
-        userId: payload.userId,
         deviceId: payload.deviceId,
       },
     });

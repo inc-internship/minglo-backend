@@ -32,7 +32,6 @@ RUN pnpm run prisma:minglo-media-service:generate:prod
 
 RUN pnpm run build:${SERVICE}
 
-# todo не запускать приложение.
 # Migrate BD + run app
 #RUN sed -i 's/\r$//' ./apps/minglo-media-service/docker-entrypoint.sh && \
 #      chmod +x ./apps/minglo-media-service/docker-entrypoint.sh

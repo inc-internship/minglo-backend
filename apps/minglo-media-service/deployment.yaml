@@ -110,6 +110,26 @@ spec:
                  secretKeyRef:
                    name: minglo-media-service-production-config-secret
                    key: MEDIA_SWAGGER
+             - name: LOGGER_HOST
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: LOGGER_HOST
+             - name: LOGGER_URL_PATH
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: LOGGER_URL_PATH
+             - name: LOGGER_LEVEL
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: LOGGER_LEVEL
+             - name: LOGGER_LICENSE_KEY
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: LOGGER_LICENSE_KEY
              - name: MEDIA_SERVICE_URL
                valueFrom:
                  secretKeyRef:

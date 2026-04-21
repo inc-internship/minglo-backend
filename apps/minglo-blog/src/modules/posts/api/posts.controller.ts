@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -19,6 +20,7 @@ import { ActiveUserDto } from '../../../core/decorators/auth/dto';
 import { ImageFilesValidationPipe } from '@app/media/pipes';
 import {
   ApiCreatePostDecorator,
+  ApiDeletePostDecorator,
   ApiGetPostByIdDecorator,
   ApiPostsUploadImagesDecorator,
   ApiUpdatePostDecorator,
@@ -29,6 +31,7 @@ import {
   CreatePostCommand,
   UploadPostImagesCommand,
   UpdatePostCommand,
+  DeletePostCommand,
 } from '../application/usecases';
 import { CreatePostInputDto, UpdatePostInputDto } from './input-dto';
 import { CreatedPostViewDto, PostViewDto } from './view-dto';
@@ -100,6 +103,20 @@ export class PostsController {
     );
     return this.commandBus.execute<UpdatePostCommand, void>(
       new UpdatePostCommand(postId, user.userId, body.description),
+    );
+  }
+
+  @Delete(':postId')
+  @ApiDeletePostDecorator()
+  @UseGuards(AccessGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async delete(@CurrentUser() user: ActiveUserDto, @Param('postId') postId: string): Promise<void> {
+    this.logger.log(
+      `Delete post request received, postId: ${postId}, userId: ${user.userId}`,
+      'delete',
+    );
+    return this.commandBus.execute<DeletePostCommand, void>(
+      new DeletePostCommand(postId, user.userId),
     );
   }
 }

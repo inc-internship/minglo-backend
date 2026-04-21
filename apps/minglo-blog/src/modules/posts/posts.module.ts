@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CoreConfig } from '../../core/core.config';
 import {
   CreatePostUseCase,
+  DeletePostUseCase,
   UpdatePostUseCase,
   UploadPostImagesUseCase,
 } from './application/usecases';
@@ -15,6 +16,9 @@ import { UserAccountModule } from '../user-account/user-account.module';
 import { GetPostByIdQueryHandler } from './application/query';
 import { PostQueryRepository } from './infrastructure/query';
 import { PostViewMapper } from './application/mappers';
+import { PostsCleanupJob } from './application/jobs';
+
+const usecases = [UploadPostImagesUseCase, CreatePostUseCase, UpdatePostUseCase, DeletePostUseCase];
 
 @Module({
   imports: [
@@ -36,10 +40,8 @@ import { PostViewMapper } from './application/mappers';
   ],
   controllers: [PostsController],
   providers: [
-    UploadPostImagesUseCase,
+    ...usecases,
     GetPostByIdQueryHandler,
-    CreatePostUseCase,
-    UpdatePostUseCase,
     PostsRepository,
     PostQueryRepository,
     PostViewMapper,
@@ -53,6 +55,7 @@ import { PostViewMapper } from './application/mappers';
       },
       inject: [CoreConfig],
     },
+    PostsCleanupJob,
   ],
 })
 export class PostsModule {}

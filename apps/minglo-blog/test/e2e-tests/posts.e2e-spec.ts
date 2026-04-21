@@ -236,6 +236,57 @@ describe('Posts API (e2e)', () => {
     });
   });
 
+  describe('DELETE /posts/:postId', () => {
+    it('401 — should return Unauthorized without token', async () => {
+      await postsTestManager.deletePost('any-id', '', HttpStatus.UNAUTHORIZED);
+    });
+
+    it('404 — should return NotFound for non-existent postId', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+
+      await postsTestManager.deletePost('non-existent-id', accessToken, HttpStatus.NOT_FOUND);
+    });
+
+    it('403 — should return Forbidden when user is not the post owner', async () => {
+      const { accessToken: ownerToken } = await authTestManager.setupUser();
+      const { accessToken: otherToken } = await authTestManager.setupUser(
+        authTestManager.validDto({ login: 'otherUser1', email: 'other@gmail.com' }),
+      );
+
+      const createResponse = await postsTestManager.createPost(
+        postsTestManager.validCreatePostDto(),
+        ownerToken,
+      );
+
+      await postsTestManager.deletePost(createResponse.body.id, otherToken, HttpStatus.FORBIDDEN);
+    });
+
+    it('204 — should delete post successfully', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+
+      const createResponse = await postsTestManager.createPost(
+        postsTestManager.validCreatePostDto(),
+        accessToken,
+      );
+      const postId = createResponse.body.id;
+
+      await postsTestManager.deletePost(postId, accessToken);
+    });
+
+    it('404 — deleted post should no longer be accessible via GET', async () => {
+      const { accessToken } = await authTestManager.setupUser();
+
+      const createResponse = await postsTestManager.createPost(
+        postsTestManager.validCreatePostDto(),
+        accessToken,
+      );
+      const postId = createResponse.body.id;
+
+      await postsTestManager.deletePost(postId, accessToken);
+      await postsTestManager.getPostById(postId, HttpStatus.NOT_FOUND);
+    });
+  });
+
   describe('GET /posts/:postId', () => {
     it('404 — should return NotFound for non-existent postId', async () => {
       await postsTestManager.getPostById('non-existent-id', HttpStatus.NOT_FOUND);

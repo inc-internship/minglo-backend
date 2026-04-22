@@ -32,7 +32,11 @@ export class MediaController {
 
   @Post('upload')
   @ApiUploadFilesDecorator()
-  @UseInterceptors(FilesInterceptor('files', 10))
+  @UseInterceptors(
+    FilesInterceptor('files', 10, {
+      limits: { fileSize: 3 * 1024 * 1024 },
+    }),
+  )
   @HttpCode(HttpStatus.CREATED)
   async uploadFiles(
     @UploadedFiles(new ImageFilesValidationPipe())

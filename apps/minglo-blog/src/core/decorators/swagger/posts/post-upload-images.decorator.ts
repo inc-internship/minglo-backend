@@ -35,7 +35,7 @@ export function ApiPostsUploadImagesDecorator() {
                 },
                 minItems: 1,
                 maxItems: 10,
-                description: '20 Mb max file size',
+                description: '3 Mb max file size',
               },
             },
             required: ['files'],

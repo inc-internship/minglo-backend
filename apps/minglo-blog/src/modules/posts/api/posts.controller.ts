@@ -57,7 +57,11 @@ export class PostsController {
   @Post('upload-images')
   @ApiPostsUploadImagesDecorator()
   @UseGuards(AccessGuard)
-  @UseInterceptors(FilesInterceptor('files', 10))
+  @UseInterceptors(
+    FilesInterceptor('files', 10, {
+      limits: { fileSize: 3 * 1024 * 1024 },
+    }),
+  )
   @HttpCode(HttpStatus.CREATED)
   async uploadMediaFile(
     @UploadedFiles(new ImageFilesValidationPipe())

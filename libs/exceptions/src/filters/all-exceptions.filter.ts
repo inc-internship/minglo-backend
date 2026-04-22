@@ -4,6 +4,7 @@ import { ErrorResponseBody } from '../error-response-body.type';
 import { DomainExceptionCode } from '../domain-exception-codes.enum';
 import { UNKNOWN_EXCEPTION_TEXT } from '@app/exceptions/constants';
 import { LoggerService } from '@app/logger';
+import { MulterError } from 'multer';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -15,6 +16,19 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+
+    if (exception instanceof MulterError && exception.code === 'LIMIT_FILE_SIZE') {
+      this.logger.warn(`File size limit exceeded`, `catch`);
+      const responseBody = this.buildResponseBody(
+        request.url,
+        'File size exceeds the allowed limit: 3 Mb.',
+      );
+      response.status(HttpStatus.BAD_REQUEST).json({
+        ...responseBody,
+        code: DomainExceptionCode.ValidationError,
+      });
+      return;
+    }
 
     this.logger.error(exception, `catch`);
 

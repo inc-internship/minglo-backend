@@ -16,6 +16,7 @@ model User {
   emailConfirmations EmailConfirmation[]
   passwordRecoveries PasswordRecovery[]
   posts              Post[]
+  profile            Profile?
 
   @@index([deletedAt])
   @@map("users")

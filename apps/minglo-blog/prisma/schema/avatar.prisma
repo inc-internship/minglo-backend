@@ -1,0 +1,21 @@
+model Avatar {
+  id        Int      @id @default(autoincrement())
+  publicId  String   @unique @default(cuid()) @map("public_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz
+
+  profileId Int      @unique @map("profile_id")
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  url       String
+  key       String   // S3 ключ
+
+  mimeType MediaMimeType @map("mime_type")
+  width     Int
+  height    Int
+  fileSize  Int      @map("file_size")
+
+  @@index([profileId, deletedAt])
+  @@map("avatar")
+}

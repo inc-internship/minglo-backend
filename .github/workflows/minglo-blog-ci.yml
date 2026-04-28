@@ -6,6 +6,9 @@ on:
       - 'apps/minglo-blog/**'
       - 'libs/**'
       - '.github/**'
+  push:
+    branches:
+      - develop
 
 jobs:
   test:
@@ -59,3 +62,17 @@ jobs:
 
       - name: Run e2e tests
         run: pnpm run test:minglo-blog:e2e
+
+  deploy:
+    name: "Mark as deployed (Jenkins handled)"
+    runs-on: ubuntu-latest
+    needs: test
+
+    if: github.ref == 'refs/heads/develop'
+
+    environment:
+      name: staging
+      url: https://minglo.blog
+
+    steps:
+      - run: echo "Deployed to develop (handled by Jenkins)"

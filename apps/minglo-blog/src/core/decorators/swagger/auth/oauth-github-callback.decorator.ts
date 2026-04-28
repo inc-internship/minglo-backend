@@ -10,8 +10,7 @@ export function ApiOAuthGithubCallback() {
   return applyDecorators(
     ApiOperation({
       summary: 'GitHub OAuth callback',
-      description:
-        'Callback endpoint GitHub OAuth. Используется для завершения авторизации пользователя.',
+      description: 'Используется для завершения авторизации пользователя.',
     }),
     ApiFoundResponse({
       description: 'Редирект на frontend после успешной авторизации.',

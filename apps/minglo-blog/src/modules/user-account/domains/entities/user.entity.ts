@@ -14,10 +14,10 @@ export class UserEntity {
   constructor(
     public login: string,
     public email: string,
-    public passwordHash: string,
+    public passwordHash: string | null,
   ) {}
 
-  static create(args: { login: string; email: string; passwordHash: string }): UserEntity {
+  static create(args: { login: string; email: string; passwordHash: string | null }): UserEntity {
     const user = new UserEntity(args.login, args.email, args.passwordHash);
     user.emailConfirmation = EmailConfirmationEntity.create();
     return user;
@@ -29,7 +29,7 @@ export class UserEntity {
     publicId: string;
     login: string;
     email: string;
-    passwordHash: string;
+    passwordHash: string | null;
     emailConfirmed: boolean;
     emailConfirmation: EmailConfirmationEntity;
   }): UserEntity {
@@ -47,7 +47,7 @@ export class UserEntity {
     publicId: string;
     login: string;
     email: string;
-    passwordHash: string;
+    passwordHash: string | null;
     emailConfirmed: boolean;
     passwordRecoveries: PasswordRecoveryEntity;
   }): UserEntity {
@@ -62,7 +62,7 @@ export class UserEntity {
     publicId: string;
     login: string;
     email: string;
-    passwordHash: string;
+    passwordHash: string | null;
     emailConfirmed: boolean;
     session: SessionEntity;
   }): UserEntity {

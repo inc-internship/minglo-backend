@@ -23,5 +23,6 @@ model Avatar {
   mimeType MediaMimeType @map("mime_type")
 
   @@index([profileId, deletedAt])
+  @@index([deletedAt])
   @@map("avatar")
 }

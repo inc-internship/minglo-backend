@@ -17,6 +17,7 @@ model User {
   passwordRecoveries PasswordRecovery[]
   posts              Post[]
   oauthAccounts      OAuthAccount[]
+  profile            Profile?
 
   @@index([deletedAt])
   @@map("users")

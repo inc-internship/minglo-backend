@@ -1,0 +1,19 @@
+name: minglo-blog deploy status
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    name: "Mark as deployed (Jenkins handled)"
+    runs-on: ubuntu-latest
+
+    environment:
+      name: production
+      url: https://minglo.blog
+
+    steps:
+      - name: Mark deployment
+        run: echo "Deployed to develop (handled by Jenkins)"

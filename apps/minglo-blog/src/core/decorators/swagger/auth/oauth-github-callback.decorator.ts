@@ -9,7 +9,7 @@ import {
 export function ApiOAuthGithubCallback() {
   return applyDecorators(
     ApiOperation({
-      summary: 'GitHub OAuth callback',
+      summary: 'GitHub OAuth 2.0 callback',
       description: 'Используется для завершения авторизации пользователя.',
     }),
     ApiFoundResponse({

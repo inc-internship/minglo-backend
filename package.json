@@ -155,8 +155,7 @@
       "^@app/logger(|/.*)$": "<rootDir>/libs/logger/src/$1",
       "^@app/media(|/.*)$": "<rootDir>/libs/media/src/$1",
       "^@app/notifications(|/.*)$": "<rootDir>/libs/notifications/src/$1",
-      "^@app/setup(|/.*)$": "<rootDir>/libs/setup/src/$1",
-      "^@app/utils(|/.*)$": "<rootDir>/libs/utils/src/$1"
+      "^@app/setup(|/.*)$": "<rootDir>/libs/setup/src/$1"
     }
   }
 }

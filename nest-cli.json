@@ -6,9 +6,7 @@
     "deleteOutDir": true,
     "webpack": true,
     "tsConfigPath": "apps/minglo-blog/tsconfig.app.json",
-    "assets": [
-      "apps/minglo-blog/src/newrelic.js"
-    ]
+    "assets": ["apps/minglo-blog/src/newrelic.js"]
   },
   "monorepo": true,
   "root": "apps/minglo-blog",
@@ -76,6 +74,15 @@
         "tsConfigPath": "apps/minglo-media-service/tsconfig.app.json"
       }
     },
+    "minglo-payment-service": {
+      "type": "application",
+      "root": "apps/minglo-payment-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/minglo-payment-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/minglo-payment-service/tsconfig.app.json"
+      }
+    },
     "notifications": {
       "type": "library",
       "root": "libs/notifications",
@@ -92,15 +99,6 @@
       "sourceRoot": "libs/setup/src",
       "compilerOptions": {
         "tsConfigPath": "libs/setup/tsconfig.lib.json"
-      }
-    },
-    "utils": {
-      "type": "library",
-      "root": "libs/utils",
-      "entryFile": "index",
-      "sourceRoot": "libs/utils/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/utils/tsconfig.lib.json"
       }
     }
   }

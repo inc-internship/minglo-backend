@@ -5,6 +5,8 @@ import { ExceptionsModule } from '@app/exceptions';
 import { ScheduleModule } from '@nestjs/schedule';
 import { MingloPaymentModule, PaymentsCoreModule } from './modules';
 import { PaymentsConfig } from './modules/core/payments.config';
+import { PaymentTestModule } from './modules/testing/testing.module';
+import { PaymentTestController } from './modules/testing/api/testing.controller';
 
 @Module({
   imports: [
@@ -27,11 +29,10 @@ export class AppModule {
   }
 
   static async forRoot(config: PaymentsConfig): Promise<DynamicModule> {
-    console.log('config', config); //todo: delete
     return {
       module: AppModule,
-      imports: [], //todo:  imports: [...(config.testingModule ? [MediaTestModule] : [])],
-      controllers: [], //todo:  controllers: [...(config.testingModule ? [MediaTestController] : [])],
+      imports: [...(config.testingModule ? [PaymentTestModule] : [])],
+      controllers: [...(config.testingModule ? [PaymentTestController] : [])],
     };
   }
 }

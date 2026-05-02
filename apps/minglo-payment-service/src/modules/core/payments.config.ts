@@ -45,6 +45,12 @@ export class PaymentsConfig {
   @IsNumber({}, { message: 'Set environment variable PAYMENTS_THROTTLE_LIMIT (number)' })
   throttleLimit: number;
 
+  //testing
+  @IsBoolean({
+    message: 'Set environment variable PAYMENTS_TESTING_MODULE (boolean), example: true',
+  })
+  testingModule: boolean;
+
   //swagger
   @IsBoolean({
     message: 'Set environment variable PAYMENTS_SWAGGER (boolean), example: true',
@@ -76,6 +82,11 @@ export class PaymentsConfig {
 
     this.throttleTtl = Number(this.configService.get('PAYMENTS_THROTTLE_TTL'));
     this.throttleLimit = Number(this.configService.get('PAYMENTS_THROTTLE_LIMIT'));
+
+    this.testingModule = configValidationUtility.convertToBoolean(
+      this.configService.get('PAYMENTS_TESTING_MODULE'),
+    ) as boolean;
+    this.logger.log(`PAYMENTS_TESTING_MODULE connection is ${this.testingModule}`, 'constructor');
 
     this.swagger = configValidationUtility.convertToBoolean(
       this.configService.get('PAYMENTS_SWAGGER'),

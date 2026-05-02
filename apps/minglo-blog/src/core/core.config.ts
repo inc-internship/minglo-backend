@@ -101,6 +101,11 @@ export class CoreConfig {
   @IsNumber({}, { message: 'Set environment variable MEDIA_TCP_PORT' })
   mediaTcpPort: number;
 
+  @IsString({
+    message: 'Set environment variable PAYMENTS_SERVICE_URL, example: http://localhost:3002',
+  })
+  paymentsServiceUrl: string;
+
   constructor(private configService: ConfigService<any, true>) {
     this.env = this.configService.get('NODE_ENV');
     this.port = Number(this.configService.get('MINGLO_PORT'));
@@ -136,6 +141,7 @@ export class CoreConfig {
     this.mediaAccessSecret = this.configService.get('MEDIA_ACCESS_SECRET');
     this.mediaTcpHost = this.configService.get('MEDIA_SERVICE_HOST');
     this.mediaTcpPort = Number(this.configService.get('MEDIA_TCP_PORT'));
+    this.paymentsServiceUrl = this.configService.get('PAYMENTS_SERVICE_URL');
 
     configValidationUtility.validateConfig(this);
   }

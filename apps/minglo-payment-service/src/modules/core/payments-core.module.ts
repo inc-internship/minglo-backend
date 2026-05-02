@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { PaymentsConfig } from './payments.config';
+import { PrismaPaymentsModule } from '../../database';
 
 @Global()
 @Module({
@@ -16,8 +17,9 @@ import { PaymentsConfig } from './payments.config';
       ],
       inject: [PaymentsConfig],
     }),
+    PrismaPaymentsModule,
   ],
   providers: [PaymentsConfig],
-  exports: [CqrsModule, ThrottlerModule, PaymentsConfig],
+  exports: [CqrsModule, ThrottlerModule, PaymentsConfig, PrismaPaymentsModule],
 })
 export class PaymentsCoreModule {}

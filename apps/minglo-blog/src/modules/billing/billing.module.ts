@@ -1,11 +1,26 @@
 import { Module } from '@nestjs/common';
 import { BillingController } from './api/billing.controller';
-import { PaymentsHttpClient } from './infrastructure/payments-http.client';
-import { HttpModule } from '@nestjs/axios';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { CoreConfig } from '../../core/core.config';
+import { PAYMENT_SERVICE } from '@app/payments';
 
 @Module({
-  imports: [HttpModule],
+  imports: [
+    ClientsModule.registerAsync([
+      {
+        name: PAYMENT_SERVICE,
+        useFactory: (config: CoreConfig) => ({
+          transport: Transport.TCP,
+          options: {
+            host: config.paymentsTcpHost,
+            port: config.paymentsTcpPort,
+          },
+        }),
+        inject: [CoreConfig],
+      },
+    ]),
+  ],
   controllers: [BillingController],
-  providers: [PaymentsHttpClient],
+  providers: [],
 })
 export class BillingModule {}

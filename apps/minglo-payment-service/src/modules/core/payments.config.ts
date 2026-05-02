@@ -13,8 +13,11 @@ export class PaymentsConfig {
   })
   env: Environments;
 
-  @IsNumber({}, { message: 'Set environment variable PAYMENTS_PORT' })
-  port: number;
+  @IsNotEmpty({ message: 'Set environment variable PAYMENTS_SERVICE_HOST' })
+  tcpHost: string;
+
+  @IsNumber({}, { message: 'Set environment variable PAYMENTS_SERVICE_TCP_PORT' })
+  tcpPort: number;
 
   @IsNotEmpty({
     message: 'Set env variable PAYMENTS_DB_URL, example: localhost:3000',
@@ -29,9 +32,6 @@ export class PaymentsConfig {
 
   @IsNotEmpty({ message: 'Set environment variable PAYMENTS_STRIPE_WEBHOOK_SECRET' })
   webHookSecret: string;
-
-  @IsNotEmpty({ message: 'Set environment variable RABBITMQ_URL' })
-  rabbitMQUrl: string;
 
   @IsNotEmpty({ message: 'Set environment variable PAYMENTS_FRONTEND_URL' })
   frontendUrl: string;
@@ -65,8 +65,11 @@ export class PaymentsConfig {
 
     this.env = this.configService.get('NODE_ENV');
 
-    this.port = Number(this.configService.get('PAYMENTS_PORT'));
-    this.logger.log(`PAYMENTS_PORT is ${this.port}`, 'constructor');
+    this.tcpHost = this.configService.get('PAYMENTS_SERVICE_HOST');
+    this.logger.log(`PAYMENTS_SERVICE_HOST is ${this.tcpHost}`, 'constructor');
+
+    this.tcpPort = Number(this.configService.get('PAYMENTS_SERVICE_TCP_PORT'));
+    this.logger.log(`PAYMENTS_SERVICE_TCP_PORT is ${this.tcpPort}`, 'constructor');
 
     this.databaseUrl = this.configService.get('PAYMENTS_DB_URL');
     this.logger.log(`PAYMENTS_DB_URL is ${this.databaseUrl}`, 'constructor');
@@ -75,8 +78,6 @@ export class PaymentsConfig {
     this.stripePublicKey = this.configService.get('PAYMENTS_STRIPE_PUBLIC_KEY');
     this.webHookSecret = this.configService.get('PAYMENTS_STRIPE_WEBHOOK_SECRET');
 
-    this.rabbitMQUrl = this.configService.get('RABBITMQ_URL');
-    this.logger.log(`RABBITMQ_URL is ${this.rabbitMQUrl}`, 'constructor');
     this.frontendUrl = this.configService.get('PAYMENTS_FRONTEND_URL');
     this.logger.log(`PAYMENTS_FRONTEND_URL is ${this.frontendUrl}`, 'constructor');
 

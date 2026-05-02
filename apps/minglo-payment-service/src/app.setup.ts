@@ -5,7 +5,7 @@ import {
   PAYMENTS_SWAGGER_PREFIX,
   PAYMENTS_SWAGGER_TITLE,
   PAYMENTS_SWAGGER_VERSION,
-} from './constants';
+} from '@app/payments';
 
 export function appSetup(app: INestApplication, isSwaggerEnabled: boolean) {
   pipesSetup(app);

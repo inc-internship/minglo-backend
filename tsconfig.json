@@ -58,12 +58,18 @@
       "@app/notifications/*": [
         "libs/notifications/src/*"
       ],
+      "@app/payments": [
+        "libs/payments/src"
+      ],
+      "@app/payments/*": [
+        "libs/payments/src/*"
+      ],
       "@app/setup": [
         "libs/setup/src"
       ],
       "@app/setup/*": [
         "libs/setup/src/*"
-      ],
+      ]
     }
   }
 }

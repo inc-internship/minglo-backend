@@ -7,12 +7,13 @@ import { MingloPaymentModule, PaymentsCoreModule } from './modules';
 import { PaymentsConfig } from './modules/core/payments.config';
 import { PaymentTestModule } from './modules/testing/testing.module';
 import { PaymentTestController } from './modules/testing/api/testing.controller';
+import { PAYMENT_SERVICE } from '@app/payments';
 
 @Module({
   imports: [
     DynamicConfigModule,
     PaymentsCoreModule,
-    LoggerModule.forRoot('MINGLO-PAYMENTS'),
+    LoggerModule.forRoot(PAYMENT_SERVICE),
     ExceptionsModule,
     ScheduleModule.forRoot(),
     MingloPaymentModule,

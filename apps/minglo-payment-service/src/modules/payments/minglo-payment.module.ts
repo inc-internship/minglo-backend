@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { MingloPaymentsController } from './api/minglo-payments.controller';
+import { MingloPaymentsTcpController } from './api/minglo-payments-tcp.controller';
 
 @Module({
   imports: [],
-  controllers: [MingloPaymentsController],
+  controllers: [MingloPaymentsTcpController],
   providers: [],
 })
 export class MingloPaymentModule {}

@@ -3,7 +3,7 @@ import { DynamicConfigModule } from '@app/dynamic-config';
 import { AsyncLocalStorageService, LoggerModule, RequestContextMiddleware } from '@app/logger';
 import { ExceptionsModule } from '@app/exceptions';
 import { ScheduleModule } from '@nestjs/schedule';
-import { PaymentsCoreModule } from './modules';
+import { MingloPaymentModule, PaymentsCoreModule } from './modules';
 import { PaymentsConfig } from './modules/core/payments.config';
 
 @Module({
@@ -13,6 +13,7 @@ import { PaymentsConfig } from './modules/core/payments.config';
     LoggerModule.forRoot('MINGLO-PAYMENTS'),
     ExceptionsModule,
     ScheduleModule.forRoot(),
+    MingloPaymentModule,
   ],
   controllers: [],
   providers: [AsyncLocalStorageService],

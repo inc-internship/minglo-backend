@@ -30,7 +30,7 @@ export class PaymentsConfig {
   @IsNotEmpty({ message: 'Set environment variable PAYMENTS_STRIPE_WEBHOOK_SECRET' })
   webHookSecret: string;
 
-  @IsNotEmpty({ message: 'Set environment variable PAYMENTS_RABBITMQ_URL' })
+  @IsNotEmpty({ message: 'Set environment variable RABBITMQ_URL' })
   rabbitMQUrl: string;
 
   @IsNotEmpty({ message: 'Set environment variable PAYMENTS_FRONTEND_URL' })
@@ -69,8 +69,8 @@ export class PaymentsConfig {
     this.stripePublicKey = this.configService.get('PAYMENTS_STRIPE_PUBLIC_KEY');
     this.webHookSecret = this.configService.get('PAYMENTS_STRIPE_WEBHOOK_SECRET');
 
-    this.rabbitMQUrl = this.configService.get('PAYMENTS_RABBITMQ_URL');
-    this.logger.log(`PAYMENTS_RABBITMQ_URL is ${this.rabbitMQUrl}`, 'constructor');
+    this.rabbitMQUrl = this.configService.get('RABBITMQ_URL');
+    this.logger.log(`RABBITMQ_URL is ${this.rabbitMQUrl}`, 'constructor');
     this.frontendUrl = this.configService.get('PAYMENTS_FRONTEND_URL');
     this.logger.log(`PAYMENTS_FRONTEND_URL is ${this.frontendUrl}`, 'constructor');
 

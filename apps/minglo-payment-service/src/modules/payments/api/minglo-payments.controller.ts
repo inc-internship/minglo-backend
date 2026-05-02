@@ -9,6 +9,6 @@ export class MingloPaymentsController {
 
   @Get()
   getHello(): string {
-    return 'Hello form Minglo Payments Service!';
+    return '<h1 style="color: red;">Hello form Minglo Payments Service!</h1>';
   }
 }

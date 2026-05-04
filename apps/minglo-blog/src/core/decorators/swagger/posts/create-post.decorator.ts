@@ -5,6 +5,7 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiOperation,
+  ApiTooManyRequestsResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ErrorResponseBody } from '@app/exceptions';
@@ -35,6 +36,9 @@ export function ApiCreatePostDecorator() {
     }),
     ApiUnauthorizedResponse({
       description: 'Unauthorized',
+    }),
+    ApiTooManyRequestsResponse({
+      description: 'Too many attempts from the same IP address. Please try again later.',
     }),
   );
 }

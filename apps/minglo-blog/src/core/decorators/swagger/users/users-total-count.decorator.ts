@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiTooManyRequestsResponse } from '@nestjs/swagger';
 import { TotalCountRegisteredUsersViewDto } from '../../../../modules/user-account/api/view-dto';
 
 export function ApiUsersTotalCountDecorator() {
@@ -10,6 +10,9 @@ export function ApiUsersTotalCountDecorator() {
     ApiOkResponse({
       type: TotalCountRegisteredUsersViewDto,
       description: 'Success',
+    }),
+    ApiTooManyRequestsResponse({
+      description: 'Too many attempts from the same IP address. Please try again later.',
     }),
   );
 }

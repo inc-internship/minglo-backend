@@ -1,8 +1,8 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe, ValidationPipeOptions } from '@nestjs/common';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
-import { errorFormatter } from '@app/utils';
+import { errorFormatter } from '@app/exceptions/error-formatter.util';
 
-export function pipesSetup(app: INestApplication) {
+export function pipesSetup(app: INestApplication, options?: ValidationPipeOptions) {
   //Глобальный пайп для валидации и трансформации входящих данных.
   app.useGlobalPipes(
     new ValidationPipe({
@@ -24,6 +24,7 @@ export function pipesSetup(app: INestApplication) {
           extensions: formattedErrors,
         });
       },
+      ...options,
     }),
   );
 }

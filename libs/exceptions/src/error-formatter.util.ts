@@ -1,5 +1,5 @@
 import { ValidationError } from '@nestjs/common';
-import { Extension } from '@app/exceptions';
+import { Extension } from 'libs/exceptions/src/index';
 
 /* функция использует рекурсию для обхода объекта children при вложенных полях, при валидации */
 export const errorFormatter = (errors: ValidationError[], errorMessage?: any): Extension[] => {

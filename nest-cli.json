@@ -76,6 +76,15 @@
         "tsConfigPath": "apps/minglo-media-service/tsconfig.app.json"
       }
     },
+    "minglo-payment-service": {
+      "type": "application",
+      "root": "apps/minglo-payment-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/minglo-payment-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/minglo-payment-service/tsconfig.app.json"
+      }
+    },
     "notifications": {
       "type": "library",
       "root": "libs/notifications",
@@ -85,6 +94,15 @@
         "tsConfigPath": "libs/notifications/tsconfig.lib.json"
       }
     },
+    "payments": {
+      "type": "library",
+      "root": "libs/payments",
+      "entryFile": "index",
+      "sourceRoot": "libs/payments/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/payments/tsconfig.lib.json"
+      }
+    },
     "setup": {
       "type": "library",
       "root": "libs/setup",
@@ -92,15 +110,6 @@
       "sourceRoot": "libs/setup/src",
       "compilerOptions": {
         "tsConfigPath": "libs/setup/tsconfig.lib.json"
-      }
-    },
-    "utils": {
-      "type": "library",
-      "root": "libs/utils",
-      "entryFile": "index",
-      "sourceRoot": "libs/utils/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/utils/tsconfig.lib.json"
       }
     }
   }

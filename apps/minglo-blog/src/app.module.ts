@@ -8,6 +8,8 @@ import { ExceptionsModule } from '@app/exceptions';
 import { UserAccountModule } from './modules/user-account/user-account.module';
 import { AsyncLocalStorageService, LoggerModule, RequestContextMiddleware } from '@app/logger';
 import { ScheduleModule } from '@nestjs/schedule';
+import { PostsModule } from './modules/posts/posts.module';
+import { BillingModule } from './modules/billing/billing.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { ScheduleModule } from '@nestjs/schedule';
     ExceptionsModule,
     UserAccountModule,
     ScheduleModule.forRoot(),
+    PostsModule,
+    BillingModule,
   ],
   controllers: [],
   providers: [AsyncLocalStorageService],

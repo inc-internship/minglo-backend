@@ -3,8 +3,9 @@ import { APP_FILTER } from '@nestjs/core';
 import { LoggerService } from '@app/logger';
 import {
   AllExceptionsFilter,
-  ThrottlerExceptionsFilter,
   DomainExceptionsFilter,
+  MulterExceptionsFilter,
+  ThrottlerExceptionsFilter,
 } from '@app/exceptions/filters';
 
 @Module({
@@ -27,6 +28,13 @@ import {
       provide: APP_FILTER,
       useFactory: (logger: LoggerService) => {
         return new DomainExceptionsFilter(logger);
+      },
+      inject: [LoggerService],
+    },
+    {
+      provide: APP_FILTER,
+      useFactory: (logger: LoggerService) => {
+        return new MulterExceptionsFilter(logger);
       },
       inject: [LoggerService],
     },

@@ -8,9 +8,28 @@ import {
   RegistrationConfirmationResendInputDto,
 } from '../../src/modules/user-account/api/input-dto';
 import { NewPasswordInputDto } from '../../src/modules/user-account/api/input-dto/new-password.input-dto';
+import { EmailService } from '@app/notifications';
+import { EmailServiceMock } from '../mocks';
 
 export class AuthTestManager {
   constructor(private readonly app: INestApplication) {}
+
+  async setupUser(customDto?: CreateUserInputDto) {
+    const dto = customDto || this.validDto();
+
+    await this.register(dto);
+    const emailService = this.app.get<EmailServiceMock>(EmailService);
+    const lastCallIndex = emailService.sendConfirmationEmail.mock.calls.length - 1;
+    const { code } = emailService.sendConfirmationEmail.mock.calls[lastCallIndex][0];
+
+    await this.confirmRegistration({ code });
+    const { body } = await this.login(dto);
+
+    return {
+      accessToken: body.accessToken,
+      userDto: dto,
+    };
+  }
 
   async register(
     dto: Partial<CreateUserInputDto>,
@@ -63,7 +82,7 @@ export class AuthTestManager {
       .post('/api/v1/auth/login')
       .set('x-forwarded-for', ip)
       .set('user-agent', ua)
-      .send(dto)
+      .send({ email: dto.email, password: dto.password })
       .expect(expectedStatus);
   }
 

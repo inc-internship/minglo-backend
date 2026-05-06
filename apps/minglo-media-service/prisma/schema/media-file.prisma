@@ -1,0 +1,39 @@
+model MediaFile {
+  id          Int       @id @default(autoincrement())
+  publicId    String    @unique @default(cuid()) @map("public_id")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz
+  s3DeletedAt DateTime? @map("s3_deleted_at") @db.Timestamptz
+
+  publicUserId String        @map("public_user_id")
+  type         MediaType     @default(POST)
+  mimeType     MediaMimeType @map("mime_type")
+  url          String
+  key          String // S3 ключ — только внутри сервиса, никогда не отдаём наружу
+
+  width    Int
+  height   Int
+  fileSize Int @map("file_size")
+
+  // null = ещё не использован в посте
+  // заполняется когда Posts module забирает файл при создании поста
+  usedAt DateTime? @map("used_at") @db.Timestamptz
+
+  @@index([publicUserId])
+  @@index([type])
+  @@index([usedAt])
+  @@index([deletedAt])
+  @@map("media_files")
+}
+
+enum MediaType {
+  POST   @map("post")
+  AVATAR @map("avatar")
+}
+
+enum MediaMimeType {
+  IMAGE_JPEG @map("image/jpeg")
+  IMAGE_PNG  @map("image/png")
+  IMAGE_WEBP @map("image/webp")
+}

@@ -46,23 +46,29 @@
       "@app/logger/*": [
         "libs/logger/src/*"
       ],
+      "@app/media": [
+        "libs/media/src"
+      ],
+      "@app/media/*": [
+        "libs/media/src/*"
+      ],
       "@app/notifications": [
         "libs/notifications/src"
       ],
       "@app/notifications/*": [
         "libs/notifications/src/*"
       ],
+      "@app/payments": [
+        "libs/payments/src"
+      ],
+      "@app/payments/*": [
+        "libs/payments/src/*"
+      ],
       "@app/setup": [
         "libs/setup/src"
       ],
       "@app/setup/*": [
         "libs/setup/src/*"
-      ],
-      "@app/utils": [
-        "libs/utils/src"
-      ],
-      "@app/utils/*": [
-        "libs/utils/src/*"
       ]
     }
   }

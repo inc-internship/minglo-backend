@@ -26,7 +26,9 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand, Login
     private readonly sessionFactory: SessionFactory,
     private readonly sessionRepository: SessionRepository,
     private logger: LoggerService,
-  ) {}
+  ) {
+    this.logger.setContext(LoginUserUseCase.name);
+  }
 
   async execute({ dto, meta }: LoginUserCommand): Promise<LoginResult> {
     const { email, password } = dto;
@@ -36,6 +38,14 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand, Login
     const user = await this.userRepository.findByEmail(email);
 
     if (!user || !user.emailConfirmed) {
+      throw new DomainException({
+        code: DomainExceptionCode.Unauthorized,
+        message: 'Invalid email or password',
+      });
+    }
+
+    // OAuth пользователи не имеют пароля — вход через email/password для них недоступен
+    if (!user.passwordHash) {
       throw new DomainException({
         code: DomainExceptionCode.Unauthorized,
         message: 'Invalid email or password',

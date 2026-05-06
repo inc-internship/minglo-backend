@@ -14,7 +14,7 @@ export type UserWithEmailConfirmation = Prisma.UserGetPayload<{
   };
 }>;
 
-export type PassworRecoveryWithUser = Prisma.PasswordRecoveryGetPayload<{
+export type PasswordRecoveryWithUser = Prisma.PasswordRecoveryGetPayload<{
   include: { user: true };
 }>;
 
@@ -24,6 +24,42 @@ export type UserWithPassworRecovery = Prisma.UserGetPayload<{
       where: { deletedAt: null; confirmedAt: null };
       orderBy: { createdAt: 'desc' };
       take: 1;
+    };
+  };
+}>;
+
+export type SessionWithUser = Prisma.SessionGetPayload<{
+  include: { user: true };
+}>;
+
+export type UserWithSession = Prisma.UserGetPayload<{
+  include: {
+    sessions: {
+      where: { deletedAt: null };
+      orderBy: { createdAt: 'desc' };
+      take: 1;
+    };
+  };
+}>;
+
+export type PostWithMediaFileAndUserData = Prisma.PostGetPayload<{
+  include: {
+    user: true;
+    postsMediaFiles: true;
+  };
+}>;
+
+export type PostOwner = Prisma.UserGetPayload<object>;
+export type PostMediaFile = Prisma.PostMediaFileGetPayload<object>;
+
+export type PostForUpdate = Prisma.PostGetPayload<{
+  select: {
+    id: true;
+    userId: true;
+    user: {
+      select: {
+        publicId: true;
+      };
     };
   };
 }>;

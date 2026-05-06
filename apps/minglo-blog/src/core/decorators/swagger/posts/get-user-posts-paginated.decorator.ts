@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiParam, ApiTooManyRequestsResponse } from '@nestjs/swagger';
 import { PostsWithCursorViewDto } from '../../../../modules/posts/api/view-dto';
 
 export function ApiGetUserPostsPaginatedDecorator() {
@@ -15,6 +15,9 @@ export function ApiGetUserPostsPaginatedDecorator() {
     ApiOkResponse({
       description: 'Success',
       type: PostsWithCursorViewDto,
+    }),
+    ApiTooManyRequestsResponse({
+      description: 'Too many attempts from the same IP address. Please try again later.',
     }),
   );
 }

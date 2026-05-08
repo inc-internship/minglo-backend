@@ -18,6 +18,12 @@ import { UploadImageCommand } from '../application/usecases';
 import { UploadImageResultDto } from '@app/media/dto';
 import { MediaJwtGuard } from '../guards';
 import { ApiTags } from '@nestjs/swagger';
+import type { Request } from 'express';
+import { DomainException, DomainExceptionCode } from '@app/exceptions';
+import { extractFileStream } from '@app/media/helpers';
+import { UploadAvatarImageMediaCommand } from '../application/usecases/upload-avatar-image-media-usecase';
+import { ApiUploadAvatarDecorator } from '../../core/decorators/swagger/upload-avatar.decorator';
+import { UploadImageProfileDto } from '@app/media/dto/upload-image-profile.dto';
 
 @ApiTags('Media HTTP')
 @UseGuards(MediaJwtGuard)
@@ -47,5 +53,30 @@ export class MediaController {
     return await this.commandBus.execute<UploadImageCommand, UploadImageResultDto>(
       new UploadImageCommand(files, body.type, body.publicUserId),
     );
+  }
+
+  @Post('upload-avatar')
+  @ApiUploadAvatarDecorator()
+  @HttpCode(HttpStatus.CREATED)
+  async uploadAvatarFile(@Body() body: MediaTypeInputDto, req: Request) {
+    this.logger.log(`Image upload for user ${body.publicUserId} begin`, 'uploadAvatarFile');
+
+    try {
+      const { stream, filename } = await extractFileStream(req);
+      this.logger.log(`Processing file: ${filename}`);
+
+      return await this.commandBus.execute<UploadAvatarImageMediaCommand, UploadImageProfileDto>(
+        new UploadAvatarImageMediaCommand(stream, body.type, body.publicUserId),
+      );
+    } catch (err) {
+      this.logger.error(`Upload failed: ${err.message}`);
+
+      if (err instanceof DomainException) throw err;
+
+      throw new DomainException({
+        code: DomainExceptionCode.InternalServerError,
+        message: 'Media Service error',
+      });
+    }
   }
 }

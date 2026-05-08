@@ -28,6 +28,14 @@ export class NewPasswordUseCase implements ICommandHandler<NewPasswordCommand, v
     user.passwordRecoveries.validate();
     this.logger.log('Confirmation code validated', 'execute');
 
+    // OAuth пользователи не имеют пароля — смена пароля для них недоступна
+    if (!user.passwordHash) {
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: 'Password change is not available for OAuth accounts',
+      });
+    }
+
     const result = await this.cryptoService.comparePassword({
       password: newPassword,
       passwordHash: user.passwordHash,

@@ -9,6 +9,7 @@ import { UserAccountModule } from './modules/user-account/user-account.module';
 import { AsyncLocalStorageService, LoggerModule, RequestContextMiddleware } from '@app/logger';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PostsModule } from './modules/posts/posts.module';
+import { BillingModule } from './modules/billing/billing.module';
 import { ProfileModule } from './modules/profile/profile.module';
 
 @Module({
@@ -21,6 +22,7 @@ import { ProfileModule } from './modules/profile/profile.module';
     ScheduleModule.forRoot(),
     PostsModule,
     ProfileModule,
+    BillingModule,
   ],
   controllers: [],
   providers: [AsyncLocalStorageService],

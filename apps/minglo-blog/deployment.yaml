@@ -170,6 +170,51 @@ spec:
                  secretKeyRef:
                    name: minglo-core-backend-production-config-secret
                    key: MEDIA_TCP_PORT
+             - name: GOOGLE_CLIENT_ID
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: GOOGLE_CLIENT_ID
+             - name: GOOGLE_CLIENT_SECRET
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: GOOGLE_CLIENT_SECRET
+             - name: GOOGLE_CALLBACK_URL
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: GOOGLE_CALLBACK_URL
+             - name: GITHUB_CLIENT_ID
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: GITHUB_CLIENT_ID
+             - name: GITHUB_CLIENT_SECRET
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: GITHUB_CLIENT_SECRET
+             - name: GITHUB_CALLBACK_URL
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: GITHUB_CALLBACK_URL
+             - name: FRONTEND_OAUTH_REDIRECT_URL
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: FRONTEND_OAUTH_REDIRECT_URL
+             - name: PAYMENTS_SERVICE_HOST
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: PAYMENTS_SERVICE_HOST
+             - name: PAYMENTS_SERVICE_TCP_PORT
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: PAYMENTS_SERVICE_TCP_PORT
              - name: MINGLO_PORT
                valueFrom:
                  secretKeyRef:

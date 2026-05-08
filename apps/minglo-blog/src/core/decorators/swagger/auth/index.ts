@@ -7,3 +7,7 @@ export * from './auth-refresh-token.decorator';
 export * from './auth-logout.decorator';
 export * from './auth-password-recovery.decorator';
 export * from './auth-new-password.decorator';
+export * from './oauth-google.decorator';
+export * from './oauth-google-callback.decorator';
+export * from './oauth-github.decorator';
+export * from './oauth-github-callback.decorator';

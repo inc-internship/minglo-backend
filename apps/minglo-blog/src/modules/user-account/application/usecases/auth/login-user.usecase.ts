@@ -44,6 +44,14 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand, Login
       });
     }
 
+    // OAuth пользователи не имеют пароля — вход через email/password для них недоступен
+    if (!user.passwordHash) {
+      throw new DomainException({
+        code: DomainExceptionCode.Unauthorized,
+        message: 'Invalid email or password',
+      });
+    }
+
     const isPasswordValid = await this.cryptoService.comparePassword({
       password,
       passwordHash: user.passwordHash,

@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
-import { loggerSetup } from '../../minglo-blog/src/setup/logger.setup';
 import { initAppModule } from './init-app-module';
 import { MediaConfig } from './modules/core/media.config';
 import { appSetup } from './setup';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { loggerSetup } from '@app/logger/logger.setup';
 
 async function bootstrap() {
   const DynamicAppModule = await initAppModule();

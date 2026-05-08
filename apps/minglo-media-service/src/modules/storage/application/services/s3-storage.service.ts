@@ -11,6 +11,9 @@ import { randomUUID } from 'node:crypto';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
 import { LoggerService } from '@app/logger';
 import pLimit from 'p-limit';
+import { Readable } from 'node:stream';
+import { Upload } from '@aws-sdk/lib-storage';
+import { MediaType } from '@app/media/enums';
 
 @Injectable()
 export class S3StorageService {
@@ -164,6 +167,49 @@ export class S3StorageService {
       this.logger.log(`Deleted ${keys.length} files from S3`, 'deleteMany');
     } catch (error) {
       this.logger.error(`Failed to delete media files`, error);
+      throw new DomainException({
+        code: DomainExceptionCode.InternalServerError,
+        message: `S3 batch delete failed`,
+      });
+    }
+  }
+
+  async uploadStream(fileType: MediaType, publicUserId: string, stream: Readable) {
+    try {
+      const type = 'webp';
+      const currentDate = new Date().toISOString().split('T')[0];
+      const key = `${fileType.toLowerCase()}s/${publicUserId}/${currentDate}/${randomUUID()}.${type}`;
+
+      let uploadedSize = 0;
+
+      const parallelUploads3 = new Upload({
+        client: this.s3Client,
+        params: {
+          Bucket: this.bucket,
+          Key: key,
+          Body: stream,
+          ContentType: `image/${type}`,
+        },
+      });
+
+      parallelUploads3.on('httpUploadProgress', (progress) => {
+        if (progress.loaded) {
+          uploadedSize = progress.loaded;
+        }
+      });
+
+      const result = await parallelUploads3.done();
+
+      this.logger.log(`[S3] Upload complete: ${key}, Size: ${uploadedSize} bytes`, 'S3Storage');
+
+      return {
+        url: result.Location,
+        key: key,
+        fileSize: uploadedSize,
+      };
+    } catch (error) {
+      this.logger.error(`S3 Stream Upload Error: ${error.message}`);
+      stream.destroy();
       throw new DomainException({
         code: DomainExceptionCode.InternalServerError,
         message: `S3 batch delete failed`,

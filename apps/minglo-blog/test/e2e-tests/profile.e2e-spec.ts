@@ -29,7 +29,7 @@ describe('Session API (e2e)', () => {
     jest.clearAllMocks();
   });
 
-  //get devices
+  //get my profile
   it('get profile: 200 — success, full flow: register -> upload avatar -> get profile', async () => {
     const dto = authManager.validDto();
     await authManager.register(dto);
@@ -72,5 +72,34 @@ describe('Session API (e2e)', () => {
     expect(profileBody.avatar.url).toBe(
       'https://s3.amazonaws.com/my-bucket/avatars/large_avatar.jpg',
     );
+  });
+
+  //soft delete my profile
+  it('delete my profile: 204 — success, full flow: get profile -> softdelete -> login(401) -> getprofile(401)', async () => {
+    const dto = authManager.validDto();
+    await authManager.register(dto);
+    const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
+    await authManager.confirmRegistration({ code });
+    const { body } = await authManager.login(dto);
+    const accessToken = body.accessToken;
+
+    const prisma = app.get(PrismaService);
+    const userWithProfile = await prisma.user.findUnique({
+      where: { email: dto.email },
+      include: { profile: true },
+    });
+    expect(userWithProfile?.profile).not.toBeNull();
+
+    const profileId = userWithProfile!.profile!.id;
+    expect(profileId).toBeDefined();
+
+    const { body: profileBody } = await profileTestManager.getMyProfile(accessToken, 200);
+    expect(profileBody.login).toBe(dto.login);
+
+    await profileTestManager.softDeleteMyProfile(accessToken, 204);
+
+    await authManager.login(dto, 401);
+
+    await profileTestManager.getMyProfile(accessToken, 401);
   });
 });

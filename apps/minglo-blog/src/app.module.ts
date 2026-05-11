@@ -10,6 +10,7 @@ import { AsyncLocalStorageService, LoggerModule, RequestContextMiddleware } from
 import { ScheduleModule } from '@nestjs/schedule';
 import { PostsModule } from './modules/posts/posts.module';
 import { BillingModule } from './modules/billing/billing.module';
+import { ProfileModule } from './modules/profile/profile.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { BillingModule } from './modules/billing/billing.module';
     UserAccountModule,
     ScheduleModule.forRoot(),
     PostsModule,
+    ProfileModule,
     BillingModule,
   ],
   controllers: [],

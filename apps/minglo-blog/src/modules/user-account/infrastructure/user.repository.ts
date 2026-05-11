@@ -160,6 +160,15 @@ export class UserRepository {
         where: { id: user.emailConfirmation?.id },
         data: { confirmedAt: new Date() },
       });
+      await tx.profile.upsert({
+        where: { userId: user.id },
+        update: {},
+        create: {
+          userId: user.id,
+          firstName: '',
+          lastName: '',
+        },
+      });
     });
   }
 

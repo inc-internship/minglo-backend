@@ -19,6 +19,7 @@ import { DomainException, DomainExceptionCode } from '@app/exceptions';
 import {
   ApiCreateAvatarDecorator,
   ApiDeleteMyProfileDecorator,
+  ApiFillMyProfileDecorator,
   ApiProfileUploadImagesDecorator,
   ApiUpdateMyProfileDecorator,
   ApiViewMyProfileDecorator,
@@ -26,10 +27,11 @@ import {
 import { UploadImageProfileDto } from '@app/media/dto/upload-image-profile.dto';
 import { extractFileStream } from '@app/media/helpers';
 import { CreateAvatarViewDto, MyProfileViewDto } from './view-dto';
-import { CreateAvatarInputDto, UpdateProfileInputDto } from './input-dto';
+import { CreateAvatarInputDto, FillProfileInputDto, UpdateProfileInputDto } from './input-dto';
 import { ViewMyProfileQuery } from '../application/queries';
 import {
   CreateAvatarCommand,
+  FillProfileCommand,
   UpdateProfileCommand,
   UploadAvatarImagesCommand,
 } from '../application/usecases';
@@ -118,6 +120,16 @@ export class ProfileController {
     this.logger.log(`delete my profile: ${user.userId}`, 'delete');
     return await this.commandBus.execute<DeleteProfileCommand, void>(
       new DeleteProfileCommand(user),
+    );
+  }
+
+  @Post('fill')
+  @ApiFillMyProfileDecorator()
+  @UseGuards(AccessGuard)
+  @HttpCode(HttpStatus.OK)
+  async fill(@CurrentUser() user: ActiveUserDto, @Body() body: FillProfileInputDto) {
+    return await this.commandBus.execute<FillProfileCommand, void>(
+      new FillProfileCommand(user, body),
     );
   }
 }

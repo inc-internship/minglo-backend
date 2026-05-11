@@ -11,7 +11,8 @@ import { ViewMyProfileHandler } from './application/queries';
 import { ProfileQueryRepository } from './infrastructure/queries/profile.query.repository';
 import {
   CreateAvatarUseCase,
-  UpdateProfileUseCase,
+  FillProfileUseCase,
+  UpdateProfileCommand,
   UploadAvatarImagesUseCase,
 } from './application/usecases';
 import { DeleteProfileUseCase } from './application/usecases/delete-profile.usecase';
@@ -19,8 +20,9 @@ import { DeleteProfileUseCase } from './application/usecases/delete-profile.usec
 const usecases = [
   CreateAvatarUseCase,
   UploadAvatarImagesUseCase,
-  UpdateProfileUseCase,
+  FillProfileUseCase,
   DeleteProfileUseCase,
+  UpdateProfileCommand,
 ];
 const queries = [ViewMyProfileHandler];
 

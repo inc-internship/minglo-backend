@@ -1,27 +1,30 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { type Request } from 'express';
 import { LoggerService } from '@app/logger';
 import { AccessGuard } from '../../user-account/guards/access.guard';
 import { CurrentUser } from '../../../core/decorators/auth/current-user.decorator';
 import { ActiveUserDto } from '../../../core/decorators/auth/dto';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UploadAvatarImagesCommand } from '../application/usecases/upload-avatar-image.usecase';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
 import {
   ApiCreateAvatarDecorator,
   ApiProfileUploadImagesDecorator,
+  ApiViewMyProfileDecorator,
 } from '../../../core/decorators/swagger/profile';
 import { UploadImageProfileDto } from '@app/media/dto/upload-image-profile.dto';
 import { extractFileStream } from '@app/media/helpers';
 import { CreateAvatarCommand } from '../application/usecases/create-avatar.usecase';
-import { CreateAvatarViewDto } from './view-dto';
+import { CreateAvatarViewDto, MyProfileViewDto } from './view-dto';
 import { CreateAvatarInputDto } from './input-dto';
+import { ViewMyProfileQuery } from '../application/queries';
 
 @Controller('profile')
 export class ProfileController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly logger: LoggerService,
+    private readonly queryBus: QueryBus,
   ) {
     this.logger.setContext(ProfileController.name);
   }
@@ -66,6 +69,17 @@ export class ProfileController {
     this.logger.log(`Create new Avatar photo for user: ${user.userId}`, 'create');
     return this.commandBus.execute<CreateAvatarCommand, CreateAvatarViewDto>(
       new CreateAvatarCommand(body, user.userId),
+    );
+  }
+
+  @Get('me')
+  @ApiViewMyProfileDecorator()
+  @UseGuards(AccessGuard)
+  @HttpCode(HttpStatus.OK)
+  async viewProfile(@CurrentUser() user: ActiveUserDto) {
+    this.logger.log(`Check my profile: ${user.userId}`, 'viewProfile');
+    return this.queryBus.execute<ViewMyProfileQuery, MyProfileViewDto>(
+      new ViewMyProfileQuery(user),
     );
   }
 }

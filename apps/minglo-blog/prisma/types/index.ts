@@ -63,3 +63,14 @@ export type PostForUpdate = Prisma.PostGetPayload<{
     };
   };
 }>;
+
+export type ProfileWithUserAndAvatar = Prisma.ProfileGetPayload<{
+  include: {
+    avatar: true;
+    user: {
+      select: {
+        login: true;
+      };
+    };
+  };
+}>;

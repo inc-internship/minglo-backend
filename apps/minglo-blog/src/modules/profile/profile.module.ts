@@ -9,9 +9,11 @@ import { ProfileController } from './api/profile.controller';
 import { CreateAvatarUseCase } from './application/usecases/create-avatar.usecase';
 import { UploadAvatarImagesUseCase } from './application/usecases/upload-avatar-image.usecase';
 import { ProfileRepository } from './infrastructure/profile.repository';
+import { ViewMyProfileHandler } from './application/queries';
+import { ProfileQueryRepository } from './infrastructure/queries/profile.query.repository';
 
 const usecases = [CreateAvatarUseCase, UploadAvatarImagesUseCase];
-const queries = [];
+const queries = [ViewMyProfileHandler];
 
 @Module({
   imports: [
@@ -36,6 +38,7 @@ const queries = [];
     ...usecases,
     ...queries,
     ProfileRepository,
+    ProfileQueryRepository,
     {
       provide: MEDIA_ACCESS_TOKEN_STRATEGY_INJECT_TOKEN,
       useFactory: (config: CoreConfig): JwtService => {

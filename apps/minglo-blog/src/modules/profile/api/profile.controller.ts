@@ -1,4 +1,14 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { type Request } from 'express';
 import { LoggerService } from '@app/logger';
 import { AccessGuard } from '../../user-account/guards/access.guard';
@@ -8,6 +18,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
 import {
   ApiCreateAvatarDecorator,
+  ApiDeleteMyProfileDecorator,
   ApiProfileUploadImagesDecorator,
   ApiUpdateMyProfileDecorator,
   ApiViewMyProfileDecorator,
@@ -22,6 +33,7 @@ import {
   UpdateProfileCommand,
   UploadAvatarImagesCommand,
 } from '../application/usecases';
+import { DeleteProfileCommand } from '../application/usecases/delete-profile.usecase';
 
 @Controller('profile')
 export class ProfileController {
@@ -95,6 +107,17 @@ export class ProfileController {
     this.logger.log(`Update my profile: ${user.userId}`, 'update');
     return await this.commandBus.execute<UpdateProfileCommand, void>(
       new UpdateProfileCommand(user, body),
+    );
+  }
+
+  @Delete()
+  @ApiDeleteMyProfileDecorator()
+  @UseGuards(AccessGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async delete(@CurrentUser() user: ActiveUserDto) {
+    this.logger.log(`delete my profile: ${user.userId}`, 'delete');
+    return await this.commandBus.execute<DeleteProfileCommand, void>(
+      new DeleteProfileCommand(user),
     );
   }
 }

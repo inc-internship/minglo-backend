@@ -86,4 +86,13 @@ export class ProfileRepository {
       },
     });
   }
+
+  async softDeleteProfile(id: string): Promise<void> {
+    await this.prisma.user.update({
+      where: { publicId: id },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+  }
 }

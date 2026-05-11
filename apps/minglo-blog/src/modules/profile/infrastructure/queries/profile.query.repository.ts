@@ -35,7 +35,7 @@ export class ProfileQueryRepository {
     if (!rawData) {
       this.logger.warn(`profile not found: ${id}`);
       throw new DomainException({
-        code: DomainExceptionCode.Unauthorized,
+        code: DomainExceptionCode.InternalServerError,
         message: 'Data integrity breach: Profile not found for existing user',
       });
     }

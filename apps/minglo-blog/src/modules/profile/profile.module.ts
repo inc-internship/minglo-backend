@@ -14,8 +14,14 @@ import {
   UpdateProfileUseCase,
   UploadAvatarImagesUseCase,
 } from './application/usecases';
+import { DeleteProfileUseCase } from './application/usecases/delete-profile.usecase';
 
-const usecases = [CreateAvatarUseCase, UploadAvatarImagesUseCase, UpdateProfileUseCase];
+const usecases = [
+  CreateAvatarUseCase,
+  UploadAvatarImagesUseCase,
+  UpdateProfileUseCase,
+  DeleteProfileUseCase,
+];
 const queries = [ViewMyProfileHandler];
 
 @Module({

@@ -4,6 +4,8 @@ import { DomainException, DomainExceptionCode } from '@app/exceptions';
 import { ProfileEntity } from '../domains/entities/profile.entity';
 import { LoggerService } from '@app/logger';
 import { AvatarEntity } from '../domains/entities/avatar.entity';
+import { ActiveUserDto } from '../../../core/decorators/auth/dto';
+import { UpdateProfileInputDto } from '../api/input-dto';
 
 @Injectable()
 export class ProfileRepository {
@@ -33,6 +35,7 @@ export class ProfileRepository {
     return result.publicId;
   }
 
+  /* поиск профиля и маппинг его */
   async findProfileById(publicUserId: string): Promise<ProfileEntity> {
     const profile = await this.prisma.profile.findFirst({
       where: {
@@ -58,5 +61,29 @@ export class ProfileRepository {
     }
 
     return ProfileEntity.reconstruct(profile);
+  }
+
+  /* Обновление профиля */
+  async updateProfile(user: ActiveUserDto, dto: UpdateProfileInputDto): Promise<void> {
+    await this.prisma.user.update({
+      where: { publicId: user.userId },
+      data: {
+        profile: {
+          update: {
+            firstName: dto.firstName,
+            lastName: dto.lastName,
+            aboutMe: dto.aboutMe,
+            countryId: dto.countryId,
+            cityId: dto.cityId,
+            birthday:
+              dto.birthday !== undefined
+                ? dto.birthday
+                  ? new Date(dto.birthday)
+                  : null
+                : undefined,
+          },
+        },
+      },
+    });
   }
 }

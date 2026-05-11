@@ -1,23 +1,27 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Put, UseGuards } from '@nestjs/common';
 import { type Request } from 'express';
 import { LoggerService } from '@app/logger';
 import { AccessGuard } from '../../user-account/guards/access.guard';
 import { CurrentUser } from '../../../core/decorators/auth/current-user.decorator';
 import { ActiveUserDto } from '../../../core/decorators/auth/dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { UploadAvatarImagesCommand } from '../application/usecases/upload-avatar-image.usecase';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
 import {
   ApiCreateAvatarDecorator,
   ApiProfileUploadImagesDecorator,
+  ApiUpdateMyProfileDecorator,
   ApiViewMyProfileDecorator,
 } from '../../../core/decorators/swagger/profile';
 import { UploadImageProfileDto } from '@app/media/dto/upload-image-profile.dto';
 import { extractFileStream } from '@app/media/helpers';
-import { CreateAvatarCommand } from '../application/usecases/create-avatar.usecase';
 import { CreateAvatarViewDto, MyProfileViewDto } from './view-dto';
-import { CreateAvatarInputDto } from './input-dto';
+import { CreateAvatarInputDto, UpdateProfileInputDto } from './input-dto';
 import { ViewMyProfileQuery } from '../application/queries';
+import {
+  CreateAvatarCommand,
+  UpdateProfileCommand,
+  UploadAvatarImagesCommand,
+} from '../application/usecases';
 
 @Controller('profile')
 export class ProfileController {
@@ -67,7 +71,7 @@ export class ProfileController {
   @HttpCode(HttpStatus.CREATED)
   async createAvatar(@Body() body: CreateAvatarInputDto, @CurrentUser() user: ActiveUserDto) {
     this.logger.log(`Create new Avatar photo for user: ${user.userId}`, 'create');
-    return this.commandBus.execute<CreateAvatarCommand, CreateAvatarViewDto>(
+    return await this.commandBus.execute<CreateAvatarCommand, CreateAvatarViewDto>(
       new CreateAvatarCommand(body, user.userId),
     );
   }
@@ -78,8 +82,19 @@ export class ProfileController {
   @HttpCode(HttpStatus.OK)
   async viewProfile(@CurrentUser() user: ActiveUserDto) {
     this.logger.log(`Check my profile: ${user.userId}`, 'viewProfile');
-    return this.queryBus.execute<ViewMyProfileQuery, MyProfileViewDto>(
+    return await this.queryBus.execute<ViewMyProfileQuery, MyProfileViewDto>(
       new ViewMyProfileQuery(user),
+    );
+  }
+
+  @Put()
+  @ApiUpdateMyProfileDecorator()
+  @UseGuards(AccessGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async update(@CurrentUser() user: ActiveUserDto, @Body() body: UpdateProfileInputDto) {
+    this.logger.log(`Update my profile: ${user.userId}`, 'update');
+    return await this.commandBus.execute<UpdateProfileCommand, void>(
+      new UpdateProfileCommand(user, body),
     );
   }
 }

@@ -6,13 +6,16 @@ import { CoreConfig } from '../../core/core.config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UserAccountModule } from '../user-account/user-account.module';
 import { ProfileController } from './api/profile.controller';
-import { CreateAvatarUseCase } from './application/usecases/create-avatar.usecase';
-import { UploadAvatarImagesUseCase } from './application/usecases/upload-avatar-image.usecase';
 import { ProfileRepository } from './infrastructure/profile.repository';
 import { ViewMyProfileHandler } from './application/queries';
 import { ProfileQueryRepository } from './infrastructure/queries/profile.query.repository';
+import {
+  CreateAvatarUseCase,
+  UpdateProfileUseCase,
+  UploadAvatarImagesUseCase,
+} from './application/usecases';
 
-const usecases = [CreateAvatarUseCase, UploadAvatarImagesUseCase];
+const usecases = [CreateAvatarUseCase, UploadAvatarImagesUseCase, UpdateProfileUseCase];
 const queries = [ViewMyProfileHandler];
 
 @Module({

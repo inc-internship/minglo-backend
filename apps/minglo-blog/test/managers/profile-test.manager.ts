@@ -13,4 +13,14 @@ export class ProfileTestManager {
       .set('Authorization', `Bearer ${token}`)
       .expect(expectedStatus);
   }
+
+  async softDeleteMyProfile(
+    token: string,
+    expectedStatus: number = HttpStatus.NO_CONTENT,
+  ): Promise<request.Response> {
+    return request(this.app.getHttpServer())
+      .delete('/api/v1/profile')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(expectedStatus);
+  }
 }

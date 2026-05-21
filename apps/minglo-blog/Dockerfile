@@ -7,7 +7,7 @@ ENV PORT=$port
 # Set to a non-root built-in user `node`
 
 # включаем corepack и pnpm
-RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
+RUN corepack enable
 
 USER node
 

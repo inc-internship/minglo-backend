@@ -153,12 +153,17 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "@prisma/engines",
-      "prisma",
-      "sharp",
-      "bcrypt",
+      "@datadog/pprof",
       "@nestjs/core",
-      "newrelic"
+      "@newrelic/fn-inspect",
+      "@newrelic/native-metrics",
+      "@prisma/engines",
+      "@scarf/scarf",
+      "bcrypt",
+      "prisma",
+      "protobufjs",
+      "sharp",
+      "unrs-resolver"
     ]
   },
   "jest": {

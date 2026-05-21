@@ -7,7 +7,7 @@ ENV PORT=$port
 # Set to a non-root built-in user `node`
 
 # включаем corepack и pnpm
-RUN corepack enable
+RUN corepack prepare pnpm@9.15.4 --activate
 
 USER node
 
@@ -22,7 +22,7 @@ WORKDIR /home/node/dist/${SERVICE}
 
 COPY --chown=node package*.json ./
 
-RUN pnpm config set ignore-scripts false && pnpm install
+RUN pnpm install
 
 # Bundle app source code
 COPY --chown=node . .

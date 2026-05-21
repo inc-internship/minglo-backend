@@ -5,6 +5,7 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "packageManager": "pnpm@9.15.4",
   "scripts": {
     "format": "prettier --write \"apps/**/*.ts\"",
     "format:prisma": "prisma format",

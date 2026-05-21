@@ -1,0 +1,12 @@
+onlyBuiltDependencies:
+  - "@datadog/pprof"
+  - "@nestjs/core"
+  - "@newrelic/fn-inspect"
+  - "@newrelic/native-metrics"
+  - "@prisma/engines"
+  - "@scarf/scarf"
+  - bcrypt
+  - prisma
+  - protobufjs
+  - sharp
+  - unrs-resolver

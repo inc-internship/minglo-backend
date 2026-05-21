@@ -22,7 +22,7 @@ WORKDIR /home/node/dist/${SERVICE}
 
 COPY --chown=node package*.json ./
 
-RUN pnpm install
+RUN pnpm config set ignore-scripts false && pnpm install --frozen-lockfile
 
 # Bundle app source code
 COPY --chown=node . .

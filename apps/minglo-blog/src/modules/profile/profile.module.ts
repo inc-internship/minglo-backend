@@ -12,7 +12,7 @@ import { ProfileQueryRepository } from './infrastructure/queries/profile.query.r
 import {
   CreateAvatarUseCase,
   FillProfileUseCase,
-  UpdateProfileCommand,
+  UpdateProfileUseCase,
   UploadAvatarImagesUseCase,
 } from './application/usecases';
 import { DeleteProfileUseCase } from './application/usecases/delete-profile.usecase';
@@ -22,7 +22,7 @@ const usecases = [
   UploadAvatarImagesUseCase,
   FillProfileUseCase,
   DeleteProfileUseCase,
-  UpdateProfileCommand,
+  UpdateProfileUseCase,
 ];
 const queries = [ViewMyProfileHandler];
 

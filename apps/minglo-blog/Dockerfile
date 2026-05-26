@@ -11,7 +11,7 @@ RUN npm install -g pnpm@9.15.4
 
 USER node
 
-# Create app directory (with user `node`)
+# Create app directory (with `node`)
 RUN mkdir -p /home/node/dist/${SERVICE}
 
 WORKDIR /home/node/dist/${SERVICE}

@@ -4,7 +4,7 @@ import { emailTemplates } from '@app/notifications/email/templates/email-confirm
 import { LoggerService } from '@app/logger';
 import { passwordRecoveryTemplates } from '@app/notifications/email/templates/password-recovery';
 
-export type ConfirmationEmail = {
+type ConfirmationEmail = {
   email: string;
   redirectUrl: string;
   code: string;

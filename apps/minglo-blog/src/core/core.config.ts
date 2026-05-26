@@ -1,6 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IsArray, IsBoolean, IsEnum, IsNumber, IsString, ValidateIf } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  ValidateIf,
+} from 'class-validator';
 import { configValidationUtility, Environments } from '@app/dynamic-config';
 
 @Injectable()
@@ -68,6 +76,37 @@ export class CoreConfig {
   @IsNumber({}, { message: 'Set environment variable MINGLO_THROTTLE_LIMIT (number)' })
   throttleLimit: number;
 
+  // Recaptcha Secret
+  @IsString({ message: 'Set environment variable RECAPTCHA_SECRET' })
+  recaptchaSecret: string;
+
+  // Recaptcha Secret
+  @IsString({ message: 'Set environment variable RECAPTCHA_BYPASS_SECRET' })
+  recaptchaBypassSecret: string;
+
+  @IsString({
+    message: 'Set environment variable MEDIA_SERVICE_URL, example: http://localhost:3002',
+  })
+  mediaServiceUrl: string;
+
+  @IsNotEmpty({ message: 'Set environment variable MEDIA_ACCESS_SECRET' })
+  mediaAccessSecret: string;
+
+  @IsNotEmpty({ message: 'Set environment variable MEDIA_ACCESS_TOKEN_EXP_IN' })
+  mediaAccessTokenExpIn: number;
+
+  @IsNotEmpty({ message: 'Set environment variable MEDIA_SERVICE_HOST' })
+  mediaTcpHost: string;
+
+  @IsNumber({}, { message: 'Set environment variable MEDIA_TCP_PORT' })
+  mediaTcpPort: number;
+
+  @IsNotEmpty({ message: 'Set environment variable PAYMENTS_SERVICE_HOST' })
+  paymentsTcpHost: string;
+
+  @IsNumber({}, { message: 'Set environment variable PAYMENTS_SERVICE_TCP_PORT' })
+  paymentsTcpPort: number;
+
   constructor(private configService: ConfigService<any, true>) {
     this.env = this.configService.get('NODE_ENV');
     this.port = Number(this.configService.get('MINGLO_PORT'));
@@ -96,6 +135,15 @@ export class CoreConfig {
     ) as boolean;
     this.throttleTtl = Number(this.configService.get('MINGLO_THROTTLE_TTL'));
     this.throttleLimit = Number(this.configService.get('MINGLO_THROTTLE_LIMIT'));
+    this.recaptchaSecret = this.configService.get('RECAPTCHA_SECRET');
+    this.recaptchaBypassSecret = this.configService.get('RECAPTCHA_BYPASS_SECRET');
+    this.mediaServiceUrl = this.configService.get('MEDIA_SERVICE_URL');
+    this.mediaAccessTokenExpIn = Number(this.configService.get('MEDIA_ACCESS_TOKEN_EXP_IN'));
+    this.mediaAccessSecret = this.configService.get('MEDIA_ACCESS_SECRET');
+    this.mediaTcpHost = this.configService.get('MEDIA_SERVICE_HOST');
+    this.mediaTcpPort = Number(this.configService.get('MEDIA_TCP_PORT'));
+    this.paymentsTcpHost = this.configService.get('PAYMENTS_SERVICE_HOST');
+    this.paymentsTcpPort = Number(this.configService.get('PAYMENTS_SERVICE_TCP_PORT'));
 
     configValidationUtility.validateConfig(this);
   }

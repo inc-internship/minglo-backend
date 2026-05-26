@@ -7,7 +7,7 @@ ENV PORT=$port
 # Set to a non-root built-in user `node`
 
 # включаем corepack и pnpm
-RUN corepack enable
+RUN npm install -g pnpm@9.15.4
 
 USER node
 
@@ -20,7 +20,7 @@ WORKDIR /home/node/dist/${SERVICE}
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 
-COPY --chown=node package*.json ./
+COPY --chown=node package*.json pnpm-workspace.yaml ./
 
 RUN pnpm install
 
@@ -32,7 +32,7 @@ RUN pnpm run prisma:minglo-blog:generate:prod
 
 RUN pnpm run build:${SERVICE}
 
-# Migrate BD + run app
+## Migrate BD + run app
 RUN sed -i 's/\r$//' ./apps/minglo-blog/docker-entrypoint.sh && \
       chmod +x ./apps/minglo-blog/docker-entrypoint.sh
 

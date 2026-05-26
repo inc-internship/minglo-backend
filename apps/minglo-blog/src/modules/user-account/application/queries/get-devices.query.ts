@@ -18,8 +18,8 @@ export class GetDevicesHandler implements IQueryHandler<GetDevicesQuery, Session
   }
 
   async execute({ user }: GetDevicesQuery): Promise<SessionViewDto[]> {
-    const { userId } = user;
+    const { userId, deviceId } = user;
     this.logger.log('take all device', 'execute');
-    return await this.sessionQueryRepo.getSession(userId);
+    return await this.sessionQueryRepo.getSession(userId, deviceId);
   }
 }

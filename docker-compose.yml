@@ -28,6 +28,62 @@ services:
     volumes:
       - minglo_test_data:/var/lib/postgresql/data
 
+  postgres-media-dev:
+    image: postgres:16
+    container_name: minglo-local-media-dev
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: minglo_media_dev
+    ports:
+      - "5434:5432"
+    volumes:
+      - minglo_media_dev_data:/var/lib/postgresql/data
+
+  postgres-media_test:
+    image: postgres:16
+    container_name: minglo-local-media_test
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: minglo_media_test
+    ports:
+      - "5435:5432"
+    volumes:
+      - minglo_media_test_data:/var/lib/postgresql/data
+
+  postgres-payments-dev:
+    image: postgres:16
+    container_name: minglo-local-payments-dev
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: minglo_payments_dev
+    ports:
+      - "5436:5432"
+    volumes:
+      - minglo_payments_dev_data:/var/lib/postgresql/data
+
+  postgres-payments_test:
+    image: postgres:16
+    container_name: minglo-local-payments_test
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: minglo_payments_test
+    ports:
+      - "5437:5432"
+    volumes:
+      - minglo_payments_test_data:/var/lib/postgresql/data
+
 volumes:
   minglo_dev_data:
+  minglo_media_dev_data:
+  minglo_payments_dev_data:
   minglo_test_data:
+  minglo_media_test_data:
+  minglo_payments_test_data:

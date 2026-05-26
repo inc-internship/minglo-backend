@@ -6,7 +6,7 @@ import { SessionViewDto } from '../../api/view-dto/session-view.dto';
 export class SessionQueryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getSession(id: string) {
+  async getSession(id: string, deviceId: string) {
     const devices = await this.prisma.session.findMany({
       where: {
         deletedAt: null,
@@ -16,6 +16,6 @@ export class SessionQueryRepository {
         },
       },
     });
-    return SessionViewDto.mapToManyView(devices);
+    return SessionViewDto.mapToManyView(devices, deviceId);
   }
 }

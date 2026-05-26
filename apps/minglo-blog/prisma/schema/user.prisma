@@ -6,16 +6,25 @@ model User {
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz
 
   // user-account info:
-  login        String @unique @db.VarChar(255)
-  email        String @unique @db.VarChar(255)
-  passwordHash String @map("password_hash") @db.VarChar(255)
+  login        String      @unique @db.VarChar(255)
+  email        String      @unique @db.VarChar(255)
+  passwordHash String?     @map("password_hash") @db.VarChar(255) //в OAuth пароля нет
+  accountType  AccountType @default(PERSONAL) @map("account_type")
 
   emailConfirmed Boolean @default(false) @map("email_confirmed")
 
   sessions           Session[]
   emailConfirmations EmailConfirmation[]
   passwordRecoveries PasswordRecovery[]
+  posts              Post[]
+  oauthAccounts      OAuthAccount[]
+  profile            Profile?
 
   @@index([deletedAt])
   @@map("users")
+}
+
+enum AccountType {
+  PERSONAL
+  BUSINESS
 }

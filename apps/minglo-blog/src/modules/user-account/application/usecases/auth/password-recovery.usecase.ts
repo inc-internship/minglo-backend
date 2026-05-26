@@ -5,22 +5,23 @@ import { LoggerService } from '@app/logger';
 import { PasswordRecoveryEvent } from '../../events';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
 
-export class PasswordRecoveryCommand {
-  constructor(public readonly dto: PasswordRecoveryInputDto) {}
+export class PasswordRecoveryUseCaseCommand {
+  constructor(public readonly body: PasswordRecoveryInputDto) {}
 }
 
-@CommandHandler(PasswordRecoveryCommand)
-export class PasswordRecoveryUseCase implements ICommandHandler<PasswordRecoveryCommand, void> {
+@CommandHandler(PasswordRecoveryUseCaseCommand)
+export class PasswordRecoveryUseCase implements ICommandHandler<
+  PasswordRecoveryUseCaseCommand,
+  void
+> {
   constructor(
     private readonly userRepo: UserRepository,
     private eventBus: EventBus,
     private logger: LoggerService,
-  ) {
-    this.logger.setContext(PasswordRecoveryUseCase.name);
-  }
+  ) {}
 
-  async execute({ dto }: PasswordRecoveryCommand): Promise<void> {
-    const { email, redirectUrl } = dto;
+  async execute({ body }: PasswordRecoveryUseCaseCommand): Promise<void> {
+    const { email, redirectUrl } = body;
 
     this.logger.log(`Attempt to recover password, user email: ${email}`, 'execute');
 

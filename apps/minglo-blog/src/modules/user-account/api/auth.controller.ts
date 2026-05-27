@@ -13,7 +13,7 @@ import {
   LoginUserCommand,
   LogoutCommand,
   NewPasswordCommand,
-  PasswordRecoveryUseCaseCommand,
+  PasswordRecoveryCommand,
   RefreshTokenCommand,
   ResendConfirmEmailCommand,
 } from '../application/usecases';
@@ -29,10 +29,9 @@ import {
   ApiAuthRegistrationConfirmationResend,
 } from '../../../core/decorators/swagger';
 import type { Response } from 'express';
-import { LoginResult } from './types/login-result';
+import { type LoginResult } from './types/login-result';
 import type { UserMetadata } from '../../../core/decorators/auth/user-agent.decorator';
 import { GetUserMetadata } from '../../../core/decorators/auth/user-agent.decorator';
-import { UserConfig } from '../../../core/user.config';
 import { LoggerService } from '@app/logger';
 import { CurrentUser } from '../../../core/decorators/auth/current-user.decorator';
 import { ActiveUserDto } from '../../../core/decorators/auth/dto';
@@ -43,14 +42,16 @@ import { RefreshGuard } from '../guards/refresh.guard';
 import { MeQuery } from '../application/queries';
 import { AccessTokenResponse } from './types';
 import { NewPasswordInputDto } from './input-dto/new-password.input-dto';
+import { RecaptchaGuard } from '../guards/captcha.guard';
+import { AuthService } from '../application/services';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-    private logger: LoggerService,
-    private userConfig: UserConfig,
+    private readonly authService: AuthService,
+    private readonly logger: LoggerService,
   ) {
     this.logger.setContext(AuthController.name);
   }
@@ -95,7 +96,7 @@ export class AuthController {
       LoginUserCommand,
       LoginResult
     >(new LoginUserCommand(dto, meta));
-    this.setRefreshTokenCookie(res, refreshToken);
+    this.authService.setRefreshTokenCookie(res, refreshToken);
     this.logger.log('User successfully logged into the app', 'Login');
     return { accessToken };
   }
@@ -121,7 +122,7 @@ export class AuthController {
       RefreshTokenCommand,
       RefreshTokenResult
     >(new RefreshTokenCommand(user));
-    this.setRefreshTokenCookie(res, refreshToken);
+    this.authService.setRefreshTokenCookie(res, refreshToken);
     this.logger.log('rotation refresh and access token completed', 'refresh-token');
     return { accessToken };
   }
@@ -135,21 +136,20 @@ export class AuthController {
     @CurrentUser() user: ActiveUserDto,
   ): Promise<void> {
     await this.commandBus.execute<LogoutCommand, void>(new LogoutCommand(user));
+    this.logger.log(`user ${user.userId} logged out', 'logout`);
     res.clearCookie('refreshToken', {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
     });
-    this.logger.log(`user ${user.userId} logged out', 'logout`);
   }
 
   @Post('password-recovery')
   @ApiAuthPasswordRecoveryDecorator()
+  @UseGuards(RecaptchaGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async passwordRecovery(@Body() body: PasswordRecoveryInputDto): Promise<void> {
-    await this.commandBus.execute<PasswordRecoveryUseCaseCommand, void>(
-      new PasswordRecoveryUseCaseCommand(body),
-    );
+    await this.commandBus.execute<PasswordRecoveryCommand, void>(new PasswordRecoveryCommand(body));
     this.logger.log(`Password-recovery success', 'password-recovery`);
   }
 
@@ -159,15 +159,5 @@ export class AuthController {
   async newPassword(@Body() body: NewPasswordInputDto): Promise<void> {
     await this.commandBus.execute<NewPasswordCommand, void>(new NewPasswordCommand(body));
     this.logger.log(`New-password success', 'new-password`);
-  }
-
-  /** Sets the refresh token as an httpOnly cookie on the response. */
-  private setRefreshTokenCookie(res: Response, refreshToken: string): void {
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-      maxAge: this.userConfig.maxAgeRefreshToken * 1000,
-    });
   }
 }

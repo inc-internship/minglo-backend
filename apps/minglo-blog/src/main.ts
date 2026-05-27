@@ -6,7 +6,7 @@ import { appSetup } from './setup/app.setup';
 import { proxySetup } from './setup/proxy.setup';
 import { cookiesSetup } from './setup/cookies.setup';
 import { corsSetup } from './setup/cors.setup';
-import { loggerSetup } from './setup/logger.setup';
+import { loggerSetup } from '@app/logger/logger.setup';
 
 async function bootstrap() {
   const DynamicAppModule = await initAppModule();

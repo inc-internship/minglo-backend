@@ -3,7 +3,7 @@ import { CryptoService } from '../../application/services';
 import { EmailConfirmationEntity, UserEntity } from '../entities';
 import {
   EmailConfirmationWithUser,
-  PassworRecoveryWithUser,
+  PasswordRecoveryWithUser,
   UserWithEmailConfirmation,
 } from '../../../../../prisma/types';
 import { PasswordRecoveryEntity } from '../entities/password-recovery.entity';
@@ -54,7 +54,7 @@ export class UserFactory {
   }
 
   /* Перегрузка prisma модели PasswordRecovery в доменную сущность UserEntity */
-  fromPasswordRecoveryRecord(record: PassworRecoveryWithUser): UserEntity {
+  fromPasswordRecoveryRecord(record: PasswordRecoveryWithUser): UserEntity {
     return UserEntity.reconstituteWithPasswordRecovery({
       id: record.user.id,
       publicId: record.user.publicId,

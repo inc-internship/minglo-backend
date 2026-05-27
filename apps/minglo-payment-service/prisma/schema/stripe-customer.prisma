@@ -1,0 +1,16 @@
+/**
+ * Созданный Customer в Stipe.
+ * Создаётся один раз при первой покупке и переиспользуется
+ */
+model StripeCustomer {
+  id     String @id @default(cuid())
+  userId String @unique @map("user_id") @db.VarChar(255)
+
+  /**
+   * ID объекта Customer в Stripe, для off-session списаний
+   */
+  stripeCustomerId String   @unique @map("stripe_customer_id") @db.VarChar(255)
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("stripe_customers")
+}

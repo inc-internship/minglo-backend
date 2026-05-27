@@ -1,0 +1,137 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: DEPLOYMENT_NAME
+  namespace: NAMESPACE
+  labels:
+    app: PROJECT
+spec:
+  selector:
+    matchLabels:
+      project: PROJECT
+  template:
+    metadata:
+      namespace: NAMESPACE
+      labels:
+        project: PROJECT
+    spec:
+      containers:
+         - name: PROJECT
+           image: REGISTRY_HOSTNAME/PROJECT:TAG_VERSION
+           securityContext:
+             allowPrivilegeEscalation: false
+             runAsNonRoot: true      # опционально, но хорошая практика
+             runAsUser: 1000         # опционально
+           ports:
+             - containerPort: PORT_CONTAINER
+           env:
+             - name: MEDIA_SERVICE_HOST
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: MEDIA_SERVICE_HOST
+             - name: MEDIA_HTTP_PORT
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: MEDIA_HTTP_PORT
+             - name: MEDIA_TCP_PORT
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: MEDIA_TCP_PORT
+             - name: MEDIA_DB_URL
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: MEDIA_DB_URL
+             - name: S3_BUCKET_NAME
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: S3_BUCKET_NAME
+             - name: S3_REGION
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: S3_REGION
+             - name: S3_ACCESS_KEY_ID
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: S3_ACCESS_KEY_ID
+             - name: S3_SECRET_ACCESS_KEY
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: S3_SECRET_ACCESS_KEY
+             - name: S3_ENDPOINT
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: S3_ENDPOINT
+             - name: S3_CONCURRENCY
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: S3_CONCURRENCY
+             - name: IMAGE_PROCESSING_CONCURRENCY
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: IMAGE_PROCESSING_CONCURRENCY
+             - name: MEDIA_ACCESS_SECRET
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: MEDIA_ACCESS_SECRET
+             - name: MEDIA_ACCESS_TOKEN_EXP_IN
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: MEDIA_ACCESS_TOKEN_EXP_IN
+             - name: MEDIA_THROTTLE_TTL
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: MEDIA_THROTTLE_TTL
+             - name: MEDIA_THROTTLE_LIMIT
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: MEDIA_THROTTLE_LIMIT
+             - name: MEDIA_TESTING_MODULE
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: MEDIA_TESTING_MODULE
+             - name: MEDIA_SWAGGER
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: MEDIA_SWAGGER
+             - name: LOGGER_HOST
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: LOGGER_HOST
+             - name: LOGGER_URL_PATH
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: LOGGER_URL_PATH
+             - name: LOGGER_LEVEL
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: LOGGER_LEVEL
+             - name: LOGGER_LICENSE_KEY
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: LOGGER_LICENSE_KEY
+             - name: MEDIA_SERVICE_URL
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-media-service-production-config-secret
+                   key: MEDIA_SERVICE_URL

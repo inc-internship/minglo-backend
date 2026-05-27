@@ -3,7 +3,8 @@ import { SessionEntity } from '../entities/session.entity';
 import { JwtPayload } from '../../application/services/token.service';
 import { UserMetadata } from '../../../../core/decorators/auth/user-agent.decorator';
 import { DeviceService } from '../../application/services/device.service';
-import { Session } from '../../../../../prisma/generated/prisma/client';
+import { SessionWithUser } from '../../../../../prisma/types';
+import { UserEntity } from '../entities';
 
 @Injectable()
 export class SessionFactory {
@@ -28,19 +29,28 @@ export class SessionFactory {
     });
   }
 
-  fromRecord(record: Session): SessionEntity {
-    return SessionEntity.reconstitute({
-      id: record.id,
-      userId: record.userId,
-      deviceId: record.deviceId,
-      deviceName: record.deviceName,
-      browserName: record.browserName,
-      browserVersion: record.browserVersion,
-      osName: record.osName,
-      ip: record.ip,
-      lastActive: record.lastActive,
-      issuedAt: record.issuedAt,
-      expiresAt: record.expiresAt,
+  /* Перегрузка prisma модели Session в доменную сущность UserEntity */
+  fromSessionRecord(record: SessionWithUser): UserEntity {
+    return UserEntity.reconstituteWithSession({
+      id: record.user.id,
+      publicId: record.user.publicId,
+      login: record.user.login,
+      email: record.user.email,
+      passwordHash: record.user.passwordHash,
+      emailConfirmed: record.user.emailConfirmed,
+      session: SessionEntity.reconstitute({
+        id: record.id,
+        userId: record.userId,
+        deviceId: record.deviceId,
+        deviceName: record.deviceName,
+        browserName: record.browserName,
+        browserVersion: record.browserVersion,
+        osName: record.osName,
+        ip: record.ip,
+        lastActive: record.lastActive,
+        issuedAt: record.issuedAt,
+        expiresAt: record.expiresAt,
+      }),
     });
   }
 }

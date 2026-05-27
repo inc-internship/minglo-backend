@@ -1,0 +1,77 @@
+/**
+ * Купленная подписка.
+ * Каждая запись = один купленный период доступа.
+ * При автопродлении создаётся НОВАЯ запись (история покупок)
+ */
+model Subscription {
+  id     String @id @default(cuid())
+  userId String @map("user_id") @db.VarChar(255)
+
+  /**
+   * Тариф
+   */
+  planId String @map("plan_id")
+  plan   Plan   @relation(fields: [planId], references: [id])
+
+  /**
+   * Текущий статус подписки
+   */
+  status SubscriptionStatus @default(PENDING)
+
+  /**
+   * Провайдер платежной системы (Stripe | PayPal)
+   */
+  paymentSystem PaymentSystem @map("payment_system")
+
+  /**
+   * Дата начала действия подписки
+   */
+  startDate DateTime? @map("start_date") @db.Timestamptz
+
+  /**
+   * Дата окончания действия подписки
+   */
+  endDate DateTime? @map("end_date") @db.Timestamptz
+
+  /**
+   * Флаг автопродления подписки.
+   * Инвариант: только одна подписка пользователя может иметь autoRenewal=true.
+   * При покупке новой — у предыдущих становится false.
+   */
+  autoRenewal Boolean @default(true) @map("auto_renewal")
+
+  /**
+   * сохранённый токен карты для off-session списания (для автопродления)
+   */
+  stripePaymentMethodId String? @map("stripe_payment_method_id") @db.VarChar(255)
+
+  /**
+   * ID клиента в Stripe (нужен для off-session: для автопродления)
+   */
+  stripeCustomerId String? @map("stripe_customer_id") @db.VarChar(255)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  /**
+   * История платежей
+   */
+  payments Payment[]
+
+  @@index([userId])
+  @@index([userId, status])
+  @@index([endDate, autoRenewal, status])
+  @@map("subscriptions")
+}
+
+enum SubscriptionStatus {
+  PENDING // куплена, но ещё не началась (стекинг)
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+enum PaymentSystem {
+  STRIPE
+  PAYPAL
+}

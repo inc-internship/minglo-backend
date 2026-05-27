@@ -1,0 +1,7 @@
+export * from './post-upload-images.decorator';
+export * from './create-post.decorator';
+export * from './get-post-by-id.decorator';
+export * from './update-post.decorator';
+export * from './delete-post.decorator';
+export * from './get-user-posts-paginated.decorator';
+export * from './get-latest-posts.decorator';

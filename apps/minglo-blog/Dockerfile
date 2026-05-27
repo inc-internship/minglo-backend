@@ -32,7 +32,7 @@ RUN pnpm run prisma:minglo-blog:generate:prod
 
 RUN pnpm run build:${SERVICE}
 
-# Migrate BD + run app
+## Migrate BD + run app
 RUN sed -i 's/\r$//' ./apps/minglo-blog/docker-entrypoint.sh && \
       chmod +x ./apps/minglo-blog/docker-entrypoint.sh
 

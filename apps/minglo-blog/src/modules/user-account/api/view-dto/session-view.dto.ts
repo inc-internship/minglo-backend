@@ -44,13 +44,7 @@ export class SessionViewDto {
   })
   osName: string;
 
-  @ApiProperty({
-    example: 'true/false',
-    description: 'current device',
-  })
-  isCurrent: boolean;
-
-  static mapToView(session: Session, isCurrent: boolean = false): SessionViewDto {
+  static mapToView(session: Session): SessionViewDto {
     const dto: SessionViewDto = new SessionViewDto();
 
     dto.ip = session.ip;
@@ -60,16 +54,11 @@ export class SessionViewDto {
     dto.browserName = session.browserName;
     dto.browserVersion = session.browserVersion;
     dto.osName = session.osName;
-    dto.isCurrent = isCurrent;
 
     return dto;
   }
 
-  static mapToManyView(sessions: Session[], currentDeviceId: string): SessionViewDto[] {
-    return sessions.map((session) => {
-      // Сравниваем ID из базы с ID из текущего запроса/токена
-      const isCurrent = session.deviceId === currentDeviceId;
-      return this.mapToView(session, isCurrent);
-    });
+  static mapToManyView(sessions: Session[]): SessionViewDto[] {
+    return sessions.map((session) => this.mapToView(session));
   }
 }

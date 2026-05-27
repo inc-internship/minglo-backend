@@ -3,7 +3,6 @@ import { initAppModule } from '../../src/init-app-module';
 import { appSetup } from '../../src/setup/app.setup';
 import { EmailService } from '@app/notifications';
 import { AuthTestManager } from '../managers';
-import { EmailServiceMock } from '../mocks';
 
 export const initTestSettings = async (
   addSettingsToModuleBuilder?: (moduleBuilder: TestingModuleBuilder) => void,
@@ -12,9 +11,12 @@ export const initTestSettings = async (
 
   const testingModuleBuilder: TestingModuleBuilder = Test.createTestingModule({
     imports: [DynamicAppModule],
-  })
-    .overrideProvider(EmailService)
-    .useClass(EmailServiceMock);
+  });
+
+  testingModuleBuilder.overrideProvider(EmailService).useValue({
+    sendConfirmationEmail: jest.fn().mockResolvedValue(undefined),
+    sendPasswordRecoveryEmail: jest.fn().mockResolvedValue(undefined),
+  });
 
   if (addSettingsToModuleBuilder) {
     addSettingsToModuleBuilder(testingModuleBuilder);

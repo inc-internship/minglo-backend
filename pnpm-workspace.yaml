@@ -2,15 +2,15 @@ packages:
   - 'apps/*'
   - 'libs/*'
 
-onlyBuiltDependencies:
-  - "@datadog/pprof"
-  - "@nestjs/core"
-  - "@newrelic/fn-inspect"
-  - "@newrelic/native-metrics"
-  - "@prisma/engines"
-  - "@scarf/scarf"
-  - bcrypt
-  - prisma
-  - protobufjs
-  - sharp
-  - unrs-resolver
+allowBuilds:
+  "@datadog/pprof": true
+  "@nestjs/core": true
+  "@newrelic/fn-inspect": true
+  "@newrelic/native-metrics": true
+  "@prisma/engines": true
+  "@scarf/scarf": true
+  bcrypt: true
+  prisma: true
+  protobufjs: true
+  sharp: true
+  unrs-resolver: true

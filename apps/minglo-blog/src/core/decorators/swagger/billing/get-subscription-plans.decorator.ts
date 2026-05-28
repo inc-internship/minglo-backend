@@ -1,14 +1,15 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTooManyRequestsResponse } from '@nestjs/swagger';
-import { TotalCountRegisteredUsersViewDto } from '../../../../modules/user-account/api/view-dto';
+import { GetSubscriptionPlansViewDto } from '@app/payments/view-dto';
 
-export function ApiUsersTotalCountDecorator() {
+export function ApiGetSubscriptionPlans() {
   return applyDecorators(
     ApiOperation({
-      summary: 'Get total count registered users in app',
+      summary: 'Get available subscription plans',
+      description: 'Redirects user to GitHub authorization page',
     }),
     ApiOkResponse({
-      type: TotalCountRegisteredUsersViewDto,
+      type: GetSubscriptionPlansViewDto,
       description: 'Success',
     }),
     ApiTooManyRequestsResponse({

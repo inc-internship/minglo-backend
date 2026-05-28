@@ -3,6 +3,9 @@ import { BillingController } from './api/billing.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { CoreConfig } from '../../core/core.config';
 import { PAYMENT_SERVICE } from '@app/payments';
+import { GetSubscriptionsPlansQueryHandler } from './application/queries';
+
+const queries = [GetSubscriptionsPlansQueryHandler];
 
 @Module({
   imports: [
@@ -21,6 +24,6 @@ import { PAYMENT_SERVICE } from '@app/payments';
     ]),
   ],
   controllers: [BillingController],
-  providers: [],
+  providers: [...queries],
 })
 export class BillingModule {}

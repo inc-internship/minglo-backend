@@ -1,0 +1,15 @@
+model OAuthAccount {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  provider   String @db.VarChar(50) // "google" | "github"
+  providerId String @map("provider_id") @db.VarChar(255) // уникальный ID у провайдера
+
+  @@unique([provider, providerId]) // один и тот же аккаунт нельзя привязать дважды
+  @@index([userId])
+  @@map("oauth_accounts")
+}

@@ -15,7 +15,9 @@ export class NewPasswordUseCase implements ICommandHandler<NewPasswordCommand, v
     private readonly userRepo: UserRepository,
     private readonly cryptoService: CryptoService,
     private logger: LoggerService,
-  ) {}
+  ) {
+    this.logger.setContext(NewPasswordUseCase.name);
+  }
 
   async execute({ body }: NewPasswordCommand): Promise<void> {
     const { recoveryCode, newPassword } = body;
@@ -26,6 +28,14 @@ export class NewPasswordUseCase implements ICommandHandler<NewPasswordCommand, v
     user.passwordRecoveries.validate();
     this.logger.log('Confirmation code validated', 'execute');
 
+    // OAuth пользователи не имеют пароля — смена пароля для них недоступна
+    if (!user.passwordHash) {
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: 'Password change is not available for OAuth accounts',
+      });
+    }
+
     const result = await this.cryptoService.comparePassword({
       password: newPassword,
       passwordHash: user.passwordHash,
@@ -34,7 +44,9 @@ export class NewPasswordUseCase implements ICommandHandler<NewPasswordCommand, v
       throw new DomainException({
         code: DomainExceptionCode.BadRequest,
         message: 'Invalid newPassword',
-        extensions: [{ field: 'newPassword', message: 'New password must be different' }],
+        extensions: [
+          { field: 'newPassword', message: 'New password must not match the old password.' },
+        ],
       });
     }
 

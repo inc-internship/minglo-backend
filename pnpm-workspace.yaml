@@ -1,0 +1,16 @@
+packages:
+  - 'apps/*'
+  - 'libs/*'
+
+allowBuilds:
+  "@datadog/pprof": true
+  "@nestjs/core": true
+  "@newrelic/fn-inspect": true
+  "@newrelic/native-metrics": true
+  "@prisma/engines": true
+  "@scarf/scarf": true
+  bcrypt: true
+  prisma: true
+  protobufjs: true
+  sharp: true
+  unrs-resolver: true

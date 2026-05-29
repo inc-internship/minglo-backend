@@ -46,6 +46,7 @@ describe('Session API (e2e)', () => {
     expect(userWithProfile?.profile).not.toBeNull();
 
     const profileId = userWithProfile!.profile!.id;
+    const publicId = userWithProfile!.profile!.publicId;
     expect(profileId).toBeDefined();
 
     await prisma.avatar.create({
@@ -67,7 +68,7 @@ describe('Session API (e2e)', () => {
       },
     });
 
-    const { body: profileBody } = await profileTestManager.getMyProfile(accessToken, 200);
+    const { body: profileBody } = await profileTestManager.getMyProfile(accessToken, 200, publicId);
     expect(profileBody.login).toBe(dto.login);
     expect(profileBody.avatar.url).toBe(
       'https://s3.amazonaws.com/my-bucket/avatars/large_avatar.jpg',
@@ -92,14 +93,15 @@ describe('Session API (e2e)', () => {
 
     const profileId = userWithProfile!.profile!.id;
     expect(profileId).toBeDefined();
+    const publicId = userWithProfile!.profile!.publicId;
 
-    const { body: profileBody } = await profileTestManager.getMyProfile(accessToken, 200);
+    const { body: profileBody } = await profileTestManager.getMyProfile(accessToken, 200, publicId);
     expect(profileBody.login).toBe(dto.login);
 
     await profileTestManager.softDeleteMyProfile(accessToken, 204);
 
     await authManager.login(dto, 401);
 
-    await profileTestManager.getMyProfile(accessToken, 401);
+    await profileTestManager.getMyProfile(accessToken, 401, publicId);
   });
 });

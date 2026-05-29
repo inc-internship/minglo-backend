@@ -1,1 +1,1 @@
-export * from './view-my-profile.query';
+export * from './view-profile.query';

@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Put,
   UseGuards,
@@ -22,13 +23,13 @@ import {
   ApiFillMyProfileDecorator,
   ApiProfileUploadImagesDecorator,
   ApiUpdateMyProfileDecorator,
-  ApiViewMyProfileDecorator,
+  ApiViewProfileDecorator,
 } from '../../../core/decorators/swagger/profile';
 import { UploadImageProfileDto } from '@app/media/dto/upload-image-profile.dto';
 import { extractFileStream } from '@app/media/helpers';
-import { CreateAvatarViewDto, MyProfileViewDto } from './view-dto';
+import { CreateAvatarViewDto, ProfileViewDto } from './view-dto';
 import { CreateAvatarInputDto, FillProfileInputDto, UpdateProfileInputDto } from './input-dto';
-import { ViewMyProfileQuery } from '../application/queries';
+import { ViewProfileQuery } from '../application/queries';
 import {
   CreateAvatarCommand,
   FillProfileCommand,
@@ -90,15 +91,13 @@ export class ProfileController {
     );
   }
 
-  @Get('me')
-  @ApiViewMyProfileDecorator()
+  @Get(':id')
+  @ApiViewProfileDecorator()
   @UseGuards(AccessGuard)
   @HttpCode(HttpStatus.OK)
-  async viewProfile(@CurrentUser() user: ActiveUserDto) {
-    this.logger.log(`Check my profile: ${user.userId}`, 'viewProfile');
-    return await this.queryBus.execute<ViewMyProfileQuery, MyProfileViewDto>(
-      new ViewMyProfileQuery(user),
-    );
+  async viewProfile(@Param('id') id: string) {
+    this.logger.log(`Check profile: ${id}`, 'viewProfile');
+    return await this.queryBus.execute<ViewProfileQuery, ProfileViewDto>(new ViewProfileQuery(id));
   }
 
   @Put()

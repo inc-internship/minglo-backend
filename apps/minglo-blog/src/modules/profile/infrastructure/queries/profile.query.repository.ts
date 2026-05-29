@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../database/prisma.service';
-import { MyProfileViewDto } from '../../api/view-dto';
+import { ProfileViewDto } from '../../api/view-dto';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
 import { LoggerService } from '@app/logger';
 
@@ -13,7 +13,7 @@ export class ProfileQueryRepository {
     this.logger.setContext(ProfileQueryRepository.name);
   }
 
-  async getMyProfile(id: string): Promise<MyProfileViewDto> {
+  async getProfile(id: string): Promise<ProfileViewDto> {
     const rawData = await this.prisma.profile.findFirst({
       where: {
         deletedAt: null,
@@ -33,13 +33,12 @@ export class ProfileQueryRepository {
     });
 
     if (!rawData) {
-      this.logger.warn(`profile not found: ${id}`);
       throw new DomainException({
-        code: DomainExceptionCode.InternalServerError,
-        message: 'Data integrity breach: Profile not found for existing user',
+        code: DomainExceptionCode.NotFound,
+        message: `profile with id: ${id} not found `,
       });
     }
 
-    return MyProfileViewDto.mapToView(rawData);
+    return ProfileViewDto.mapToView(rawData);
   }
 }

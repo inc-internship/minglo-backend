@@ -1,44 +1,43 @@
-import { MediaFileMetaDataViewDto } from '@app/media/api/view-dto';
 import { MediaMimeType } from '@app/media/enums';
+import { UploadImageProfileDto } from '@app/media/dto/upload-image-profile.dto';
 
 export class AvatarEntity {
   profileId: number;
   mimeType: MediaMimeType;
 
-  urlLarge: string;
-  keyLarge: string;
-  fileSizeLarge: number;
-  widthLarge: number;
-  heightLarge: number;
+  originalMediaId: string;
+  urlOriginal: string;
+  keyOriginal: string;
+  fileSizeOriginal: number;
+  widthOriginal: number;
+  heightOriginal: number;
 
-  urlSmall: string;
-  keySmall: string;
-  fileSizeSmall: number;
-  widthSmall: number;
-  heightSmall: number;
+  thumbnailMediaId: string;
+  urlThumbnail: string;
+  keyThumbnail: string;
+  fileSizeThumbnail: number;
+  widthThumbnail: number;
+  heightThumbnail: number;
 
-  static create(images: MediaFileMetaDataViewDto[], profileId: number): AvatarEntity {
+  static create(dto: UploadImageProfileDto, profileId: number): AvatarEntity {
     const avatar = new this();
 
-    const sorted = [...images].sort((a, b) => b.width - a.width);
-    const [large, small] = sorted;
-
     avatar.profileId = profileId;
-    avatar.mimeType = large.mimeType;
+    avatar.mimeType = dto.original.mimeType;
 
-    // Мапим Large
-    avatar.urlLarge = large.url;
-    avatar.keyLarge = large.key;
-    avatar.fileSizeLarge = large.fileSize;
-    avatar.widthLarge = large.width;
-    avatar.heightLarge = large.height;
+    avatar.originalMediaId = dto.original.id;
+    avatar.urlOriginal = dto.original.url;
+    avatar.keyOriginal = dto.original.key;
+    avatar.fileSizeOriginal = dto.original.fileSize;
+    avatar.widthOriginal = dto.original.width;
+    avatar.heightOriginal = dto.original.height;
 
-    // Мапим Small
-    avatar.urlSmall = small.url;
-    avatar.keySmall = small.key;
-    avatar.fileSizeSmall = small.fileSize;
-    avatar.widthSmall = small.width;
-    avatar.heightSmall = small.height;
+    avatar.thumbnailMediaId = dto.thumbnail.id;
+    avatar.urlThumbnail = dto.thumbnail.url;
+    avatar.keyThumbnail = dto.thumbnail.key;
+    avatar.fileSizeThumbnail = dto.thumbnail.fileSize;
+    avatar.widthThumbnail = dto.thumbnail.width;
+    avatar.heightThumbnail = dto.thumbnail.height;
 
     return avatar;
   }

@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { type Request } from 'express';
@@ -18,25 +19,21 @@ import { ActiveUserDto } from '../../../core/decorators/auth/dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
 import {
-  ApiCreateAvatarDecorator,
-  ApiDeleteMyProfileDecorator,
-  ApiFillMyProfileDecorator,
+  ApiDeleteAvatarDecorator,
   ApiProfileUploadImagesDecorator,
   ApiUpdateMyProfileDecorator,
   ApiViewProfileDecorator,
 } from '../../../core/decorators/swagger/profile';
 import { UploadImageProfileDto } from '@app/media/dto/upload-image-profile.dto';
 import { extractFileStream } from '@app/media/helpers';
-import { CreateAvatarViewDto, ProfileViewDto } from './view-dto';
-import { CreateAvatarInputDto, FillProfileInputDto, UpdateProfileInputDto } from './input-dto';
+import { ProfileViewDto } from './view-dto';
+import { DeleteAvatarInputDto, UpdateProfileInputDto } from './input-dto';
 import { ViewProfileQuery } from '../application/queries';
 import {
-  CreateAvatarCommand,
-  FillProfileCommand,
+  DeleteAvatarCommand,
   UpdateProfileCommand,
   UploadAvatarImagesCommand,
 } from '../application/usecases';
-import { DeleteProfileCommand } from '../application/usecases/delete-profile.usecase';
 
 @Controller('profile')
 export class ProfileController {
@@ -54,7 +51,7 @@ export class ProfileController {
   @HttpCode(HttpStatus.CREATED)
   async uploadMediaFile(
     @CurrentUser() user: ActiveUserDto,
-    req: Request,
+    @Req() req: Request,
   ): Promise<UploadImageProfileDto> {
     this.logger.log(
       `New media(profile) upload request received from user: ${user.userId}`,
@@ -80,24 +77,26 @@ export class ProfileController {
     }
   }
 
-  @Post('create-avatar')
-  @ApiCreateAvatarDecorator()
+  @Delete('avatar')
+  @ApiDeleteAvatarDecorator()
   @UseGuards(AccessGuard)
-  @HttpCode(HttpStatus.CREATED)
-  async createAvatar(@Body() body: CreateAvatarInputDto, @CurrentUser() user: ActiveUserDto) {
-    this.logger.log(`Create new Avatar photo for user: ${user.userId}`, 'create');
-    return await this.commandBus.execute<CreateAvatarCommand, CreateAvatarViewDto>(
-      new CreateAvatarCommand(body, user.userId),
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteAvatar(@CurrentUser() user: ActiveUserDto, @Body() body: DeleteAvatarInputDto) {
+    this.logger.log(`Delete avatar for user: ${user.userId}`, 'deleteAvatar');
+    return await this.commandBus.execute<DeleteAvatarCommand, void>(
+      new DeleteAvatarCommand(body.mediaId, user),
     );
   }
 
-  @Get(':id')
+  @Get(':userId')
   @ApiViewProfileDecorator()
   @UseGuards(AccessGuard)
   @HttpCode(HttpStatus.OK)
-  async viewProfile(@Param('id') id: string) {
-    this.logger.log(`Check profile: ${id}`, 'viewProfile');
-    return await this.queryBus.execute<ViewProfileQuery, ProfileViewDto>(new ViewProfileQuery(id));
+  async viewProfile(@Param('userId') userId: string) {
+    this.logger.log(`Check profile: ${userId}`, 'viewProfile');
+    return await this.queryBus.execute<ViewProfileQuery, ProfileViewDto>(
+      new ViewProfileQuery(userId),
+    );
   }
 
   @Put()
@@ -108,27 +107,6 @@ export class ProfileController {
     this.logger.log(`Update my profile: ${user.userId}`, 'update');
     return await this.commandBus.execute<UpdateProfileCommand, void>(
       new UpdateProfileCommand(user, body),
-    );
-  }
-
-  @Delete()
-  @ApiDeleteMyProfileDecorator()
-  @UseGuards(AccessGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async delete(@CurrentUser() user: ActiveUserDto) {
-    this.logger.log(`delete my profile: ${user.userId}`, 'delete');
-    return await this.commandBus.execute<DeleteProfileCommand, void>(
-      new DeleteProfileCommand(user),
-    );
-  }
-
-  @Post('fill')
-  @ApiFillMyProfileDecorator()
-  @UseGuards(AccessGuard)
-  @HttpCode(HttpStatus.OK)
-  async fill(@CurrentUser() user: ActiveUserDto, @Body() body: FillProfileInputDto) {
-    return await this.commandBus.execute<FillProfileCommand, void>(
-      new FillProfileCommand(user, body),
     );
   }
 }

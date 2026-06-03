@@ -9,10 +9,12 @@ import FormData from 'form-data';
 import { firstValueFrom } from 'rxjs';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
 import { Inject } from '@nestjs/common';
-import { MEDIA_ACCESS_TOKEN_STRATEGY_INJECT_TOKEN } from '@app/media/constants';
+import { MEDIA_ACCESS_TOKEN_STRATEGY_INJECT_TOKEN, MEDIA_SERVICE } from '@app/media/constants';
 import { Readable } from 'stream';
 import { UploadImageProfileDto } from '@app/media/dto/upload-image-profile.dto';
-import { getFileTypeFromBuffer, SupportedFileType } from '../../helpers/file-type.helper';
+import { ProfileRepository } from '../../infrastructure/profile.repository';
+import { AvatarEntity } from '../../domains/entities/avatar.entity';
+import { ClientProxy } from '@nestjs/microservices';
 
 export class UploadAvatarImagesCommand {
   constructor(
@@ -29,132 +31,85 @@ export class UploadAvatarImagesUseCase implements ICommandHandler<
 > {
   constructor(
     @Inject(MEDIA_ACCESS_TOKEN_STRATEGY_INJECT_TOKEN)
-    private jwt: JwtService,
+    private readonly jwt: JwtService,
+    @Inject(MEDIA_SERVICE)
+    private readonly mediaClient: ClientProxy,
     private readonly httpService: HttpService,
     private readonly coreConfig: CoreConfig,
+    private readonly profileRepository: ProfileRepository,
     private readonly logger: LoggerService,
   ) {
     this.logger.setContext(UploadAvatarImagesUseCase.name);
   }
 
-  async execute(command: UploadAvatarImagesCommand) {
+  async execute(command: UploadAvatarImagesCommand): Promise<UploadImageProfileDto> {
     const { fileStream, filename, user } = command;
 
+    /** Signs a service-to-service JWT; media-service reads userId and type from the token. */
     const token = this.jwt.sign({
       service: MediaAuthorizedServices.MINGLO_BLOG,
+      publicUserId: user.userId,
+      type: MediaType.AVATAR,
     });
 
-    const delay = 3000;
-    let firstChunk: Buffer;
+    const formData = new FormData();
+    formData.append('file', fileStream, {
+      filename,
+      contentType: 'application/octet-stream',
+    });
+
+    let uploadResult: UploadImageProfileDto;
 
     try {
-      this.logger.log('take first chunk');
-      firstChunk = await new Promise<Buffer>((resolve, reject) => {
-        const timeout = setTimeout(() => {
-          stopListening();
-          reject(new Error('timeout'));
-        }, delay);
-
-        const onReadable = () => {
-          stopListening();
-          resolve(fileStream.read(16));
-        };
-
-        const onError = (err: Error) => {
-          stopListening();
-          reject(err);
-        };
-
-        const stopListening = () => {
-          clearTimeout(timeout);
-          fileStream.removeListener('readable', onReadable);
-          fileStream.removeListener('error', onError);
-        };
-
-        fileStream.once('readable', onReadable);
-        fileStream.once('error', onError);
-      });
-    } catch (error) {
-      if (error instanceof DomainException) {
-        throw error;
-      }
-
-      this.logger.error(`Stream process failed: ${error.message}`);
-      fileStream.destroy();
-
-      throw new DomainException({
-        code: DomainExceptionCode.RequestTimeout,
-        message: `These photos did not load within ${delay / 1000} seconds`,
-      });
-    }
-
-    const type: SupportedFileType = getFileTypeFromBuffer(firstChunk);
-    this.logger.log(`Detected format: ${type}`);
-    fileStream.unshift(firstChunk);
-
-    const MAX_FILE_SIZE = 3 * 1024 * 1024;
-    let totalBytes = 0;
-
-    const sizeChecker = (chunk: Buffer) => {
-      totalBytes += chunk.length;
-
-      if (totalBytes > MAX_FILE_SIZE) {
-        this.logger.error('File too heavy, cutting the pipe!');
-
-        fileStream.destroy(new Error('LIMIT_EXCEEDED'));
-      }
-    };
-
-    fileStream.on('data', sizeChecker);
-
-    const mimeTypes = {
-      JPG: 'image/jpeg',
-      PNG: 'image/png',
-      WEBP: 'image/webp',
-    };
-
-    try {
-      const formData = new FormData();
-
-      formData.append('type', MediaType.AVATAR);
-      formData.append('publicUserId', user.userId);
-
-      formData.append('file', fileStream, {
-        filename: filename,
-        contentType: mimeTypes[type],
-      });
+      this.logger.log(`Forwarding avatar upload to media service, user: ${user.userId}`);
 
       const { data } = await firstValueFrom(
-        this.httpService.post(`${this.coreConfig.mediaServiceUrl}/media/upload-avatar`, formData, {
-          headers: {
-            ...formData.getHeaders(),
-            Authorization: `Bearer ${token}`,
+        this.httpService.post<UploadImageProfileDto>(
+          `${this.coreConfig.mediaServiceUrl}/media/upload-avatar`,
+          formData,
+          {
+            headers: {
+              ...formData.getHeaders(),
+              Authorization: `Bearer ${token}`,
+            },
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity,
           },
-        }),
+        ),
       );
 
-      this.logger.log('New post image(s) uploaded');
-      return data;
+      uploadResult = data;
+      this.logger.log(`Avatar upload successful, user: ${user.userId}`);
     } catch (error) {
-      const isLimit =
-        error.message === 'LIMIT_EXCEEDED' ||
-        error.cause?.message === 'LIMIT_EXCEEDED' ||
-        error.code === 'ECONNRESET';
-
-      if (isLimit) {
-        throw new DomainException({
-          code: DomainExceptionCode.BadRequest,
-          message: 'Image is too big (max 3MB)',
-        });
-      }
       if (error instanceof DomainException) throw error;
 
+      /** Forward structured errors from the media-service (4xx) as-is. */
+      const mediaErrorCode = error?.response?.data?.code;
+      const mediaErrorMessage = error?.response?.data?.message;
+      if (mediaErrorCode && mediaErrorMessage) {
+        throw new DomainException({ code: mediaErrorCode, message: mediaErrorMessage });
+      }
+
+      this.logger.error(`Media service call failed: ${error.message}`);
       throw new DomainException({
         code: DomainExceptionCode.InternalServerError,
         message: 'Media Service is unavailable',
       });
-    } finally {
-      fileStream.removeListener('data', sizeChecker);
     }
+
+    // Save / replace avatar in blog DB
+    const profile = await this.profileRepository.findProfileById(user.userId);
+    const avatar = AvatarEntity.create(uploadResult, profile.id);
+    const { oldKeys } = await this.profileRepository.upsertAvatar(avatar);
+
+    // Schedule old S3 files for deletion (fire-and-forget)
+    if (oldKeys.length) {
+      this.mediaClient.send({ cmd: 'mark_media_files_deleted' }, { keys: oldKeys }).subscribe({
+        error: (err) =>
+          this.logger.error(`Failed to mark old avatar keys for deletion: ${err.message}`),
+      });
+    }
+
+    return uploadResult;
   }
 }

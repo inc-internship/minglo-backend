@@ -44,12 +44,28 @@ export type UserWithSession = Prisma.UserGetPayload<{
 
 export type PostWithMediaFileAndUserData = Prisma.PostGetPayload<{
   include: {
-    user: true;
+    user: {
+      include: {
+        profile: {
+          include: {
+            avatar: { where: { deletedAt: null } };
+          };
+        };
+      };
+    };
     postsMediaFiles: true;
   };
 }>;
 
-export type PostOwner = Prisma.UserGetPayload<object>;
+export type PostOwner = Prisma.UserGetPayload<{
+  include: {
+    profile: {
+      include: {
+        avatar: { where: { deletedAt: null } };
+      };
+    };
+  };
+}>;
 export type PostMediaFile = Prisma.PostMediaFileGetPayload<object>;
 
 export type PostForUpdate = Prisma.PostGetPayload<{
@@ -66,10 +82,11 @@ export type PostForUpdate = Prisma.PostGetPayload<{
 
 export type ProfileWithUserAndAvatar = Prisma.ProfileGetPayload<{
   include: {
-    avatar: true;
+    avatar: { where: { deletedAt: null } };
     user: {
       select: {
         login: true;
+        accountType: true;
       };
     };
   };

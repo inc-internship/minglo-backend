@@ -4,7 +4,7 @@ import { MediaFileEntity } from '../domains/entities';
 import { PrismaExceptionMapper } from '@app/exceptions';
 import { MediaFileFactory } from '../domains/factory/media-file.factory';
 import { BatchPayload } from '../../../../prisma/generated/prisma/internal/prismaNamespace';
-import { MediaMimeType } from '../../../../prisma/generated/prisma/enums';
+import { MediaMimeType } from '@app/media/enums';
 
 @Injectable()
 export class MediaRepository {

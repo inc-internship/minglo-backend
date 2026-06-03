@@ -483,10 +483,13 @@ describe('Posts API (e2e)', () => {
         id: postId,
         description: null,
         images: expect.any(Array),
-        owner: expect.objectContaining({
+        owner: {
           id: expect.any(String),
           login: expect.any(String),
-        }),
+          firstName: null,
+          lastName: null,
+          avatar: null,
+        },
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
       });

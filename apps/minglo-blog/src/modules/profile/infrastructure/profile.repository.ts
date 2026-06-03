@@ -6,6 +6,7 @@ import { LoggerService } from '@app/logger';
 import { AvatarEntity } from '../domains/entities/avatar.entity';
 import { ActiveUserDto } from '../../../core/decorators/auth/dto';
 import { UpdateProfileInputDto } from '../api/input-dto';
+import { Avatar } from '../../../../prisma/generated/prisma/client';
 
 @Injectable()
 export class ProfileRepository {
@@ -14,25 +15,74 @@ export class ProfileRepository {
     private readonly logger: LoggerService,
   ) {}
 
-  /* Создает аватар */
-  async createAvatar(avatar: AvatarEntity): Promise<string> {
-    const result = await this.prisma.avatar.create({
-      data: {
+  /**
+   * Upserts avatar for the given profile.
+   */
+  async upsertAvatar(avatar: AvatarEntity): Promise<{ avatarId: string; oldKeys: string[] }> {
+    const existing = await this.prisma.avatar.findUnique({
+      where: { profileId: avatar.profileId },
+    });
+
+    // Only collect old keys if the existing avatar is active (not already soft-deleted)
+    const oldKeys: string[] =
+      existing && !existing.deletedAt ? [existing.keyOriginal, existing.keyThumbnail] : [];
+
+    const result = await this.prisma.avatar.upsert({
+      where: { profileId: avatar.profileId },
+      create: {
         profileId: avatar.profileId,
         mimeType: avatar.mimeType,
-        urlLarge: avatar.urlLarge,
-        keyLarge: avatar.keyLarge,
-        fileSizeLarge: avatar.fileSizeLarge,
-        widthLarge: avatar.widthLarge,
-        heightLarge: avatar.heightLarge,
-        urlSmall: avatar.urlSmall,
-        keySmall: avatar.keySmall,
-        fileSizeSmall: avatar.fileSizeSmall,
-        widthSmall: avatar.widthSmall,
-        heightSmall: avatar.heightSmall,
+        originalMediaId: avatar.originalMediaId,
+        urlOriginal: avatar.urlOriginal,
+        keyOriginal: avatar.keyOriginal,
+        fileSizeOriginal: avatar.fileSizeOriginal,
+        widthOriginal: avatar.widthOriginal,
+        heightOriginal: avatar.heightOriginal,
+        thumbnailMediaId: avatar.thumbnailMediaId,
+        urlThumbnail: avatar.urlThumbnail,
+        keyThumbnail: avatar.keyThumbnail,
+        fileSizeThumbnail: avatar.fileSizeThumbnail,
+        widthThumbnail: avatar.widthThumbnail,
+        heightThumbnail: avatar.heightThumbnail,
+      },
+      update: {
+        deletedAt: null,
+        mimeType: avatar.mimeType,
+        originalMediaId: avatar.originalMediaId,
+        urlOriginal: avatar.urlOriginal,
+        keyOriginal: avatar.keyOriginal,
+        fileSizeOriginal: avatar.fileSizeOriginal,
+        widthOriginal: avatar.widthOriginal,
+        heightOriginal: avatar.heightOriginal,
+        thumbnailMediaId: avatar.thumbnailMediaId,
+        urlThumbnail: avatar.urlThumbnail,
+        keyThumbnail: avatar.keyThumbnail,
+        fileSizeThumbnail: avatar.fileSizeThumbnail,
+        widthThumbnail: avatar.widthThumbnail,
+        heightThumbnail: avatar.heightThumbnail,
       },
     });
-    return result.publicId;
+
+    return { avatarId: result.publicId, oldKeys };
+  }
+
+  /* Finds avatar by either originalMediaId or thumbnailMediaId */
+  async findAvatarByMediaId(mediaId: string, profileId: number): Promise<Avatar | null> {
+    return this.prisma.avatar.findFirst({
+      where: {
+        deletedAt: null,
+        profileId,
+        OR: [{ originalMediaId: mediaId }, { thumbnailMediaId: mediaId }],
+      },
+    });
+  }
+
+  /* Soft-deletes the avatar record */
+  async deleteAvatar(avatarId: number): Promise<void> {
+    await this.prisma.avatar.update({
+      where: { id: avatarId },
+      data: { deletedAt: new Date() },
+    });
   }
 
   /* поиск профиля и маппинг его */
@@ -48,15 +98,10 @@ export class ProfileRepository {
     });
 
     if (!profile) {
-      this.logger.error(
-        `Critical data inconsistency: User ${publicUserId} exists but has no profile!`,
-      );
+      this.logger.error(`Data inconsistency: profile for user ${publicUserId} is missing`);
       throw new DomainException({
         code: DomainExceptionCode.InternalServerError,
-        message: `Inconsistency detected: Profile for user ${publicUserId} is missing.`,
-        extensions: [
-          { field: 'publicUserId', message: `Profile for user ${publicUserId} is missing` },
-        ],
+        message: `Profile for user ${publicUserId} is missing`,
       });
     }
 
@@ -83,15 +128,6 @@ export class ProfileRepository {
                 : undefined,
           },
         },
-      },
-    });
-  }
-
-  async softDeleteProfile(id: string): Promise<void> {
-    await this.prisma.user.update({
-      where: { publicId: id },
-      data: {
-        deletedAt: new Date(),
       },
     });
   }

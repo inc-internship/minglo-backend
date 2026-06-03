@@ -1,8 +1,10 @@
 import { applyDecorators } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ProfileViewDto } from '../../../../modules/profile/api/view-dto';
@@ -11,15 +13,15 @@ export function ApiViewProfileDecorator() {
   return applyDecorators(
     ApiBearerAuth('access-token'),
     ApiOperation({
-      summary: 'Get current user profile',
-      description: 'Returns detailed profile information including the avatar and user login.',
+      summary: 'Get profile by user ID',
+      description: 'Returns profile information for the given user public ID.',
     }),
+    ApiParam({ name: 'userId', type: String, description: 'User public ID' }),
     ApiOkResponse({
-      description: 'The profile has been successfully retrieved.',
+      description: 'Profile successfully retrieved.',
       type: ProfileViewDto,
     }),
-    ApiUnauthorizedResponse({
-      description: 'Unauthorized: Access token is missing or invalid.',
-    }),
+    ApiUnauthorizedResponse({ description: 'Access token is missing or invalid.' }),
+    ApiNotFoundResponse({ description: 'Profile not found.' }),
   );
 }

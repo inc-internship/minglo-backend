@@ -1,17 +1,33 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { MediaMimeType } from '../enums';
 
-class ImageResponseDto {
-  @ApiProperty({ example: 'clv123abc...', description: 'Public ID из базы' })
+class AvatarImageDto {
+  @ApiProperty({ type: String })
   id: string;
 
-  @ApiProperty({ example: 'https://s3.cloud.com/avatars/user/photo.webp' })
+  @ApiProperty({ type: String })
   url: string;
+
+  @ApiProperty({ type: String })
+  key: string;
+
+  @ApiProperty({ type: Number })
+  width: number;
+
+  @ApiProperty({ type: Number })
+  height: number;
+
+  @ApiProperty({ type: Number })
+  fileSize: number;
+
+  @ApiProperty({ enum: MediaMimeType, enumName: 'MediaMimeType' })
+  mimeType: MediaMimeType;
 }
 
 export class UploadImageProfileDto {
-  @ApiProperty({ type: ImageResponseDto })
-  mainImage: ImageResponseDto;
+  @ApiProperty({ type: AvatarImageDto })
+  original: AvatarImageDto;
 
-  @ApiProperty({ type: ImageResponseDto })
-  thumbnail: ImageResponseDto;
+  @ApiProperty({ type: AvatarImageDto })
+  thumbnail: AvatarImageDto;
 }

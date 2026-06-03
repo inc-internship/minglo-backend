@@ -5,18 +5,15 @@ import {
   ApiBody,
   ApiConsumes,
   ApiCreatedResponse,
-  ApiExtraModels,
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ErrorResponseBody } from '@app/exceptions';
-import { MediaTypeInputDto } from '@app/media/api/input-dto';
-import { UploadImageResultDto } from '@app/media/dto';
+import { UploadImageProfileDto } from '@app/media/dto/upload-image-profile.dto';
 
 export function ApiProfileUploadImagesDecorator() {
   return applyDecorators(
     ApiBearerAuth('access-token'),
-    ApiExtraModels(MediaTypeInputDto),
     ApiOperation({
       summary: 'Upload image for profile',
     }),
@@ -41,7 +38,7 @@ export function ApiProfileUploadImagesDecorator() {
       type: ErrorResponseBody,
     }),
     ApiCreatedResponse({
-      type: UploadImageResultDto,
+      type: UploadImageProfileDto,
       description: 'Success',
     }),
     ApiUnauthorizedResponse({

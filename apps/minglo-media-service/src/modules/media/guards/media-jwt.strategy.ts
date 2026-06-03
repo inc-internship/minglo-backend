@@ -1,14 +1,13 @@
-/**
- * Passport JWT strategy for service-to-service authentication.
- * Extracts and verifies the Bearer token from the Authorization header
- */
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { MediaConfig } from '../../core/media.config';
+import { MediaType } from '@app/media/enums';
 
 export interface ServiceTokenPayload {
   service: string;
+  publicUserId: string;
+  type: MediaType;
 }
 
 @Injectable()
@@ -22,10 +21,14 @@ export class MediaJwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   /**
-   * функция принимает payload из jwt токена и возвращает то, что будет записано в req.user
-   * @param payload
+   * Passport вызывает этот метод после успешной верификации токена.
+   * Возвращаемый объект записывается в req.user.
    */
   async validate(payload: ServiceTokenPayload): Promise<ServiceTokenPayload> {
-    return { service: payload.service };
+    return {
+      service: payload.service,
+      publicUserId: payload.publicUserId,
+      type: payload.type,
+    };
   }
 }

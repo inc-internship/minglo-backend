@@ -6,6 +6,7 @@ import {
   ConfirmEmailUseCase,
   CreateUserUseCase,
   DeleteSessionUseCase,
+  DeleteUserUseCase,
   LoginUserUseCase,
   LogoutUseCase,
   NewPasswordUseCase,
@@ -58,6 +59,7 @@ const services = [
 const usecases = [
   NewPasswordUseCase,
   CreateUserUseCase,
+  DeleteUserUseCase,
   LoginUserUseCase,
   ConfirmEmailUseCase,
   ResendConfirmEmailUseCase,

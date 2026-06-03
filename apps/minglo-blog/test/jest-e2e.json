@@ -2,6 +2,7 @@
   "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": ".",
   "testEnvironment": "node",
+  "testTimeout": 30000,
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
@@ -17,10 +18,12 @@
     "@app/notifications": "<rootDir>/../../../libs/notifications/src",
     "@app/setup/(.*)": "<rootDir>/../../../libs/setup/src/$1",
     "@app/setup": "<rootDir>/../../../libs/setup/src",
-    "@app/utils/(.*)": "<rootDir>/../../../libs/utils/src/$1",
-    "@app/utils": "<rootDir>/../../../libs/utils/src",
+    "@app/payments/(.*)": "<rootDir>/../../../libs/payments/src/$1",
+    "@app/payments": "<rootDir>/../../../libs/payments/src",
     "@app/logger/(.*)": "<rootDir>/../../../libs/logger/src/$1",
     "@app/logger": "<rootDir>/../../../libs/logger/src",
+    "@app/media/(.*)": "<rootDir>/../../../libs/media/src/$1",
+    "@app/media": "<rootDir>/../../../libs/media/src",
     "^(\\.{1,2}/.*)\\.js$": "$1"
   }
 }

@@ -135,6 +135,86 @@ spec:
                  secretKeyRef:
                    name: minglo-core-backend-production-config-secret
                    key: MAX_AGE_REFRESH_TOKEN
+             - name: RECAPTCHA_SECRET
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: RECAPTCHA_SECRET
+             - name: RECAPTCHA_BYPASS_SECRET
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: RECAPTCHA_BYPASS_SECRET
+             - name: MEDIA_SERVICE_URL
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MEDIA_SERVICE_URL
+             - name: MEDIA_ACCESS_SECRET
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MEDIA_ACCESS_SECRET
+             - name: MEDIA_ACCESS_TOKEN_EXP_IN
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MEDIA_ACCESS_TOKEN_EXP_IN
+             - name: MEDIA_SERVICE_HOST
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MEDIA_SERVICE_HOST
+             - name: MEDIA_TCP_PORT
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: MEDIA_TCP_PORT
+             - name: GOOGLE_CLIENT_ID
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: GOOGLE_CLIENT_ID
+             - name: GOOGLE_CLIENT_SECRET
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: GOOGLE_CLIENT_SECRET
+             - name: GOOGLE_CALLBACK_URL
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: GOOGLE_CALLBACK_URL
+             - name: GITHUB_CLIENT_ID
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: GITHUB_CLIENT_ID
+             - name: GITHUB_CLIENT_SECRET
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: GITHUB_CLIENT_SECRET
+             - name: GITHUB_CALLBACK_URL
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: GITHUB_CALLBACK_URL
+             - name: FRONTEND_OAUTH_REDIRECT_URL
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: FRONTEND_OAUTH_REDIRECT_URL
+             - name: PAYMENTS_SERVICE_HOST
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: PAYMENTS_SERVICE_HOST
+             - name: PAYMENTS_SERVICE_TCP_PORT
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: PAYMENTS_SERVICE_TCP_PORT
              - name: MINGLO_PORT
                valueFrom:
                  secretKeyRef:

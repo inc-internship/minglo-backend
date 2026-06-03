@@ -2,19 +2,13 @@ import { User } from '../../../../../prisma/generated/prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class MeViewDto {
-  @ApiProperty({
-    example: 'cmmtt3b760001g0tyyf4yfhlu',
-  })
+  @ApiProperty({ type: String })
   publicId: string;
 
-  @ApiProperty({
-    example: 'avocado',
-  })
+  @ApiProperty({ type: String })
   login: string;
 
-  @ApiProperty({
-    example: 'avocado@mail.com',
-  })
+  @ApiProperty({ type: String })
   email: string;
 
   static mapToView(user: User): MeViewDto {

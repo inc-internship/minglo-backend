@@ -1,0 +1,30 @@
+model Avatar {
+  id        Int       @id @default(autoincrement())
+  publicId  String    @unique @default(cuid()) @map("public_id")
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz
+
+  profileId Int     @unique @map("profile_id")
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  originalMediaId  String @map("original_media_id")
+  urlOriginal      String @map("url_original")
+  keyOriginal      String @map("key_original")
+  fileSizeOriginal Int    @map("file_size_original")
+  widthOriginal    Int    @map("width_original")
+  heightOriginal   Int    @map("height_original")
+
+  thumbnailMediaId String @map("thumbnail_media_id")
+  urlThumbnail     String @map("url_thumbnail")
+  keyThumbnail     String @map("key_thumbnail")
+  fileSizeThumbnail Int   @map("file_size_thumbnail")
+  widthThumbnail   Int    @map("width_thumbnail")
+  heightThumbnail  Int    @map("height_thumbnail")
+
+  mimeType MediaMimeType @map("mime_type")
+
+  @@index([profileId, deletedAt])
+  @@index([deletedAt])
+  @@map("avatar")
+}

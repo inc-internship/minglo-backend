@@ -1,0 +1,36 @@
+/**
+ * Каталог тарифов. Только для чтения через API — изменяется через seed.
+ */
+model Plan {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  /**
+   * Название "1 Day" | "1 Week" | "1 Month"
+   */
+  name         String @db.VarChar(100)
+  /**
+   * Кол-во дней доступа:  1 | 7 | 30
+   */
+  durationDays Int    @map("duration_days")
+
+  /**
+   * Стоимость подписки
+   */
+  price Decimal @db.Decimal(10, 2)
+
+  /**
+   * Валюта
+   */
+  currency String @default("USD") @db.VarChar(3)
+
+  /**
+   * ID объекта Price в Stripe (нужен при создании Checkout Session для отображения суммы)
+   */
+  stripePriceId String  @unique @map("stripe_price_id") @db.VarChar(255)
+  isActive      Boolean @default(true) @map("is_active")
+
+  subscriptions Subscription[]
+
+  @@map("plans")
+}

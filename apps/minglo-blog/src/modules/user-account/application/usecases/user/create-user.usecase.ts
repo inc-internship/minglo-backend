@@ -27,7 +27,8 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand, str
   }
 
   async execute({ dto }: CreateUserCommand): Promise<string> {
-    const { login, email, password, redirectUrl, forSA = false } = dto;
+    const { login, password, redirectUrl, forSA = false } = dto;
+    const email = dto.email.toLowerCase();
 
     await this.userService.ensureUserCredentialsAreUnique(login, email);
     this.logger.log(`Check for User unique credentials, completed: successful`, 'execute');

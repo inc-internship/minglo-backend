@@ -2,8 +2,9 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { TokenService } from '../../services/token.service';
 import { SessionRepository } from '../../../infrastructure/session.repository';
 import { SessionEntity } from '../../../domains/entities/session.entity';
-import { ActiveUserDto } from '../../../../../core/decorators/auth/dto/active-user.dto';
 import { RefreshTokenResult } from '../../../api/types/refresh-token-result';
+import { ActiveUserDto } from '../../../../../core/decorators/auth/dto';
+import { LoggerService } from '@app/logger';
 
 export class RefreshTokenCommand {
   constructor(public readonly user: ActiveUserDto) {}
@@ -17,7 +18,10 @@ export class RefreshTokenUseCase implements ICommandHandler<
   constructor(
     private readonly tokenService: TokenService,
     private readonly sessionRepository: SessionRepository,
-  ) {}
+    private logger: LoggerService,
+  ) {
+    this.logger.setContext(RefreshTokenUseCase.name);
+  }
 
   async execute({ user }: RefreshTokenCommand): Promise<RefreshTokenResult> {
     const { userId, deviceId } = user;

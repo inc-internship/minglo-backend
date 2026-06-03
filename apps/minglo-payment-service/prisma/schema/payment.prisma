@@ -1,0 +1,52 @@
+/**
+ * Каждое фактическое списание денег, связь с подпиской через subscriptionId.
+ */
+model Payment {
+  id     String @id @default(cuid())
+  userId String @map("user_id") @db.VarChar(255)
+
+  subscriptionId String       @map("subscription_id")
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+
+  /**
+   * Сумма списания
+   */
+  amount   Decimal @db.Decimal(10, 2)
+  /**
+   * Валюта
+   */
+  currency String  @db.VarChar(3)
+
+  status PaymentStatus
+
+  /**
+   * Провайдер (Stripe | PayPal)
+   */
+  paymentSystem PaymentSystem @map("payment_system")
+
+  /**
+   * ID транзакции (Stripe | PayPal).
+   * Уникальный индекс: защита от дублирования (если провайдер вызовет webhook дважды).
+   */
+  externalPaymentId String? @unique @map("external_payment_id") @db.VarChar(255)
+
+  /**
+   * Полный ответ от провайдера, записывает в БД целиком для аудита и дебага.
+   */
+  rawProviderData Json? @map("raw_provider_data")
+
+  /**
+   * Причина ошибки (3DS, insufficient funds, etc.) — для уведомлений пользователю
+   */
+  failureReason String? @map("failure_reason") @db.VarChar(500)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([userId])
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  SUCCESS
+  FAILED
+}

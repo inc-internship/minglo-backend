@@ -1,0 +1,30 @@
+model PostMediaFile {
+  id        Int       @id @default(autoincrement())
+  publicId  String    @unique @default(cuid()) @map("public_id")
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz
+
+  postId Int  @map("post_id")
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  url String
+  key String // внутренний S3 ключ, никогда не возвращается фронту
+
+  mimeType MediaMimeType @map("mime_type")
+  width    Int
+  height   Int
+  fileSize Int
+  order    Int
+
+  @@unique([postId, order])
+  @@index([postId])
+  @@index([deletedAt])
+  @@map("posts_media_files")
+}
+
+enum MediaMimeType {
+  IMAGE_JPEG @map("image/jpeg")
+  IMAGE_PNG  @map("image/png")
+  IMAGE_WEBP @map("image/webp")
+}

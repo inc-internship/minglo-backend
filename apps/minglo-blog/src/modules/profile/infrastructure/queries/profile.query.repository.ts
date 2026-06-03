@@ -16,9 +16,9 @@ export class ProfileQueryRepository {
   async getProfile(id: string): Promise<ProfileViewDto> {
     const rawData = await this.prisma.profile.findFirst({
       where: {
+        publicId: id,
         deletedAt: null,
         user: {
-          publicId: id,
           deletedAt: null,
         },
       },

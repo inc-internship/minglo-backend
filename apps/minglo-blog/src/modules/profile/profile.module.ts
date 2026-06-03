@@ -10,20 +10,12 @@ import { ProfileRepository } from './infrastructure/profile.repository';
 import { ViewProfileHandler } from './application/queries';
 import { ProfileQueryRepository } from './infrastructure/queries/profile.query.repository';
 import {
-  CreateAvatarUseCase,
-  FillProfileUseCase,
+  DeleteAvatarUseCase,
   UpdateProfileUseCase,
   UploadAvatarImagesUseCase,
 } from './application/usecases';
-import { DeleteProfileUseCase } from './application/usecases/delete-profile.usecase';
 
-const usecases = [
-  CreateAvatarUseCase,
-  UploadAvatarImagesUseCase,
-  FillProfileUseCase,
-  DeleteProfileUseCase,
-  UpdateProfileUseCase,
-];
+const usecases = [UploadAvatarImagesUseCase, DeleteAvatarUseCase, UpdateProfileUseCase];
 const queries = [ViewProfileHandler];
 
 @Module({

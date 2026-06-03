@@ -5,8 +5,8 @@ export class ProfileEntity {
   publicId: string;
   userId: number;
 
-  firstName: string;
-  lastName: string;
+  firstName: string | null;
+  lastName: string | null;
   birthday: Date | null;
   countryId: string | null;
   cityId: string | null;

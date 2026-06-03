@@ -208,11 +208,12 @@ export class S3StorageService {
         fileSize: uploadedSize,
       };
     } catch (error) {
-      this.logger.error(`S3 Stream Upload Error: ${error.message}`);
       stream.destroy();
+      if (error instanceof DomainException) throw error;
+      this.logger.error(`S3 stream upload failed: ${error.message}`);
       throw new DomainException({
         code: DomainExceptionCode.InternalServerError,
-        message: `S3 batch delete failed`,
+        message: 'File upload to storage failed',
       });
     }
   }

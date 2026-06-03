@@ -3,31 +3,21 @@ import { PostMediaFileViewDto } from './post-media-file.view-dto';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class PostViewDto {
-  @ApiProperty()
+  @ApiProperty({ type: String })
   id: string;
 
-  @ApiProperty({ nullable: true, example: 'string' })
+  @ApiProperty({ type: String, nullable: true })
   description: string | null;
 
-  @ApiProperty({
-    type: () => [PostMediaFileViewDto],
-  })
+  @ApiProperty({ type: () => [PostMediaFileViewDto] })
   images: PostMediaFileViewDto[];
 
-  @ApiProperty({
-    type: PostOwnerViewDto,
-  })
+  @ApiProperty({ type: PostOwnerViewDto })
   owner: PostOwnerViewDto;
 
-  @ApiProperty({
-    type: String,
-    format: 'date-time',
-  })
+  @ApiProperty({ type: String, format: 'date-time' })
   createdAt: string;
 
-  @ApiProperty({
-    type: String,
-    format: 'date-time',
-  })
+  @ApiProperty({ type: String, format: 'date-time' })
   updatedAt: string;
 }

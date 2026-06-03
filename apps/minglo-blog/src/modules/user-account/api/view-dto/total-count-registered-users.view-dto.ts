@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class TotalCountRegisteredUsersViewDto {
-  @ApiProperty()
+  @ApiProperty({ type: Number })
   totalCount: number;
 }

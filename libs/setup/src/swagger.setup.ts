@@ -17,6 +17,7 @@ export function swaggerSetup(app: INestApplication, options: SwaggerConfigOption
       .setTitle(title)
       .setDescription(description)
       .setVersion(version)
+      .addBearerAuth(undefined, 'access-token')
       .build();
 
     const document = SwaggerModule.createDocument(app, config);

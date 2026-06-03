@@ -6,7 +6,7 @@ import { AuthTestManager, ProfileTestManager } from '../managers';
 import { EmailService } from '@app/notifications';
 import { PrismaService } from '../../src/database/prisma.service';
 
-describe('Session API (e2e)', () => {
+describe('Profile API (e2e)', () => {
   let app: INestApplication<App>;
   let authManager: AuthTestManager;
   let profileTestManager: ProfileTestManager;
@@ -45,33 +45,45 @@ describe('Session API (e2e)', () => {
     });
     expect(userWithProfile?.profile).not.toBeNull();
 
+    const userPublicId = userWithProfile!.publicId;
     const profileId = userWithProfile!.profile!.id;
-    const publicId = userWithProfile!.profile!.publicId;
     expect(profileId).toBeDefined();
 
     await prisma.avatar.create({
       data: {
         profileId: profileId,
-        mimeType: 'IMAGE_JPEG',
+        mimeType: 'IMAGE_WEBP',
 
-        urlLarge: 'https://s3.amazonaws.com/my-bucket/avatars/large_avatar.jpg',
-        keyLarge: 'avatars/large_avatar.jpg',
-        fileSizeLarge: 1024500, // ~1MB
-        widthLarge: 1080,
-        heightLarge: 1080,
+        originalMediaId: 'media-original-id',
+        urlOriginal: 'https://s3.amazonaws.com/my-bucket/avatars/original_avatar.webp',
+        keyOriginal: 'avatars/original_avatar.webp',
+        fileSizeOriginal: 1024500,
+        widthOriginal: 800,
+        heightOriginal: 800,
 
-        urlSmall: 'https://s3.amazonaws.com/my-bucket/avatars/small_avatar.jpg',
-        keySmall: 'avatars/small_avatar.jpg',
-        fileSizeSmall: 51200, // ~50KB
-        widthSmall: 150,
-        heightSmall: 150,
+        thumbnailMediaId: 'media-thumbnail-id',
+        urlThumbnail: 'https://s3.amazonaws.com/my-bucket/avatars/thumbnail_avatar.webp',
+        keyThumbnail: 'avatars/thumbnail_avatar.webp',
+        fileSizeThumbnail: 51200,
+        widthThumbnail: 300,
+        heightThumbnail: 300,
       },
     });
 
-    const { body: profileBody } = await profileTestManager.getMyProfile(accessToken, 200, publicId);
+    const { body: profileBody } = await profileTestManager.getMyProfile(
+      accessToken,
+      200,
+      userPublicId,
+    );
     expect(profileBody.login).toBe(dto.login);
-    expect(profileBody.avatar.url).toBe(
-      'https://s3.amazonaws.com/my-bucket/avatars/large_avatar.jpg',
+    expect(profileBody.firstName).toBeNull();
+    expect(profileBody.lastName).toBeNull();
+    expect(profileBody.accountType).toBe('PERSONAL');
+    expect(profileBody.avatar.original.url).toBe(
+      'https://s3.amazonaws.com/my-bucket/avatars/original_avatar.webp',
+    );
+    expect(profileBody.avatar.thumbnail.url).toBe(
+      'https://s3.amazonaws.com/my-bucket/avatars/thumbnail_avatar.webp',
     );
   });
 
@@ -85,23 +97,24 @@ describe('Session API (e2e)', () => {
     const accessToken = body.accessToken;
 
     const prisma = app.get(PrismaService);
-    const userWithProfile = await prisma.user.findUnique({
+    const userRecord = await prisma.user.findUnique({
       where: { email: dto.email },
-      include: { profile: true },
     });
-    expect(userWithProfile?.profile).not.toBeNull();
+    expect(userRecord).not.toBeNull();
 
-    const profileId = userWithProfile!.profile!.id;
-    expect(profileId).toBeDefined();
-    const publicId = userWithProfile!.profile!.publicId;
+    const userPublicId = userRecord!.publicId;
 
-    const { body: profileBody } = await profileTestManager.getMyProfile(accessToken, 200, publicId);
+    const { body: profileBody } = await profileTestManager.getMyProfile(
+      accessToken,
+      200,
+      userPublicId,
+    );
     expect(profileBody.login).toBe(dto.login);
 
-    await profileTestManager.softDeleteMyProfile(accessToken, 204);
+    await profileTestManager.deleteMe(accessToken, 204);
 
     await authManager.login(dto, 401);
 
-    await profileTestManager.getMyProfile(accessToken, 401, publicId);
+    await profileTestManager.getMyProfile(accessToken, 401, userPublicId);
   });
 });

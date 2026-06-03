@@ -1,50 +1,59 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { ProfileWithUserAndAvatar } from '../../../../../prisma/types';
+import { AccountType } from '../../../../shared/enums';
 
-class PhotoDetailsDto {
-  @ApiProperty({
-    example: 'https://s3.storage/bucket/original_uuid.jpg',
-    description: 'Полная ссылка на изображение',
-  })
+class AvatarImageDto {
+  @ApiProperty({ type: String })
+  id: string;
+
+  @ApiProperty({ type: String })
   url: string;
 
-  @ApiProperty({ example: 'image/jpeg' })
-  mimeType: string;
-
-  @ApiProperty({ example: 1048576, description: 'Размер файла в байтах' })
-  fileSize: number;
-
-  @ApiProperty({ example: 1080 })
+  @ApiProperty({ type: Number })
   width: number;
 
-  @ApiProperty({ example: 1080 })
+  @ApiProperty({ type: Number })
   height: number;
+
+  @ApiProperty({ type: Number })
+  fileSize: number;
+}
+
+class AvatarDto {
+  @ApiProperty({ type: AvatarImageDto })
+  original: AvatarImageDto;
+
+  @ApiProperty({ type: AvatarImageDto })
+  thumbnail: AvatarImageDto;
 }
 
 export class ProfileViewDto {
-  @ApiProperty({ example: 'Ivan' })
-  firstName: string;
+  @ApiProperty({ type: String, nullable: true })
+  firstName: string | null;
 
-  @ApiProperty({ example: 'Ivanov' })
-  lastName: string;
+  @ApiProperty({ type: String, nullable: true })
+  lastName: string | null;
 
-  @ApiProperty({ example: 'example1' })
+  @ApiProperty({ type: String })
   login: string;
 
-  @ApiPropertyOptional({ example: '2000-01-01T00:00:00.000Z' })
+  @ApiProperty({ type: String, format: 'date-time', nullable: true })
   birthday: string | null;
 
-  @ApiPropertyOptional({ example: '550e8400-e29b-41d4-a716-446655440000' })
+  @ApiProperty({ type: String, nullable: true })
   countryId: string | null;
 
-  @ApiPropertyOptional({ example: '550e8400-e29b-41d4-a716-446655440000' })
+  @ApiProperty({ type: String, nullable: true })
   cityId: string | null;
 
-  @ApiPropertyOptional({ example: 'Backend developer & Mushroom hunter', maxLength: 500 })
+  @ApiProperty({ type: String, nullable: true })
   aboutMe: string | null;
 
-  @ApiPropertyOptional({ type: PhotoDetailsDto, nullable: true })
-  avatar: PhotoDetailsDto | null;
+  @ApiProperty({ enum: AccountType, enumName: 'AccountType' })
+  accountType: AccountType;
+
+  @ApiProperty({ type: AvatarDto, nullable: true })
+  avatar: AvatarDto | null;
 
   static mapToView(profile: ProfileWithUserAndAvatar): ProfileViewDto {
     const dto = new ProfileViewDto();
@@ -52,6 +61,7 @@ export class ProfileViewDto {
     dto.firstName = profile.firstName;
     dto.lastName = profile.lastName;
     dto.login = profile.user.login;
+    dto.accountType = profile.user.accountType as AccountType;
     dto.birthday = profile.birthday ? profile.birthday.toISOString() : null;
     dto.countryId = profile.countryId;
     dto.cityId = profile.cityId;
@@ -59,11 +69,20 @@ export class ProfileViewDto {
 
     dto.avatar = profile.avatar
       ? {
-          url: profile.avatar.urlLarge,
-          mimeType: profile.avatar.mimeType,
-          fileSize: profile.avatar.fileSizeLarge,
-          width: profile.avatar.widthLarge,
-          height: profile.avatar.heightLarge,
+          original: {
+            id: profile.avatar.originalMediaId,
+            url: profile.avatar.urlOriginal,
+            width: profile.avatar.widthOriginal,
+            height: profile.avatar.heightOriginal,
+            fileSize: profile.avatar.fileSizeOriginal,
+          },
+          thumbnail: {
+            id: profile.avatar.thumbnailMediaId,
+            url: profile.avatar.urlThumbnail,
+            width: profile.avatar.widthThumbnail,
+            height: profile.avatar.heightThumbnail,
+            fileSize: profile.avatar.fileSizeThumbnail,
+          },
         }
       : null;
 

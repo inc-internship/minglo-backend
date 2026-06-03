@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../database/prisma.service';
 import { PostEntity } from '../domains/entities';
-import { MediaMimeType } from '../../../../prisma/generated/prisma/enums';
+import { MediaMimeType } from '@app/media/enums';
 import { PostForUpdate } from '../../../../prisma/types';
 import { BatchPayload } from '../../../../prisma/generated/prisma/internal/prismaNamespace';
 

@@ -17,7 +17,7 @@ export class UserRepository {
   async findFirst(login: string, email: string): Promise<User | null> {
     return this.prisma.user.findFirst({
       where: {
-        OR: [{ login }, { email }],
+        OR: [{ login }, { email: email.toLowerCase() }],
         deletedAt: null,
       },
     });
@@ -51,7 +51,7 @@ export class UserRepository {
   async findByEmailOrFail(email: string): Promise<UserEntity> {
     const dbUser = await this.prisma.user.findFirst({
       where: {
-        email,
+        email: email.toLowerCase(),
         deletedAt: null,
       },
       include: {
@@ -82,7 +82,7 @@ export class UserRepository {
   /* Находит юзера по email, без exception */
   async findByEmail(email: string): Promise<UserEntity | null> {
     const dbUser = await this.prisma.user.findFirst({
-      where: { email, deletedAt: null },
+      where: { email: email.toLowerCase(), deletedAt: null },
       include: {
         emailConfirmations: {
           where: { deletedAt: null, confirmedAt: null },
@@ -140,6 +140,10 @@ export class UserRepository {
           },
         });
 
+        await tx.profile.create({
+          data: { userId: created.id },
+        });
+
         return created.publicId;
       });
     } catch (error) {
@@ -163,11 +167,7 @@ export class UserRepository {
       await tx.profile.upsert({
         where: { userId: user.id },
         update: {},
-        create: {
-          userId: user.id,
-          firstName: '',
-          lastName: '',
-        },
+        create: { userId: user.id },
       });
     });
   }
@@ -214,6 +214,14 @@ export class UserRepository {
     }
 
     return this.userFactory.fromPasswordRecoveryRecord(user);
+  }
+
+  /* Soft-deletes user by publicId */
+  async softDeleteUser(publicId: string): Promise<void> {
+    await this.prisma.user.update({
+      where: { publicId },
+      data: { deletedAt: new Date() },
+    });
   }
 
   /* Подтверждает смену пароля */

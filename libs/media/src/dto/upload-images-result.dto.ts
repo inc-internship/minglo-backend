@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UploadImageResultDto {
-  @ApiProperty()
+  @ApiProperty({ type: [String] })
   ids: string[];
-  @ApiProperty()
+
+  @ApiProperty({ type: Number })
   failedCount: number;
 }

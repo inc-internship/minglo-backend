@@ -45,6 +45,14 @@ describe('Auth API (e2e)', () => {
       HttpStatus.CONFLICT,
     );
   });
+  it('Registration: 409 — should return conflict when same email is re-used with different case', async () => {
+    await authTestManager.register(authTestManager.validDto({ email: 'user@gmail.com' }));
+
+    await authTestManager.register(
+      authTestManager.validDto({ login: 'otherUser1', email: 'User@Gmail.COM' }),
+      HttpStatus.CONFLICT,
+    );
+  });
 
   // Подтверждение по почте
   it('Confirm email: 204 — should confirm email after registration', async () => {

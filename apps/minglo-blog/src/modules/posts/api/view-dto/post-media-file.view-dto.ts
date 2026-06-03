@@ -2,22 +2,22 @@ import { ApiProperty } from '@nestjs/swagger';
 import { PostMediaFile } from '../../../../../prisma/types';
 
 export class PostMediaFileViewDto {
-  @ApiProperty()
+  @ApiProperty({ type: String })
   public id: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   public url: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: Number })
   public width: number;
 
-  @ApiProperty()
+  @ApiProperty({ type: Number })
   public height: number;
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   public mimeType: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: Number })
   public fileSize: number;
 
   private constructor(mediaFile: PostMediaFile) {

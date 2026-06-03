@@ -37,7 +37,8 @@ export class OAuthLoginUseCase implements ICommandHandler<OAuthLoginCommand, Log
     displayName,
     meta,
   }: OAuthLoginCommand): Promise<LoginResult> {
-    this.logger.log(`OAuth login attempt via ${provider}, email: ${email}`, 'execute');
+    const normalizedEmail = email ? email.toLowerCase() : null;
+    this.logger.log(`OAuth login attempt via ${provider}, email: ${normalizedEmail}`, 'execute');
 
     const { userId, publicId } = await this.prisma.$transaction(async (tx) => {
       // Шаг 1: ищем уже существующий OAuth аккаунт (повторный вход)
@@ -67,10 +68,10 @@ export class OAuthLoginUseCase implements ICommandHandler<OAuthLoginCommand, Log
       }
 
       // Шаг 2: ищем пользователя по email (первый вход через OAuth, но юзер уже есть)
-      if (email) {
+      if (normalizedEmail) {
         const existingUser = await tx.user.findFirst({
           where: {
-            email,
+            email: normalizedEmail,
             deletedAt: null,
           },
           select: {
@@ -102,7 +103,7 @@ export class OAuthLoginUseCase implements ICommandHandler<OAuthLoginCommand, Log
 
       // Шаг 3: создаём нового пользователя
       // email обязателен — GitHub пользователи со скрытым email не могут быть зарегистрированы
-      if (!email) {
+      if (!normalizedEmail) {
         throw new DomainException({
           code: DomainExceptionCode.BadRequest,
           message: 'Email is required. Please make your GitHub email public and try again.',
@@ -116,7 +117,7 @@ export class OAuthLoginUseCase implements ICommandHandler<OAuthLoginCommand, Log
       const newUser = await tx.user.create({
         data: {
           login,
-          email,
+          email: normalizedEmail,
           passwordHash: null, // OAuth пользователи не имеют пароля
           emailConfirmed: true, // email подтверждён провайдером
         },
@@ -132,6 +133,10 @@ export class OAuthLoginUseCase implements ICommandHandler<OAuthLoginCommand, Log
           provider,
           providerId,
         },
+      });
+
+      await tx.profile.create({
+        data: { userId: newUser.id },
       });
 
       return {

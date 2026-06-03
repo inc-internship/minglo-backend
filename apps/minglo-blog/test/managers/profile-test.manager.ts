@@ -7,9 +7,10 @@ export class ProfileTestManager {
   async getMyProfile(
     token: string,
     expectedStatus: number = HttpStatus.OK,
+    id: string,
   ): Promise<request.Response> {
     return request(this.app.getHttpServer())
-      .get('/api/v1/profile/me')
+      .get(`/api/v1/profile/${id}`)
       .set('Authorization', `Bearer ${token}`)
       .expect(expectedStatus);
   }

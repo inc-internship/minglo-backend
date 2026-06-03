@@ -21,7 +21,7 @@ class PhotoDetailsDto {
   height: number;
 }
 
-export class MyProfileViewDto {
+export class ProfileViewDto {
   @ApiProperty({ example: 'Ivan' })
   firstName: string;
 
@@ -46,8 +46,8 @@ export class MyProfileViewDto {
   @ApiPropertyOptional({ type: PhotoDetailsDto, nullable: true })
   avatar: PhotoDetailsDto | null;
 
-  static mapToView(profile: ProfileWithUserAndAvatar): MyProfileViewDto {
-    const dto = new MyProfileViewDto();
+  static mapToView(profile: ProfileWithUserAndAvatar): ProfileViewDto {
+    const dto = new ProfileViewDto();
 
     dto.firstName = profile.firstName;
     dto.lastName = profile.lastName;

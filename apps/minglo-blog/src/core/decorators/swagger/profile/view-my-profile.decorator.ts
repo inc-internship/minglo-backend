@@ -5,9 +5,9 @@ import {
   ApiOperation,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { MyProfileViewDto } from '../../../../modules/profile/api/view-dto';
+import { ProfileViewDto } from '../../../../modules/profile/api/view-dto';
 
-export function ApiViewMyProfileDecorator() {
+export function ApiViewProfileDecorator() {
   return applyDecorators(
     ApiBearerAuth('access-token'),
     ApiOperation({
@@ -16,7 +16,7 @@ export function ApiViewMyProfileDecorator() {
     }),
     ApiOkResponse({
       description: 'The profile has been successfully retrieved.',
-      type: MyProfileViewDto,
+      type: ProfileViewDto,
     }),
     ApiUnauthorizedResponse({
       description: 'Unauthorized: Access token is missing or invalid.',

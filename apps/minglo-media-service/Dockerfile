@@ -7,7 +7,7 @@ ENV PORT=$port
 # Set to a non-root built-in user `node`
 
 # включаем corepack и pnpm
-RUN corepack enable
+RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
 
 USER node
 
@@ -20,9 +20,9 @@ WORKDIR /home/node/dist/${SERVICE}
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 
-COPY --chown=node package*.json ./
+COPY --chown=node package*.json pnpm-workspace.yaml pnpm-lock.yaml ./
 
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 # Bundle app source code
 COPY --chown=node . .

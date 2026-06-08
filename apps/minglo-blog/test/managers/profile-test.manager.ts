@@ -1,0 +1,46 @@
+import { HttpStatus, INestApplication } from '@nestjs/common';
+import request from 'supertest';
+
+export class ProfileTestManager {
+  constructor(private readonly app: INestApplication) {}
+
+  async getMyProfile(
+    token: string,
+    expectedStatus: number = HttpStatus.OK,
+    id: string,
+  ): Promise<request.Response> {
+    return request(this.app.getHttpServer())
+      .get(`/api/v1/profile/${id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(expectedStatus);
+  }
+
+  async getProfilePublic(
+    id: string,
+    expectedStatus: number = HttpStatus.OK,
+  ): Promise<request.Response> {
+    return request(this.app.getHttpServer()).get(`/api/v1/profile/${id}`).expect(expectedStatus);
+  }
+
+  async updateProfile(
+    token: string,
+    body: Record<string, unknown>,
+    expectedStatus: number = HttpStatus.NO_CONTENT,
+  ): Promise<request.Response> {
+    return request(this.app.getHttpServer())
+      .put('/api/v1/profile')
+      .set('Authorization', `Bearer ${token}`)
+      .send(body)
+      .expect(expectedStatus);
+  }
+
+  async deleteMe(
+    token: string,
+    expectedStatus: number = HttpStatus.NO_CONTENT,
+  ): Promise<request.Response> {
+    return request(this.app.getHttpServer())
+      .delete('/api/v1/users/me')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(expectedStatus);
+  }
+}

@@ -87,7 +87,7 @@ describe('Session API (e2e)', () => {
     const deviceIdA = sessionsA[0].deviceId;
     const userB = await authManager.setupUser({
       login: 'validUser2',
-      email: 'valiD@gmail.com',
+      email: 'other@gmail.com',
       password: 'Qwerty123',
       redirectUrl: 'https://minglo.blog/auth/confirm',
     });

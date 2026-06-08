@@ -24,6 +24,9 @@ const mockPostView: PostViewDto = {
   owner: {
     id: 'user-public-id',
     login: 'testuser',
+    firstName: null,
+    lastName: null,
+    avatar: null,
   },
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),

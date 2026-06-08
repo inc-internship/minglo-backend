@@ -31,7 +31,10 @@ export class ImageFilesValidationPipe implements PipeTransform {
     this.parseFilePipe = new ParseFilePipe({
       validators: [
         new MaxFileSizeValidator({ maxSize: this.maxSize }),
-        new FileTypeValidator({ fileType: `image/(${this.allowedExtensions.join('|')})` }),
+        new FileTypeValidator({
+          fileType: `image/(${this.allowedExtensions.join('|')})`,
+          skipMagicNumbersValidation: true,
+        }),
       ],
       exceptionFactory: () => {
         throw new DomainException({

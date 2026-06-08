@@ -15,12 +15,14 @@ import { JwtService } from '@nestjs/jwt';
 import { MediaJwtStrategy } from './guards/media-jwt.strategy';
 import { SwaggerMediaTcpController } from './api/minglo-media-tcp.swagger-controller';
 import { MediaFilesDBCleanupJob, MediaFilesS3CleanupJob } from './application/jobs';
+import { UploadAvatarImageMediaUseCase } from './application/usecases/upload-avatar-image-media-usecase';
 
 @Module({
   imports: [],
   controllers: [MediaController, MediaTcpController, SwaggerMediaTcpController],
   providers: [
     S3StorageService,
+    UploadAvatarImageMediaUseCase,
     ImageProcessorService,
     UploadImageUseCase,
     MediaRepository,

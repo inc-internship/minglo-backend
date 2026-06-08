@@ -15,12 +15,12 @@ export class PostQueryRepository {
     const post = await this.prisma.post.findUnique({
       where: { publicId, deletedAt: null },
       include: {
-        user: true,
-        postsMediaFiles: {
-          orderBy: {
-            order: 'asc',
+        user: {
+          include: {
+            profile: { include: { avatar: { where: { deletedAt: null } } } },
           },
         },
+        postsMediaFiles: { orderBy: { order: 'asc' } },
       },
     });
 
@@ -46,7 +46,11 @@ export class PostQueryRepository {
         deletedAt: null,
       },
       include: {
-        user: true,
+        user: {
+          include: {
+            profile: { include: { avatar: { where: { deletedAt: null } } } },
+          },
+        },
         postsMediaFiles: true,
       },
       orderBy: {
@@ -82,10 +86,12 @@ export class PostQueryRepository {
       },
       take: limit,
       include: {
-        user: true,
-        postsMediaFiles: {
-          orderBy: { order: 'asc' },
+        user: {
+          include: {
+            profile: { include: { avatar: { where: { deletedAt: null } } } },
+          },
         },
+        postsMediaFiles: { orderBy: { order: 'asc' } },
       },
     });
 

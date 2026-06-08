@@ -205,6 +205,16 @@ spec:
                  secretKeyRef:
                    name: minglo-core-backend-production-config-secret
                    key: FRONTEND_OAUTH_REDIRECT_URL
+             - name: PAYMENTS_SERVICE_HOST
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: PAYMENTS_SERVICE_HOST
+             - name: PAYMENTS_SERVICE_TCP_PORT
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: PAYMENTS_SERVICE_TCP_PORT
              - name: MINGLO_PORT
                valueFrom:
                  secretKeyRef:

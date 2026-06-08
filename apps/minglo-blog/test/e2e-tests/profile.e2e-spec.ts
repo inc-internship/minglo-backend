@@ -30,7 +30,7 @@ describe('Profile API (e2e)', () => {
   });
 
   //get my profile
-  it('get profile: 200 — success, full flow: register -> upload avatar -> get profile', async () => {
+  it('get profile: 200 — authenticated, full flow: register -> confirm -> login -> seed avatar -> get profile', async () => {
     const dto = authManager.validDto();
     await authManager.register(dto);
     const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
@@ -87,8 +87,69 @@ describe('Profile API (e2e)', () => {
     );
   });
 
+  //get profile without auth
+  it('get profile: 200 — public access without token', async () => {
+    const dto = authManager.validDto();
+    await authManager.register(dto);
+    const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
+    await authManager.confirmRegistration({ code });
+
+    const prisma = app.get(PrismaService);
+    const userRecord = await prisma.user.findUnique({ where: { email: dto.email } });
+    const userPublicId = userRecord!.publicId;
+
+    const { body: profileBody } = await profileTestManager.getProfilePublic(userPublicId, 200);
+    expect(profileBody.login).toBe(dto.login);
+    expect(profileBody.firstName).toBeNull();
+    expect(profileBody.accountType).toBe('PERSONAL');
+  });
+
+  //update login
+  it('update profile: 204 — success, change login', async () => {
+    const dto = authManager.validDto();
+    await authManager.register(dto);
+    const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
+    await authManager.confirmRegistration({ code });
+    const { body } = await authManager.login(dto);
+    const accessToken = body.accessToken;
+
+    const prisma = app.get(PrismaService);
+    const userRecord = await prisma.user.findUnique({ where: { email: dto.email } });
+    const userPublicId = userRecord!.publicId;
+
+    const newLogin = 'new_login_ok';
+    await profileTestManager.updateProfile(accessToken, { login: newLogin }, 204);
+
+    const { body: profileBody } = await profileTestManager.getMyProfile(
+      accessToken,
+      200,
+      userPublicId,
+    );
+    expect(profileBody.login).toBe(newLogin);
+  });
+
+  //update login conflict
+  it('update profile: 409 — login already taken', async () => {
+    const dto1 = authManager.validDto();
+    const dto2 = { ...authManager.validDto(), login: 'another_login', email: 'another@mail.com' };
+
+    await authManager.register(dto1);
+    const { code: code1 } = emailService.sendConfirmationEmail.mock.calls[0][0];
+    await authManager.confirmRegistration({ code: code1 });
+
+    await authManager.register(dto2);
+    const { code: code2 } = emailService.sendConfirmationEmail.mock.calls[1][0];
+    await authManager.confirmRegistration({ code: code2 });
+
+    const { body } = await authManager.login(dto1);
+    const accessToken = body.accessToken;
+
+    // Try to take dto2's login
+    await profileTestManager.updateProfile(accessToken, { login: dto2.login }, 409);
+  });
+
   //soft delete my profile
-  it('delete my profile: 204 — success, full flow: get profile -> softdelete -> login(401) -> getprofile(401)', async () => {
+  it('delete my profile: 204 — success, full flow: get profile -> softdelete -> login(401) -> getprofile(404)', async () => {
     const dto = authManager.validDto();
     await authManager.register(dto);
     const { code } = emailService.sendConfirmationEmail.mock.calls[0][0];
@@ -115,6 +176,8 @@ describe('Profile API (e2e)', () => {
 
     await authManager.login(dto, 401);
 
-    await profileTestManager.getMyProfile(accessToken, 401, userPublicId);
+    // After soft-delete the endpoint is public; token's session is invalidated (user.deletedAt set),
+    // so OptionalAccessGuard treats the request as anonymous → profile not found → 404.
+    await profileTestManager.getMyProfile(accessToken, 404, userPublicId);
   });
 });

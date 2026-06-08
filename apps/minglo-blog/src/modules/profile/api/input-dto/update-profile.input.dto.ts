@@ -1,7 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDateString, IsOptional, IsString, Length, MaxLength } from 'class-validator';
+import { IsValidLogin } from '@app/decorators';
+import { loginConstraints } from '../../../user-account/domains';
 
 export class UpdateProfileInputDto {
+  @ApiProperty({
+    required: false,
+    minLength: loginConstraints.min,
+    maxLength: loginConstraints.max,
+    pattern: loginConstraints.regex.source,
+    example: 'new_login',
+  })
+  @IsOptional()
+  @IsValidLogin({
+    min: loginConstraints.min,
+    max: loginConstraints.max,
+    regex: loginConstraints.regex,
+    regexMessage: 'Login can only contain letters, numbers, "_" and "-"',
+  })
+  login?: string;
+
   @ApiProperty({ required: false, example: 'Ivan' })
   @IsOptional()
   @IsString()

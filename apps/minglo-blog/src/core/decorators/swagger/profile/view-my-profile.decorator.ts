@@ -6,9 +6,7 @@ export function ApiViewProfileDecorator() {
   return applyDecorators(
     ApiOperation({
       summary: 'Get profile by user ID',
-      description:
-        'Public endpoint. Returns profile information for the given user public ID. ' +
-        'Access token is optional — authenticated requests may receive additional private fields in future versions.',
+      description: 'Returns profile information for the given user public ID.',
     }),
     ApiParam({ name: 'userId', type: String, description: 'User public ID' }),
     ApiOkResponse({

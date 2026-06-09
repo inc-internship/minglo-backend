@@ -4,13 +4,29 @@ import { StripeWebhookController } from './api/stripe-webhook.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { CoreConfig } from '../../core/core.config';
 import { PAYMENT_SERVICE } from '@app/payments';
-import { GetSubscriptionsPlansQueryHandler } from './application/queries';
-import { CreateStripeCheckoutUseCase, ActivateSubscriptionUseCase } from './application/usecases';
+import {
+  GetSubscriptionsPlansQueryHandler,
+  GetPaymentHistoryQueryHandler,
+  GetCurrentSubscriptionQueryHandler,
+} from './application/queries';
+import {
+  CreateStripeCheckoutUseCase,
+  ActivateSubscriptionUseCase,
+  ToggleAutoRenewalUseCase,
+} from './application/usecases';
 import { SubscriptionConsumerController } from './api/subscription-consumer.controller';
 import { UserAccountModule } from '../user-account/user-account.module';
 
-const queries = [GetSubscriptionsPlansQueryHandler];
-const commands = [CreateStripeCheckoutUseCase, ActivateSubscriptionUseCase];
+const queries = [
+  GetSubscriptionsPlansQueryHandler,
+  GetPaymentHistoryQueryHandler,
+  GetCurrentSubscriptionQueryHandler,
+];
+const commands = [
+  CreateStripeCheckoutUseCase,
+  ActivateSubscriptionUseCase,
+  ToggleAutoRenewalUseCase,
+];
 
 @Module({
   imports: [

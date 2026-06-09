@@ -2,10 +2,21 @@ import { Controller } from '@nestjs/common';
 import { LoggerService } from '@app/logger';
 import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { GetSubscriptionPlansViewDto } from '@app/payments/view-dto';
+import { PaymentHistoryViewDto, SubscriptionInfoViewDto } from '@app/payments/view-dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { GetPlansQuery } from '../application/queries';
+import {
+  GetPlansQuery,
+  GetPaymentHistoryQuery,
+  GetCurrentSubscriptionQuery,
+} from '../application/queries';
 import { CreateStripeCheckoutInputDto } from './input-dto/create-stripe-checkout.input-dto';
-import { CreateStripeCheckoutCommand, StripeWebhookCommand } from '../application/usecases';
+import { GetPaymentHistoryInputDto } from './input-dto/get-payment-history.input-dto';
+import { ToggleAutoRenewalInputDto } from './input-dto/toggle-auto-renewal.input-dto';
+import {
+  CreateStripeCheckoutCommand,
+  StripeWebhookCommand,
+  ToggleAutoRenewalCommand,
+} from '../application/usecases';
 import { PAYMENTS_TCP_PATTERNS } from '@app/payments';
 
 @Controller()
@@ -42,5 +53,37 @@ export class MingloPaymentsTcpController {
     this.logger.log('Stripe webhook event received via TCP', 'handleStripeWebhook');
     const rawBody = Buffer.from(data.rawBodyBase64, 'base64');
     await this.commandBus.execute(new StripeWebhookCommand(rawBody, data.signature));
+  }
+
+  @MessagePattern(PAYMENTS_TCP_PATTERNS.GET_PAYMENT_HISTORY)
+  async getPaymentHistory(
+    @Payload() dto: GetPaymentHistoryInputDto,
+  ): Promise<PaymentHistoryViewDto> {
+    this.logger.log(
+      `New GET_PAYMENT_HISTORY request, userId=${dto.userId} page=${dto.page}`,
+      'getPaymentHistory',
+    );
+    return this.queryBus.execute(new GetPaymentHistoryQuery(dto.userId, dto.page, dto.pageSize));
+  }
+
+  @MessagePattern(PAYMENTS_TCP_PATTERNS.GET_CURRENT_SUBSCRIPTION)
+  async getCurrentSubscription(
+    @Payload() dto: { userId: string },
+  ): Promise<SubscriptionInfoViewDto> {
+    this.logger.log(
+      `New GET_CURRENT_SUBSCRIPTION request, userId=${dto.userId}`,
+      'getCurrentSubscription',
+    );
+    return this.queryBus.execute(new GetCurrentSubscriptionQuery(dto.userId));
+  }
+
+  @MessagePattern(PAYMENTS_TCP_PATTERNS.TOGGLE_AUTO_RENEWAL)
+  async toggleAutoRenewal(@Payload() dto: ToggleAutoRenewalInputDto): Promise<null> {
+    this.logger.log(
+      `New TOGGLE_AUTO_RENEWAL request, userId=${dto.userId} autoRenewal=${dto.autoRenewal}`,
+      'toggleAutoRenewal',
+    );
+    await this.commandBus.execute(new ToggleAutoRenewalCommand(dto.userId, dto.autoRenewal));
+    return null;
   }
 }

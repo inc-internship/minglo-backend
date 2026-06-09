@@ -64,4 +64,30 @@ export class StripeService {
       expand: ['payment_method'],
     });
   }
+
+  /**
+   * Creates and confirms an off-session PaymentIntent for auto-renewal.
+   * Uses a saved payment method attached to the customer.
+   */
+  async createOffSessionPayment(params: {
+    amountCents: number;
+    currency: string;
+    customerId: string;
+    paymentMethodId: string;
+    metadata: Record<string, string>;
+  }) {
+    this.logger.log(
+      `Creating off-session PaymentIntent for customerId=${params.customerId}`,
+      'createOffSessionPayment',
+    );
+    return this.stripe.paymentIntents.create({
+      amount: params.amountCents,
+      currency: params.currency.toLowerCase(),
+      customer: params.customerId,
+      payment_method: params.paymentMethodId,
+      off_session: true,
+      confirm: true,
+      metadata: params.metadata,
+    });
+  }
 }

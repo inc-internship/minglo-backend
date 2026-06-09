@@ -8,6 +8,7 @@ import {
   ApiNotFoundResponse,
   ApiOperation,
   ApiParam,
+  ApiTooManyRequestsResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ErrorResponseBody } from '@app/exceptions';
@@ -43,6 +44,9 @@ export function ApiUpdatePostDecorator() {
     }),
     ApiForbiddenResponse({
       description: 'Forbidden',
+    }),
+    ApiTooManyRequestsResponse({
+      description: 'Too many attempts from the same IP address. Please try again later.',
     }),
   );
 }

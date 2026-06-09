@@ -1,5 +1,11 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
+import {
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTooManyRequestsResponse,
+} from '@nestjs/swagger';
 import { ErrorResponseBody } from '@app/exceptions';
 import { PostViewDto } from '../../../../modules/posts/api/view-dto';
 
@@ -17,6 +23,9 @@ export function ApiGetPostByIdDecorator() {
     ApiOkResponse({
       type: PostViewDto,
       description: 'Success',
+    }),
+    ApiTooManyRequestsResponse({
+      description: 'Too many attempts from the same IP address. Please try again later.',
     }),
   );
 }

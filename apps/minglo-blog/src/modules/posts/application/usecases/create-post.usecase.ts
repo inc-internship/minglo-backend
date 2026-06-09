@@ -9,7 +9,7 @@ import { PostsRepository } from '../../infrastructure/posts.repository';
 import { MediaFileMetaDataMapper } from '../../mappers/media-file-metadata.mapper';
 import { MediaFileMetaDataViewDto } from '@app/media/api/view-dto';
 import { PostEntity } from '../../domains/entities';
-import { UserQueryRepository } from '../../../user-account/infrastructure/queries/user.query.repository';
+import { UserQueryRepository } from '../../../user-account/infrastructure/queries';
 import { CreatedPostViewDto } from '../../api/view-dto';
 
 export class CreatePostCommand {

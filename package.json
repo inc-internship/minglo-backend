@@ -63,7 +63,10 @@
     "migrate:minglo-payment-service:status": "cross-env NODE_ENV=development prisma migrate status --config apps/minglo-payment-service/prisma.config.ts",
     "prisma:minglo-payment-service:generate": "cross-env NODE_ENV=development prisma generate --config apps/minglo-payment-service/prisma.config.ts",
     "prisma:minglo-payment-service:generate-test": "cross-env NODE_ENV=test prisma generate --config apps/minglo-payment-service/prisma.config.ts",
-    "prisma:minglo-payment-service:generate:prod": "cross-env NODE_ENV=production prisma generate --config apps/minglo-payment-service/prisma.config.ts"
+    "prisma:minglo-payment-service:generate:prod": "cross-env NODE_ENV=production prisma generate --config apps/minglo-payment-service/prisma.config.ts",
+    "seed:payment-plans:dev": "cross-env NODE_ENV=development ts-node --project apps/minglo-payment-service/prisma/tsconfig.seed.json apps/minglo-payment-service/prisma/seeds/plans.seed.ts",
+    "seed:payment-plans:test": "cross-env NODE_ENV=test ts-node --project apps/minglo-payment-service/prisma/tsconfig.seed.json apps/minglo-payment-service/prisma/seeds/plans.seed.ts",
+    "seed:payment-plans:prod": "cross-env NODE_ENV=production ts-node --project apps/minglo-payment-service/prisma/tsconfig.seed.json apps/minglo-payment-service/prisma/seeds/plans.seed.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1023.0",

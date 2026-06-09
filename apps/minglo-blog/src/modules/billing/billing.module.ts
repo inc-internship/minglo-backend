@@ -4,8 +4,10 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { CoreConfig } from '../../core/core.config';
 import { PAYMENT_SERVICE } from '@app/payments';
 import { GetSubscriptionsPlansQueryHandler } from './application/queries';
+import { CreateStripeCheckoutUseCase } from './application/usecases';
 
 const queries = [GetSubscriptionsPlansQueryHandler];
+const commands = [CreateStripeCheckoutUseCase];
 
 @Module({
   imports: [
@@ -24,6 +26,6 @@ const queries = [GetSubscriptionsPlansQueryHandler];
     ]),
   ],
   controllers: [BillingController],
-  providers: [...queries],
+  providers: [...queries, ...commands],
 })
 export class BillingModule {}

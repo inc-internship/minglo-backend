@@ -1,5 +1,10 @@
 import { PaymentStatus, PaymentSystem, SubscriptionStatus } from '@app/payments/enums';
 
+export interface SubscriptionActivatedPayload {
+  userId: string;
+  expiresAt: string;
+}
+
 export interface ICreateCheckoutSession {
   customerId: string;
   priceId: string;

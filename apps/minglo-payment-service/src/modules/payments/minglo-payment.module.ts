@@ -6,15 +6,15 @@ import { PrismaPaymentsModule } from '../../database';
 import { StripeModule } from '../stripe/stripe.module';
 import { PaymentsRepository } from './infrastructure';
 import { SubscriptionActivatedHandler } from './application/events';
-import { StripeWebhookController } from './api/stripe-webhook.controller';
+import { RmqPublisherModule } from '../rmq/rmq-publisher.module';
 
 const queries = [GetPlansQueryHandler];
 const commands = [CreateStripeCheckoutUseCase, StripeWebhookUseCase];
 const events = [SubscriptionActivatedHandler];
 
 @Module({
-  imports: [StripeModule, PrismaPaymentsModule],
-  controllers: [MingloPaymentsTcpController, StripeWebhookController],
+  imports: [StripeModule, PrismaPaymentsModule, RmqPublisherModule],
+  controllers: [MingloPaymentsTcpController],
   providers: [...queries, ...commands, ...events, PaymentsRepository],
 })
 export class MingloPaymentModule {}

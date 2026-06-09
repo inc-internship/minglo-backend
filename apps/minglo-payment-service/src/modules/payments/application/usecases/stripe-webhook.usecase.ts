@@ -42,9 +42,7 @@ export class StripeWebhookUseCase implements ICommandHandler<StripeWebhookComman
         break;
 
       case 'payment_intent.payment_failed':
-        // TODO BE-12: полная обработка при off-session renewals (cron).
-        // Во время Stripe Checkout подписки ещё нет — Payment(FAILED) создать невозможно.
-        // При off-session списании (BE-12) subscriptionId будет в paymentIntent.metadata.
+        // TODO BE-12: add off-session renewals logic with cron.
         this.logger.warn(
           `payment_intent.payment_failed: ${(event.data.object as any).id}. Skipping for now (BE-12).`,
           'execute',

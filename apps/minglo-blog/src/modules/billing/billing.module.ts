@@ -1,16 +1,20 @@
 import { Module } from '@nestjs/common';
 import { BillingController } from './api/billing.controller';
+import { StripeWebhookController } from './api/stripe-webhook.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { CoreConfig } from '../../core/core.config';
 import { PAYMENT_SERVICE } from '@app/payments';
 import { GetSubscriptionsPlansQueryHandler } from './application/queries';
-import { CreateStripeCheckoutUseCase } from './application/usecases';
+import { CreateStripeCheckoutUseCase, ActivateSubscriptionUseCase } from './application/usecases';
+import { SubscriptionConsumerController } from './api/subscription-consumer.controller';
+import { UserAccountModule } from '../user-account/user-account.module';
 
 const queries = [GetSubscriptionsPlansQueryHandler];
-const commands = [CreateStripeCheckoutUseCase];
+const commands = [CreateStripeCheckoutUseCase, ActivateSubscriptionUseCase];
 
 @Module({
   imports: [
+    UserAccountModule,
     ClientsModule.registerAsync([
       {
         name: PAYMENT_SERVICE,
@@ -25,7 +29,7 @@ const commands = [CreateStripeCheckoutUseCase];
       },
     ]),
   ],
-  controllers: [BillingController],
+  controllers: [BillingController, StripeWebhookController, SubscriptionConsumerController],
   providers: [...queries, ...commands],
 })
 export class BillingModule {}

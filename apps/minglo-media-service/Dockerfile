@@ -20,7 +20,7 @@ WORKDIR /home/node/dist/${SERVICE}
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 
-COPY --chown=node package*.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY --chown=node package*.json pnpm-lock.yaml ./
 
 RUN pnpm install --frozen-lockfile
 

@@ -90,16 +90,16 @@ spec:
                  secretKeyRef:
                    name: minglo-payment-service-production-config-secret
                    key: LOGGER_URL_PATH
-             - name: LOGGER_LEVEL
-               valueFrom:
-                 secretKeyRef:
-                   name: minglo-payment-service-production-config-secret
-                   key: LOGGER_LEVEL
              - name: LOGGER_LICENSE_KEY
                valueFrom:
                  secretKeyRef:
                    name: minglo-payment-service-production-config-secret
                    key: LOGGER_LICENSE_KEY
+             - name: LOGGER_LEVEL
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-payment-service-production-config-secret
+                   key: LOGGER_LEVEL
              - name: PAYMENTS_SERVICE_HOST
                valueFrom:
                  secretKeyRef:

@@ -5,7 +5,7 @@ import {
   Plan,
   StripeCustomer,
   Subscription,
-} from 'apps/minglo-payment-service/prisma/generated/prisma';
+} from '../../../../prisma/generated/prisma/client';
 import { SubscriptionStatus } from '@app/payments/enums';
 import { PrismaPaymentService } from '../../../database';
 import { ICreatePaymentData, ICreateSubscriptionData } from '../application/interfaces';

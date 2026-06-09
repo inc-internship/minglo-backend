@@ -2,7 +2,7 @@ import {
   PaymentStatus,
   PaymentSystem,
   SubscriptionStatus,
-} from 'apps/minglo-payment-service/prisma/generated/prisma';
+} from '../../../../../prisma/generated/prisma/client';
 
 export interface ICreateCheckoutSession {
   customerId: string;

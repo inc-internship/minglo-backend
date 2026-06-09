@@ -1,5 +1,5 @@
 import { GetSubscriptionPlansViewDto, SubscriptionPlanViewDto } from '@app/payments/view-dto';
-import { Plan } from 'apps/minglo-payment-service/prisma/generated/prisma/client';
+import { Plan } from '../../../../../prisma/generated/prisma/client';
 
 export class SubscriptionPlanMapper {
   static toViewDto(plan: Plan): SubscriptionPlanViewDto {

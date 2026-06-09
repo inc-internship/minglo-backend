@@ -11,7 +11,8 @@ export function ApiStripeWebhook() {
     }),
     ApiHeader({
       name: 'stripe-signature',
-      description: 'Stripe HMAC-SHA256 signature (t=...,v1=...). For Swagger testing enter any value.',
+      description:
+        'Stripe HMAC-SHA256 signature (t=...,v1=...). For Swagger testing enter any value.',
       required: true,
       example: 't=1234567890,v1=abc123',
     }),

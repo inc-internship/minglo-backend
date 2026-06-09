@@ -41,7 +41,6 @@ export class CreateStripeCheckoutUseCase implements ICommandHandler<
       'execute',
     );
 
-    //todo: BE-8 ?
     const session = await this.stripeService.createCheckoutSession({
       customerId,
       priceId: plan.stripePriceId,

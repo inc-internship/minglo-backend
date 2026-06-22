@@ -100,19 +100,26 @@ export class UserRepository {
     return this.userFactory.fromUserWithEmailConfirmations(dbUser);
   }
 
-  /* Возвращает массив id пользователей с протухшим проверочным кодом */
+  /* Возвращает массив id пользователей с протухшим проверочным кодом или soft-deleted */
   async findAllExpired(): Promise<number[]> {
     const expiredUsers = await this.prisma.user.findMany({
       where: {
-        emailConfirmed: false,
-        deletedAt: null,
-        emailConfirmations: {
-          some: {
-            expiresAt: { lt: new Date() },
-            confirmedAt: null,
+        OR: [
+          {
+            emailConfirmed: false,
             deletedAt: null,
+            emailConfirmations: {
+              some: {
+                expiresAt: { lt: new Date() },
+                confirmedAt: null,
+                deletedAt: null,
+              },
+            },
           },
-        },
+          {
+            deletedAt: { not: null },
+          },
+        ],
       },
       select: { id: true },
     });
@@ -222,6 +229,13 @@ export class UserRepository {
     await this.prisma.user.update({
       where: { publicId },
       data: { deletedAt: new Date() },
+    });
+  }
+
+  /* Hard-deletes user by publicId */
+  async hardDeleteUser(publicId: string): Promise<void> {
+    await this.prisma.user.delete({
+      where: { publicId },
     });
   }
 

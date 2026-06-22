@@ -12,6 +12,14 @@ export class PostQueryRepository {
   ) {}
 
   async findByPublicIdOrFail(publicId: string): Promise<PostViewDto> {
+    if (!publicId) {
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: 'Post ID is required',
+        extensions: [{ field: 'postId', message: 'Post ID is required' }],
+      });
+    }
+
     const post = await this.prisma.post.findUnique({
       where: { publicId, deletedAt: null },
       include: {

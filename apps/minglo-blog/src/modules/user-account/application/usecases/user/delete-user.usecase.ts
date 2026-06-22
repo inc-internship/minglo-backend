@@ -18,7 +18,7 @@ export class DeleteUserUseCase implements ICommandHandler<DeleteUserCommand, voi
 
   async execute(command: DeleteUserCommand): Promise<void> {
     const { user } = command;
-    await this.userRepo.softDeleteUser(user.userId);
-    this.logger.log(`User ${user.userId} soft-deleted`);
+    await this.userRepo.hardDeleteUser(user.userId);
+    this.logger.log(`User ${user.userId} deleted`);
   }
 }

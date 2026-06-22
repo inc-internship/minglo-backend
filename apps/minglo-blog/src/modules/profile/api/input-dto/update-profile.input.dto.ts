@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsOptional, IsString, Length, MaxLength } from 'class-validator';
-import { IsValidLogin } from '@app/decorators';
+import { IsOptional, IsString, Length, MaxLength } from 'class-validator';
+import { IsBirthdayValid, IsValidLogin } from '@app/decorators';
 import { loginConstraints } from '../../../user-account/domains';
 
 export class UpdateProfileInputDto {
@@ -34,17 +34,19 @@ export class UpdateProfileInputDto {
 
   @ApiProperty({ required: false, example: '2000-01-01T00:00:00.000Z' })
   @IsOptional()
-  @IsDateString()
+  @IsBirthdayValid()
   birthday?: string;
 
   @ApiProperty({ required: false, example: '550e8400-e29b-41d4-a716-446655440000' })
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   countryId?: string;
 
   @ApiProperty({ required: false, example: '550e8400-e29b-41d4-a716-446655440000' })
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   cityId?: string;
 
   @ApiProperty({ required: false, example: 'Backend developer' })

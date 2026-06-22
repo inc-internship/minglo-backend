@@ -3,6 +3,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { emailTemplates } from '@app/notifications/email/templates/email-confirmation';
 import { LoggerService } from '@app/logger';
 import { passwordRecoveryTemplates } from '@app/notifications/email/templates/password-recovery';
+import { welcomeTemplates } from '@app/notifications/email/templates/welcome';
 
 export type ConfirmationEmail = {
   email: string;
@@ -28,6 +29,19 @@ export class EmailService {
       });
     } catch (exception) {
       this.logger.error(exception, 'Failed to send confirmation email');
+      throw exception;
+    }
+  }
+
+  async sendWelcomeEmail(email: string): Promise<void> {
+    try {
+      await this.mailer.sendMail({
+        to: email,
+        subject: '[Minglo] Welcome to Minglo!',
+        html: welcomeTemplates.welcomeEmail(),
+      });
+    } catch (exception) {
+      this.logger.error(exception, 'Failed to send welcome email');
       throw exception;
     }
   }

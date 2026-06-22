@@ -60,7 +60,7 @@ export class ProfileController {
     );
 
     try {
-      const { stream, filename } = await extractFileStream(req);
+      const { stream, filename } = await extractFileStream(req, { fileSizeLimit: 3 * 1024 * 1024 });
 
       return await this.commandBus.execute<UploadAvatarImagesCommand, UploadImageProfileDto>(
         new UploadAvatarImagesCommand(stream, filename, user),

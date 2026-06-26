@@ -19,6 +19,7 @@ model User {
   posts              Post[]
   oauthAccounts      OAuthAccount[]
   profile            Profile?
+  notifications      Notification[]
 
   @@index([deletedAt])
   @@map("users")

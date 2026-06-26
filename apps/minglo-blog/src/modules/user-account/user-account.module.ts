@@ -108,7 +108,7 @@ const strategies = [AccessStrategy, RefreshStrategy, GoogleStrategy, GithubStrat
     PasswordRecoveryHandler,
     ...jobs,
   ],
-  exports: [UserQueryRepository, UserRepository],
+  exports: [UserQueryRepository, UserRepository, SessionRepository],
 })
 export class UserAccountModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

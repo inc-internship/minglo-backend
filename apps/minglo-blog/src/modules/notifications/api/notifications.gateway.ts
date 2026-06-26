@@ -6,6 +6,7 @@ import { UserConfig } from '../../../core/user.config';
 import { NotificationViewDto } from './view-dto/notification.view-dto';
 import { WS_EVENTS } from '../../../shared/enums';
 import { LoggerService } from '@app/logger';
+import { SessionRepository } from '../../user-account/infrastructure/session.repository';
 
 @WebSocketGateway({ namespace: '/notifications' })
 @Injectable()
@@ -16,12 +17,13 @@ export class NotificationsGateway implements OnGatewayConnection {
   constructor(
     private readonly jwtService: JwtService,
     private readonly userConfig: UserConfig,
+    private readonly sessionRepository: SessionRepository,
     private readonly logger: LoggerService,
   ) {
     this.logger.setContext(NotificationsGateway.name);
   }
 
-  handleConnection(client: Socket): void {
+  async handleConnection(client: Socket): Promise<void> {
     const rawToken =
       (client.handshake.auth?.token as string | undefined) ??
       client.handshake.headers?.authorization;
@@ -30,15 +32,19 @@ export class NotificationsGateway implements OnGatewayConnection {
 
     if (!token) {
       this.logger.warn(`Connection rejected: no token, socketId=${client.id}`, 'handleConnection');
-      client.emit(WS_EVENTS.EXCEPTION, { message: 'Unauthorized' });
-      client.disconnect(true);
+      client.disconnect();
       return;
     }
 
     try {
-      const payload = this.jwtService.verify<{ publicId: string }>(token, {
+      const payload = this.jwtService.verify<{ publicId: string; deviceId: string }>(token, {
         secret: this.userConfig.accessSecret,
       });
+
+      await this.sessionRepository.findSessionByDeviceIdAndUserId(
+        payload.publicId,
+        payload.deviceId,
+      );
 
       client.data.userId = payload.publicId;
       void client.join(`user:${payload.publicId}`);
@@ -48,11 +54,10 @@ export class NotificationsGateway implements OnGatewayConnection {
       );
     } catch {
       this.logger.warn(
-        `Connection rejected: invalid token, socketId=${client.id}`,
+        `Connection rejected: invalid token or session, socketId=${client.id}`,
         'handleConnection',
       );
-      client.emit(WS_EVENTS.EXCEPTION, { message: 'Unauthorized' });
-      client.disconnect(true);
+      client.disconnect();
     }
   }
 
@@ -66,7 +71,6 @@ export class NotificationsGateway implements OnGatewayConnection {
 
   disconnectUser(userId: string): void {
     this.logger.log(`Force disconnect: userId=${userId}`, 'disconnectUser');
-    this.server.to(`user:${userId}`).emit(WS_EVENTS.EXCEPTION, { message: 'Session terminated' });
     this.server.to(`user:${userId}`).disconnectSockets(true);
   }
 }

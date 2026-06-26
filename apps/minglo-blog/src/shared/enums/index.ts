@@ -5,5 +5,4 @@ export enum AccountType {
 
 export enum WS_EVENTS {
   NOTIFICATION = 'NOTIFICATION',
-  EXCEPTION = 'EXCEPTION',
 }

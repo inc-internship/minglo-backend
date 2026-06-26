@@ -7,6 +7,7 @@ import { proxySetup } from './setup/proxy.setup';
 import { cookiesSetup } from './setup/cookies.setup';
 import { corsSetup } from './setup/cors.setup';
 import { loggerSetup } from '@app/logger/logger.setup';
+import { WsAdapter } from './setup/ws.adapter';
 import { RABBITMQ_QUEUES } from '@app/payments';
 import { Transport } from '@nestjs/microservices';
 
@@ -29,6 +30,8 @@ async function bootstrap() {
     origin: coreConfig.corsOrigins,
     credentials: coreConfig.corsCredentials,
   });
+
+  app.useWebSocketAdapter(new WsAdapter(app));
 
   const { logger } = await loggerSetup(app);
 

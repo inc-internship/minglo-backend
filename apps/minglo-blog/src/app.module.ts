@@ -11,6 +11,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { PostsModule } from './modules/posts/posts.module';
 import { BillingModule } from './modules/billing/billing.module';
 import { ProfileModule } from './modules/profile/profile.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ProfileModule } from './modules/profile/profile.module';
     PostsModule,
     ProfileModule,
     BillingModule,
+    NotificationsModule,
   ],
   controllers: [],
   providers: [AsyncLocalStorageService],

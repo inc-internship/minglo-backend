@@ -1,8 +1,8 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { LoggerService } from 'libs/logger/src';
-import { PAYMENT_SERVICE, PAYMENTS_TCP_PATTERNS } from 'libs/payments/src';
+import { LoggerService } from '@app/logger';
+import { PAYMENT_SERVICE, PAYMENTS_TCP_PATTERNS } from '@app/payments';
 
 export class UserDeletedEvent {
   constructor(public readonly userId: string) {}

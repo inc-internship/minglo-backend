@@ -13,9 +13,12 @@ import {
   CreateStripeCheckoutUseCase,
   ActivateSubscriptionUseCase,
   ToggleAutoRenewalUseCase,
+  SubscriptionPendingUseCase,
 } from './application/usecases';
 import { SubscriptionConsumerController } from './api/subscription-consumer.controller';
 import { UserAccountModule } from '../user-account/user-account.module';
+import { NotificationsModule } from '../notifications/notifications.module';
+import { UserDeletedHandler } from '../user-account/application/events/user-deleted.handler';
 
 const queries = [
   GetSubscriptionsPlansQueryHandler,
@@ -26,11 +29,14 @@ const commands = [
   CreateStripeCheckoutUseCase,
   ActivateSubscriptionUseCase,
   ToggleAutoRenewalUseCase,
+  SubscriptionPendingUseCase,
 ];
+const events = [UserDeletedHandler];
 
 @Module({
   imports: [
     UserAccountModule,
+    NotificationsModule,
     ClientsModule.registerAsync([
       {
         name: PAYMENT_SERVICE,
@@ -46,6 +52,6 @@ const commands = [
     ]),
   ],
   controllers: [BillingController, StripeWebhookController, SubscriptionConsumerController],
-  providers: [...queries, ...commands],
+  providers: [...queries, ...commands, ...events],
 })
 export class BillingModule {}

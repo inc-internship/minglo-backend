@@ -2,7 +2,9 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { LoggerService } from '@app/logger';
 import { SubscriptionActivatedPayload } from '@app/payments';
 import { UserRepository } from '../../../user-account/infrastructure';
-import { AccountType } from '../../../../shared/enums';
+import { AccountType, NotificationType } from '../../../../shared/enums';
+import { NotificationService } from '../../../notifications/application/services/notification.service';
+import { format } from 'date-fns';
 
 export class ActivateSubscriptionCommand {
   constructor(public readonly payload: SubscriptionActivatedPayload) {}
@@ -15,6 +17,7 @@ export class ActivateSubscriptionUseCase implements ICommandHandler<
 > {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly notificationService: NotificationService,
     private readonly logger: LoggerService,
   ) {
     this.logger.setContext(ActivateSubscriptionUseCase.name);
@@ -27,7 +30,17 @@ export class ActivateSubscriptionUseCase implements ICommandHandler<
     );
 
     await this.userRepository.updateAccountType(payload.userId, AccountType.BUSINESS);
-
     this.logger.log(`accountType set to BUSINESS for userId=${payload.userId}`, 'execute');
+
+    const formattedExpiresAt = format(new Date(payload.expiresAt), 'dd.MM.yyyy');
+    await this.notificationService.createAndEmit(
+      payload.userId,
+      NotificationType.SUBSCRIPTION_ACTIVATED,
+      `Subscription activated until ${formattedExpiresAt}`,
+    );
+    this.logger.log(
+      `Subscription activation notification sent to user with id: ${payload.userId}`,
+      'execute',
+    );
   }
 }

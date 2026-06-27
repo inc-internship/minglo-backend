@@ -1,5 +1,4 @@
 import { Controller, Delete, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { AccessGuard } from '../../user-account/guards/access.guard';
 import { CurrentUser } from '../../../core/decorators/auth/current-user.decorator';
@@ -19,7 +18,6 @@ import {
   MarkNotificationReadCommand,
 } from '../application/usecases';
 
-@ApiTags('notifications')
 @Controller('notifications')
 @UseGuards(AccessGuard)
 export class NotificationsController {

@@ -5,4 +5,5 @@ export const PAYMENTS_TCP_PATTERNS = {
   GET_PAYMENT_HISTORY: 'get_payment_history',
   GET_CURRENT_SUBSCRIPTION: 'get_current_subscription',
   TOGGLE_AUTO_RENEWAL: 'toggle_auto_renewal',
+  DELETE_USER_DATA: 'delete_user_data',
 } as const;

@@ -6,6 +6,7 @@ import {
 import { UserRepository } from '../../../src/modules/user-account/infrastructure';
 import { LoggerService } from '@app/logger';
 import { ActiveUserDto } from '../../../src/core/decorators/auth/dto';
+import { EventBus } from '@nestjs/cqrs';
 
 describe('DeleteUserUseCase', () => {
   let useCase: DeleteUserUseCase;
@@ -24,6 +25,7 @@ describe('DeleteUserUseCase', () => {
           provide: LoggerService,
           useValue: { setContext: jest.fn(), log: jest.fn(), error: jest.fn(), warn: jest.fn() },
         },
+        { provide: EventBus, useValue: { publish: jest.fn() } },
       ],
     }).compile();
 

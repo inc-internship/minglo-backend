@@ -187,4 +187,12 @@ export class PaymentsRepository {
       data: { status: SubscriptionStatus.ACTIVE },
     });
   }
+
+  async deleteUserData(userId: string): Promise<void> {
+    await this.prisma.$transaction([
+      this.prisma.payment.deleteMany({ where: { userId } }),
+      this.prisma.subscription.deleteMany({ where: { userId } }),
+      this.prisma.stripeCustomer.deleteMany({ where: { userId } }),
+    ]);
+  }
 }

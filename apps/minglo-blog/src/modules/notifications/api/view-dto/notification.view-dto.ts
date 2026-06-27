@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Notification, NotificationType } from '../../../../../prisma/generated/prisma/client';
+import { Notification } from '../../../../../prisma/generated/prisma/client';
+import { NotificationType } from '../../../../shared/enums';
 
 export class NotificationViewDto {
   @ApiProperty()
@@ -20,7 +21,7 @@ export class NotificationViewDto {
   static mapToView(notification: Notification): NotificationViewDto {
     const dto = new NotificationViewDto();
     dto.id = notification.id;
-    dto.type = notification.type;
+    dto.type = notification.type as unknown as NotificationType;
     dto.message = notification.message;
     dto.isRead = notification.isRead;
     dto.createdAt = notification.createdAt;

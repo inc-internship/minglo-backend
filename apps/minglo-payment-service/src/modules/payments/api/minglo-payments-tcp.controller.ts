@@ -16,6 +16,7 @@ import {
   CreateStripeCheckoutCommand,
   StripeWebhookCommand,
   ToggleAutoRenewalCommand,
+  DeleteUserDataCommand,
 } from '../application/usecases';
 import { PAYMENTS_TCP_PATTERNS } from '@app/payments';
 
@@ -85,5 +86,11 @@ export class MingloPaymentsTcpController {
     );
     await this.commandBus.execute(new ToggleAutoRenewalCommand(dto.userId, dto.autoRenewal));
     return null;
+  }
+
+  @EventPattern(PAYMENTS_TCP_PATTERNS.DELETE_USER_DATA)
+  async deleteUserData(@Payload() data: { userId: string }): Promise<void> {
+    this.logger.log(`Received DELETE_USER_DATA for userId=${data.userId}`, 'deleteUserData');
+    await this.commandBus.execute(new DeleteUserDataCommand(data.userId));
   }
 }

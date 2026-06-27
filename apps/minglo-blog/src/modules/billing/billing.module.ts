@@ -18,7 +18,7 @@ import {
 import { SubscriptionConsumerController } from './api/subscription-consumer.controller';
 import { UserAccountModule } from '../user-account/user-account.module';
 import { NotificationsModule } from '../notifications/notifications.module';
-import { UserDeletedHandler } from './application/events/user-deleted.handler';
+import { UserDeletedHandler } from '../user-account/application/events/user-deleted.handler';
 
 const queries = [
   GetSubscriptionsPlansQueryHandler,

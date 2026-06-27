@@ -9,11 +9,12 @@ import {
   CreateStripeCheckoutUseCase,
   StripeWebhookUseCase,
   ToggleAutoRenewalUseCase,
+  DeleteUserDataUseCase,
 } from './application/usecases';
 import { PrismaPaymentsModule } from '../../database';
 import { StripeModule } from '../stripe/stripe.module';
 import { PaymentsRepository } from './infrastructure';
-import { SubscriptionActivatedHandler } from './application/events';
+import { SubscriptionActivatedHandler, SubscriptionPendingHandler } from './application/events';
 import { RmqPublisherModule } from '../rmq/rmq-publisher.module';
 import { SubscriptionsJob } from './application/jobs/subscriptions.job';
 
@@ -22,8 +23,13 @@ const queries = [
   GetPaymentHistoryQueryHandler,
   GetCurrentSubscriptionQueryHandler,
 ];
-const commands = [CreateStripeCheckoutUseCase, StripeWebhookUseCase, ToggleAutoRenewalUseCase];
-const events = [SubscriptionActivatedHandler];
+const commands = [
+  CreateStripeCheckoutUseCase,
+  StripeWebhookUseCase,
+  ToggleAutoRenewalUseCase,
+  DeleteUserDataUseCase,
+];
+const events = [SubscriptionActivatedHandler, SubscriptionPendingHandler];
 const jobs = [SubscriptionsJob];
 
 @Module({

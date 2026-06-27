@@ -11,6 +11,7 @@ import {
   MarkAllNotificationsReadUseCase,
   MarkNotificationReadUseCase,
 } from './application/usecases';
+import { NotificationService } from './application/services/notification.service';
 
 const usecases = [
   MarkAllNotificationsReadUseCase,
@@ -27,9 +28,10 @@ const queries = [GetNotificationsHandler];
     NotificationsGateway,
     UserLoggedOutEventHandler,
     NotificationRepository,
+    NotificationService,
     ...usecases,
     ...queries,
   ],
-  exports: [],
+  exports: [NotificationService],
 })
 export class NotificationsModule {}

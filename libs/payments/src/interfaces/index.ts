@@ -5,6 +5,12 @@ export interface SubscriptionActivatedPayload {
   expiresAt: string;
 }
 
+export interface SubscriptionPendingPayload {
+  userId: string;
+  startsAt: string;
+  expiresAt: string;
+}
+
 export interface ICreateCheckoutSession {
   customerId: string;
   priceId: string;

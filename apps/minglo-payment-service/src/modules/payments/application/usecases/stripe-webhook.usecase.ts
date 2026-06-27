@@ -3,7 +3,7 @@ import { LoggerService } from '@app/logger';
 import { PaymentStatus, PaymentSystem, SubscriptionStatus } from '@app/payments/enums';
 import { PaymentsRepository } from '../../infrastructure';
 import { StripeService } from '../../../stripe/stripe.service';
-import { SubscriptionActivatedEvent } from '../events';
+import { SubscriptionActivatedEvent, SubscriptionPendingEvent } from '../events';
 
 export interface PaymentSessionMeta {
   userId: string;
@@ -115,13 +115,16 @@ export class StripeWebhookUseCase implements ICommandHandler<StripeWebhookComman
       throw err;
     }
 
-    // Publicates event only for ACTIVE subscriptions.
-    // If PENDING -> user has not finished ACTIVE subscription (stacking)
     if (status === SubscriptionStatus.ACTIVE) {
       this.eventBus.publish(new SubscriptionActivatedEvent(userId, new Date(endDate)));
-
       this.logger.log(
-        `SubscriptionActivatedDomainEvent published for userId=${userId}`,
+        `SubscriptionActivatedEvent published for userId=${userId}`,
+        'handleCheckoutCompleted',
+      );
+    } else {
+      this.eventBus.publish(new SubscriptionPendingEvent(userId, start, new Date(endDate)));
+      this.logger.log(
+        `SubscriptionPendingEvent published for userId=${userId}`,
         'handleCheckoutCompleted',
       );
     }

@@ -13,7 +13,7 @@ Backend service for a social media platform inspired by Instagram.
 - event: NOTIFICATION
 - payload: {
     id: String
-    type: SUBSCRIPTION_ACTIVATED | PAYMENT_REMINDER | SUBSCRIPTION_EXPIRING_7_DAYS | SUBSCRIPTION_EXPIRING_1_DAY
+    type: SUBSCRIPTION_ACTIVATED | SUBSCRIPTION_PENDING | PAYMENT_REMINDER | SUBSCRIPTION_EXPIRING_7_DAYS | SUBSCRIPTION_EXPIRING_1_DAY
     message: String,
     isRead: Boolean,
     createdAt: Date

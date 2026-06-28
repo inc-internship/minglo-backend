@@ -3,11 +3,13 @@ import { LoggerService } from '@app/logger';
 import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { GetSubscriptionPlansViewDto } from '@app/payments/view-dto';
 import { PaymentHistoryViewDto, SubscriptionInfoViewDto } from '@app/payments/view-dto';
+import { ExpiringSubscriptionDto } from '@app/payments';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   GetPlansQuery,
   GetPaymentHistoryQuery,
   GetCurrentSubscriptionQuery,
+  GetExpiringSubscriptionsQuery,
 } from '../application/queries';
 import { CreateStripeCheckoutInputDto } from './input-dto/create-stripe-checkout.input-dto';
 import { GetPaymentHistoryInputDto } from './input-dto/get-payment-history.input-dto';
@@ -86,6 +88,17 @@ export class MingloPaymentsTcpController {
     );
     await this.commandBus.execute(new ToggleAutoRenewalCommand(dto.userId, dto.autoRenewal));
     return null;
+  }
+
+  @MessagePattern(PAYMENTS_TCP_PATTERNS.GET_EXPIRING_SUBSCRIPTIONS)
+  async getExpiringSubscriptions(
+    @Payload() dto: { days: number },
+  ): Promise<ExpiringSubscriptionDto[]> {
+    this.logger.log(
+      `New GET_EXPIRING_SUBSCRIPTIONS request, days=${dto.days}`,
+      'getExpiringSubscriptions',
+    );
+    return this.queryBus.execute(new GetExpiringSubscriptionsQuery(dto.days));
   }
 
   @EventPattern(PAYMENTS_TCP_PATTERNS.DELETE_USER_DATA)

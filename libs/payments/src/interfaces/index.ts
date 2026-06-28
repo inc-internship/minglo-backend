@@ -29,6 +29,12 @@ export interface ICreateSubscriptionData {
   stripeCustomerId: string;
 }
 
+export interface ExpiringSubscriptionDto {
+  userId: string;
+  expiresAt: string;
+  autoRenewal: boolean;
+}
+
 export interface ICreatePaymentData {
   userId: string;
   subscriptionId: string;

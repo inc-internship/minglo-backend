@@ -13,6 +13,17 @@ export class NotificationService {
 
   async createAndEmit(userId: string, type: NotificationType, message: string): Promise<void> {
     const notification = await this.notificationRepo.create({ userId, type, message });
+
     this.gateway.emitNotification(userId, NotificationViewDto.mapToView(notification));
+  }
+
+  async createAndEmitOnce(userId: string, type: NotificationType, message: string): Promise<void> {
+    const alreadySent = await this.notificationRepo.existsForToday(userId, type);
+
+    if (alreadySent) {
+      return;
+    }
+
+    await this.createAndEmit(userId, type, message);
   }
 }

@@ -188,6 +188,48 @@ export class PaymentsRepository {
     });
   }
 
+  /**
+   * ACTIVE subscriptions expiring on the given UTC calendar day,
+   * excluding users who already have a PENDING (stacked) subscription.
+   */
+  async findExpiringSubscriptions(
+    date: Date,
+  ): Promise<{ userId: string; endDate: Date; autoRenewal: boolean }[]> {
+    const startOfDay = new Date(date);
+    startOfDay.setUTCHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(date);
+    endOfDay.setUTCHours(23, 59, 59, 999);
+
+    const usersWithPending = await this.prisma.subscription.findMany({
+      where: { status: SubscriptionStatus.PENDING },
+      select: { userId: true },
+      distinct: ['userId'],
+    });
+
+    const pendingUserIds = usersWithPending.map((s) => s.userId);
+
+    const results = await this.prisma.subscription.findMany({
+      where: {
+        status: SubscriptionStatus.ACTIVE,
+        endDate: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+        ...(pendingUserIds.length > 0 && {
+          userId: {
+            notIn: pendingUserIds,
+          },
+        }),
+      },
+      select: { userId: true, endDate: true, autoRenewal: true },
+    });
+
+    return results.filter(
+      (s): s is { userId: string; endDate: Date; autoRenewal: boolean } => s.endDate !== null,
+    );
+  }
+
   async deleteUserData(userId: string): Promise<void> {
     await this.prisma.$transaction([
       this.prisma.payment.deleteMany({ where: { userId } }),

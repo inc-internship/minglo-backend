@@ -19,12 +19,14 @@ import { SubscriptionConsumerController } from './api/subscription-consumer.cont
 import { UserAccountModule } from '../user-account/user-account.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { UserDeletedHandler } from '../user-account/application/events/user-deleted.handler';
+import { NotificationSchedulerService } from './application/services/notification-scheduler.service';
 
 const queries = [
   GetSubscriptionsPlansQueryHandler,
   GetPaymentHistoryQueryHandler,
   GetCurrentSubscriptionQueryHandler,
 ];
+
 const commands = [
   CreateStripeCheckoutUseCase,
   ActivateSubscriptionUseCase,
@@ -32,6 +34,8 @@ const commands = [
   SubscriptionPendingUseCase,
 ];
 const events = [UserDeletedHandler];
+
+const jobs = [NotificationSchedulerService];
 
 @Module({
   imports: [
@@ -52,6 +56,6 @@ const events = [UserDeletedHandler];
     ]),
   ],
   controllers: [BillingController, StripeWebhookController, SubscriptionConsumerController],
-  providers: [...queries, ...commands, ...events],
+  providers: [...queries, ...commands, ...events, ...jobs],
 })
 export class BillingModule {}

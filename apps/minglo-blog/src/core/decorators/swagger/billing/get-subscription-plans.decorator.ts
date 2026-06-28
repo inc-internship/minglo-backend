@@ -6,7 +6,7 @@ export function ApiGetSubscriptionPlans() {
   return applyDecorators(
     ApiOperation({
       summary: 'Get available subscription plans',
-      description: 'Redirects user to GitHub authorization page',
+      description: 'Returns a list of available subscription plans.',
     }),
     ApiOkResponse({
       type: GetSubscriptionPlansViewDto,

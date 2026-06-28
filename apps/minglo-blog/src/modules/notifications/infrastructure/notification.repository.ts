@@ -86,6 +86,22 @@ export class NotificationRepository {
     });
   }
 
+  async existsForToday(userId: string, type: NotificationType): Promise<boolean> {
+    const startOfDay = new Date();
+    startOfDay.setUTCHours(0, 0, 0, 0);
+    const endOfDay = new Date();
+    endOfDay.setUTCHours(23, 59, 59, 999);
+
+    const count = await this.prisma.notification.count({
+      where: {
+        user: { publicId: userId },
+        type: type as PrismaNotificationType,
+        createdAt: { gte: startOfDay, lte: endOfDay },
+      },
+    });
+    return count > 0;
+  }
+
   async deleteById(id: string): Promise<void> {
     try {
       await this.prisma.notification.delete({ where: { id } });

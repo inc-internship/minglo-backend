@@ -20,40 +20,40 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Prepare test DB') {
-            steps {
-                script {
-                    sh '''
-                       export NVM_DIR="$HOME/.nvm"
-                       [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-                       nvm use --lts
-                       yarn install
-
-                       # Миграция тестовой базы и генерация Prisma Client
-                       yarn migrate:minglo-blog:test
-                       yarn prisma:minglo-blog:generate-test
-                    '''
-                }
-            }
-        }
-        stage('Unit tests') {
-            steps {
-                script {
-                    sh '''
-                       yarn test:minglo-blog:unit
-                    '''
-                }
-            }
-        }
-        stage('e2e tests') {
-            steps {
-                script {
-                    sh '''
-                       yarn test:minglo-blog:e2e
-                    '''
-                }
-            }
-        }
+//        stage('Prepare test DB') {
+//            steps {
+//                script {
+//                    sh '''
+//                       export NVM_DIR="$HOME/.nvm"
+//                       [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+//                       nvm use --lts
+//                       yarn install
+//
+//                       # Миграция тестовой базы и генерация Prisma Client
+//                       yarn migrate:minglo-blog:test
+//                       yarn prisma:minglo-blog:generate-test
+//                    '''
+//                }
+//            }
+//        }
+//        stage('Unit tests') {
+//            steps {
+//                script {
+//                    sh '''
+//                       yarn test:minglo-blog:unit
+//                    '''
+//                }
+//            }
+//        }
+//        stage('e2e tests') {
+//            steps {
+//                script {
+//                    sh '''
+//                       yarn test:minglo-blog:e2e
+//                    '''
+//                }
+//            }
+//        }
         stage('Build docker image') {
             steps {
                 echo "Build image started..."

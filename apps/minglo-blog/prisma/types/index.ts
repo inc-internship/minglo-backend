@@ -68,6 +68,34 @@ export type PostOwner = Prisma.UserGetPayload<{
 }>;
 export type PostMediaFile = Prisma.PostMediaFileGetPayload<object>;
 
+export type FollowWithFollowerData = Prisma.FollowGetPayload<{
+  include: {
+    follower: {
+      include: {
+        profile: {
+          include: {
+            avatar: { where: { deletedAt: null } };
+          };
+        };
+      };
+    };
+  };
+}>;
+
+export type FollowWithFollowingData = Prisma.FollowGetPayload<{
+  include: {
+    following: {
+      include: {
+        profile: {
+          include: {
+            avatar: { where: { deletedAt: null } };
+          };
+        };
+      };
+    };
+  };
+}>;
+
 export type PostForUpdate = Prisma.PostGetPayload<{
   select: {
     id: true;

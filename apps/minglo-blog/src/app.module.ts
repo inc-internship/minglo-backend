@@ -12,6 +12,7 @@ import { PostsModule } from './modules/posts/posts.module';
 import { BillingModule } from './modules/billing/billing.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { FollowsModule } from './modules/follows/follows.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     ProfileModule,
     BillingModule,
     NotificationsModule,
+    FollowsModule,
   ],
   controllers: [],
   providers: [AsyncLocalStorageService],

@@ -68,6 +68,21 @@ export type PostOwner = Prisma.UserGetPayload<{
 }>;
 export type PostMediaFile = Prisma.PostMediaFileGetPayload<object>;
 
+export type CommentWithAuthor = Prisma.CommentGetPayload<{
+  include: {
+    author: {
+      include: {
+        profile: {
+          include: {
+            avatar: { where: { deletedAt: null } };
+          };
+        };
+      };
+    };
+    likes: true;
+  };
+}>;
+
 export type FeedPostWithData = Prisma.PostGetPayload<{
   include: {
     user: {

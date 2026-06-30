@@ -14,6 +14,7 @@ import { ProfileModule } from './modules/profile/profile.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { FollowsModule } from './modules/follows/follows.module';
 import { CommentsModule } from './modules/comments/comments.module';
+import { LikesModule } from './modules/likes/likes.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { CommentsModule } from './modules/comments/comments.module';
     NotificationsModule,
     FollowsModule,
     CommentsModule,
+    LikesModule,
   ],
   controllers: [],
   providers: [AsyncLocalStorageService],

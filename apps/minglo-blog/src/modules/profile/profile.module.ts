@@ -14,7 +14,6 @@ import {
   UpdateProfileUseCase,
   UploadAvatarImagesUseCase,
 } from './application/usecases';
-import { UserSearchController } from './api/user-search.controller';
 
 const usecases = [UploadAvatarImagesUseCase, DeleteAvatarUseCase, UpdateProfileUseCase];
 const queries = [ViewProfileHandler, GetUsersSearchQueryHandler];
@@ -37,7 +36,7 @@ const queries = [ViewProfileHandler, GetUsersSearchQueryHandler];
     ]),
     UserAccountModule,
   ],
-  controllers: [ProfileController, UserSearchController],
+  controllers: [ProfileController],
   providers: [
     ...usecases,
     ...queries,

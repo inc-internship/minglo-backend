@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { PostsWithCursorViewDto, PostViewDto } from '../../api/view-dto';
+import {
+  FeedPostsWithCursorViewDto,
+  FeedPostViewDto,
+  PostsWithCursorViewDto,
+  PostViewDto,
+} from '../../api/view-dto';
 import { PrismaService } from '../../../../database/prisma.service';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
 import { PostViewMapper } from '../../application/mappers';
@@ -104,5 +109,60 @@ export class PostQueryRepository {
     });
 
     return this.mapper.toViewList(posts);
+  }
+
+  async findFeed(
+    currentUserPublicId: string,
+    cursor?: string,
+    limit: number = 8,
+  ): Promise<FeedPostsWithCursorViewDto> {
+    const currentUser = await this.prisma.user.findUnique({
+      where: { publicId: currentUserPublicId, deletedAt: null },
+      select: { id: true },
+    });
+
+    if (!currentUser) {
+      throw new DomainException({
+        code: DomainExceptionCode.NotFound,
+        message: 'User not found',
+      });
+    }
+
+    const follows = await this.prisma.follow.findMany({
+      where: { followerId: currentUser.id },
+      select: { followingId: true },
+    });
+
+    const followingIds = follows.map((f) => f.followingId);
+
+    if (followingIds.length === 0) {
+      return { items: [], nextCursor: null, hasNextPage: false };
+    }
+
+    const posts = await this.prisma.post.findMany({
+      where: { userId: { in: followingIds }, deletedAt: null },
+      include: {
+        user: {
+          include: {
+            profile: { include: { avatar: { where: { deletedAt: null } } } },
+          },
+        },
+        postsMediaFiles: { orderBy: { order: 'asc' } },
+        likes: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      take: limit + 1,
+      ...(cursor && { skip: 1, cursor: { publicId: cursor } }),
+    });
+
+    const hasNextPage = posts.length > limit;
+    const items = hasNextPage ? posts.slice(0, limit) : posts;
+    const nextCursor = hasNextPage ? items[items.length - 1].publicId : null;
+
+    return {
+      items: items.map((p): FeedPostViewDto => FeedPostViewDto.mapToView(p, currentUser.id)),
+      nextCursor,
+      hasNextPage,
+    };
   }
 }

@@ -14,6 +14,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PostsRepository } from './infrastructure/posts.repository';
 import { UserAccountModule } from '../user-account/user-account.module';
 import {
+  GetFeedQueryHandler,
   GetLatestPostsQueryHandler,
   GetPostByIdQueryHandler,
   GetUserPostsPaginatedQueryHandler,
@@ -27,6 +28,7 @@ const queries = [
   GetPostByIdQueryHandler,
   GetUserPostsPaginatedQueryHandler,
   GetLatestPostsQueryHandler,
+  GetFeedQueryHandler,
 ];
 
 @Module({

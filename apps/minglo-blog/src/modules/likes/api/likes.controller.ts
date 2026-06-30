@@ -1,5 +1,15 @@
-import { Controller, Delete, HttpCode, HttpStatus, Param, Post, UseGuards } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import {
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { LoggerService } from '@app/logger';
 import { AccessGuard } from '../../user-account/guards/access.guard';
 import { CurrentUser } from '../../../core/decorators/auth/current-user.decorator';
@@ -10,7 +20,10 @@ import {
   UnlikeCommentCommand,
   UnlikePostCommand,
 } from '../application/usecases';
+import { GetPostLikesQuery } from '../application/queries';
+import { PostLikesWithCursorViewDto } from './view-dto';
 import {
+  ApiGetPostLikesDecorator,
   ApiLikeCommentDecorator,
   ApiLikePostDecorator,
   ApiUnlikeCommentDecorator,
@@ -21,9 +34,23 @@ import {
 export class LikesController {
   constructor(
     private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
     private readonly logger: LoggerService,
   ) {
     this.logger.setContext(LikesController.name);
+  }
+
+  @Get(':postId/likes')
+  @ApiGetPostLikesDecorator()
+  @HttpCode(HttpStatus.OK)
+  async getPostLikes(
+    @Param('postId') postId: string,
+    @Query('cursor') cursor?: string,
+  ): Promise<PostLikesWithCursorViewDto> {
+    this.logger.log(`GetPostLikes postId=${postId}`, 'getPostLikes');
+    return this.queryBus.execute<GetPostLikesQuery, PostLikesWithCursorViewDto>(
+      new GetPostLikesQuery(postId, cursor),
+    );
   }
 
   @Post(':postId/likes')
@@ -35,9 +62,7 @@ export class LikesController {
     @CurrentUser() user: ActiveUserDto,
   ): Promise<void> {
     this.logger.log(`LikePost postId=${postId}`, 'likePost');
-    return this.commandBus.execute<LikePostCommand, void>(
-      new LikePostCommand(postId, user.userId),
-    );
+    return this.commandBus.execute<LikePostCommand, void>(new LikePostCommand(postId, user.userId));
   }
 
   @Delete(':postId/likes')

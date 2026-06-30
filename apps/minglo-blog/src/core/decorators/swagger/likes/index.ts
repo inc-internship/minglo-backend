@@ -5,10 +5,12 @@ import {
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTooManyRequestsResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { PostLikesWithCursorViewDto } from '../../../../modules/likes/api/view-dto';
 import { ErrorResponseBody } from '@app/exceptions';
 
 export function ApiLikePostDecorator() {
@@ -53,6 +55,15 @@ export function ApiUnlikeCommentDecorator() {
     ApiNoContentResponse({ description: 'Like removed' }),
     ApiNotFoundResponse({ type: ErrorResponseBody, description: 'Like not found' }),
     ApiUnauthorizedResponse({ description: 'Unauthorized' }),
+    ApiTooManyRequestsResponse({ description: 'Too many requests' }),
+  );
+}
+
+export function ApiGetPostLikesDecorator() {
+  return applyDecorators(
+    ApiOperation({ summary: 'Get users who liked a post' }),
+    ApiOkResponse({ type: PostLikesWithCursorViewDto }),
+    ApiNotFoundResponse({ type: ErrorResponseBody, description: 'Post not found' }),
     ApiTooManyRequestsResponse({ description: 'Too many requests' }),
   );
 }

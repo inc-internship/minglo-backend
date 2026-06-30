@@ -68,6 +68,21 @@ export type PostOwner = Prisma.UserGetPayload<{
 }>;
 export type PostMediaFile = Prisma.PostMediaFileGetPayload<object>;
 
+export type UserWithProfileForPublicView = Prisma.UserGetPayload<{
+  include: {
+    profile: {
+      include: {
+        avatar: { where: { deletedAt: null } };
+      };
+    };
+    _count: {
+      select: {
+        posts: { where: { deletedAt: null } };
+      };
+    };
+  };
+}>;
+
 export type FollowWithFollowerData = Prisma.FollowGetPayload<{
   include: {
     follower: {

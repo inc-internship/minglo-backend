@@ -23,6 +23,6 @@ export class ViewProfileHandler implements IQueryHandler<ViewProfileQuery, Profi
   async execute(query: ViewProfileQuery): Promise<ProfileViewDto> {
     const { id, currentUser } = query;
     this.logger.log(`Check profile, viewer=${currentUser?.userId ?? 'anonymous'}`, 'execute');
-    return await this.profileQueryRepo.getProfile(id);
+    return await this.profileQueryRepo.getProfile(id, currentUser?.userId ?? null);
   }
 }

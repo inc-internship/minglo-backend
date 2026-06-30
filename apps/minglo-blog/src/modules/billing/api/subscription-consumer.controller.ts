@@ -31,9 +31,7 @@ export class SubscriptionConsumerController {
   }
 
   @EventPattern(SUBSCRIPTION_EVENTS.PENDING)
-  async handleSubscriptionPending(
-    @Payload() payload: SubscriptionPendingPayload,
-  ): Promise<void> {
+  async handleSubscriptionPending(@Payload() payload: SubscriptionPendingPayload): Promise<void> {
     this.logger.log(
       `Received subscription.pending: userId=${payload.userId}`,
       'handleSubscriptionPending',

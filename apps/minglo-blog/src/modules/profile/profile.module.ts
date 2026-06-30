@@ -7,7 +7,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UserAccountModule } from '../user-account/user-account.module';
 import { ProfileController } from './api/profile.controller';
 import { ProfileRepository } from './infrastructure/profile.repository';
-import { ViewProfileHandler } from './application/queries';
+import { GetUsersSearchQueryHandler, ViewProfileHandler } from './application/queries';
 import { ProfileQueryRepository } from './infrastructure/queries/profile.query.repository';
 import {
   DeleteAvatarUseCase,
@@ -16,7 +16,7 @@ import {
 } from './application/usecases';
 
 const usecases = [UploadAvatarImagesUseCase, DeleteAvatarUseCase, UpdateProfileUseCase];
-const queries = [ViewProfileHandler];
+const queries = [ViewProfileHandler, GetUsersSearchQueryHandler];
 
 @Module({
   imports: [

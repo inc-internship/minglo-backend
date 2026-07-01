@@ -15,6 +15,9 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { FollowsModule } from './modules/follows/follows.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { LikesModule } from './modules/likes/likes.module';
+import { AdminModule } from './modules/admin/admin.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 
 @Module({
   imports: [
@@ -31,6 +34,12 @@ import { LikesModule } from './modules/likes/likes.module';
     FollowsModule,
     CommentsModule,
     LikesModule,
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: true,
+      path: '/admin/graphql',
+    }),
+    AdminModule,
   ],
   controllers: [],
   providers: [AsyncLocalStorageService],

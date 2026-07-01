@@ -12,17 +12,22 @@ export class AllExceptionsFilter implements ExceptionFilter {
   }
 
   catch(exception: any, host: ArgumentsHost): void {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
+    if (host.getType() === 'http') {
+      const ctx = host.switchToHttp();
+      const response = ctx.getResponse<Response>();
+      const request = ctx.getRequest<Request>();
 
-    this.logger.error(exception, `catch`);
+      this.logger.error(exception, `catch`);
 
-    const message = exception.message || UNKNOWN_EXCEPTION_TEXT;
-    const status = HttpStatus.INTERNAL_SERVER_ERROR;
-    const responseBody = this.buildResponseBody(request.url, message);
+      const message = exception.message || UNKNOWN_EXCEPTION_TEXT;
+      const status = HttpStatus.INTERNAL_SERVER_ERROR;
+      const responseBody = this.buildResponseBody(request.url, message);
 
-    response.status(status).json(responseBody);
+      response.status(status).json(responseBody);
+    } else {
+      this.logger.error(exception, `catch`);
+      throw exception;
+    }
   }
 
   private buildResponseBody(requestUrl: string, message: string): ErrorResponseBody {

@@ -220,6 +220,31 @@ spec:
                  secretKeyRef:
                    name: minglo-core-backend-production-config-secret
                    key: RABBITMQ_URL
+             - name: ADMIN_EMAIL
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: ADMIN_EMAIL
+             - name: ADMIN_PASSWORD
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: ADMIN_PASSWORD
+             - name: GRAPHQL_PATH
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: GRAPHQL_PATH
+             - name: GRAPHQL_INTROSPECTION
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: GRAPHQL_INTROSPECTION
+             - name: GRAPHQL_SANDBOX
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: GRAPHQL_SANDBOX
              - name: MINGLO_PORT
                valueFrom:
                  secretKeyRef:

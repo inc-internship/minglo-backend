@@ -1,12 +1,13 @@
 export const MINGLO_BLOG_SWAGGER_VERSION = '1.0';
 export const MINGLO_BLOG_SWAGGER_PREFIX = 'api/v1';
 export const MINGLO_BLOG_SWAGGER_TITLE = 'Minglo Blog API';
-export const MINGLO_BLOG_SWAGGER_DESCRIPTION = `
+export const MINGLO_BLOG_SWAGGER_DESCRIPTION = (gqlPath: string) => {
+  return `
 Backend service for a social media platform inspired by Instagram.
 ---
 ## 🎉GraphQL (Admin)
 \`\`\`
-- sandbox: /api/v1/graphql
+- sandbox: ${gqlPath}
 - auth: Basic Auth (admin credentials)
 - scope: user management (list, detail, block/unblock, delete), payments, followers/following
 \`\`\`
@@ -27,3 +28,4 @@ Backend service for a social media platform inspired by Instagram.
   }
 \`\`\`
 `.trim();
+};

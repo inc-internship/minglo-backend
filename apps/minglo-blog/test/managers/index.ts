@@ -6,3 +6,4 @@ export * from './notifications-test.manager';
 export * from './follows-test.manager';
 export * from './comments-test.manager';
 export * from './likes-test.manager';
+export * from './admin-test.manager';

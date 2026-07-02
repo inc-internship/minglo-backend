@@ -179,3 +179,9 @@ export type ProfileWithUserAndAvatar = Prisma.ProfileGetPayload<{
     };
   };
 }>;
+
+export type UserWithProfile = Prisma.UserGetPayload<{
+  include: {
+    profile: { include: { avatar: { where: { deletedAt: null } } } };
+  };
+}>;

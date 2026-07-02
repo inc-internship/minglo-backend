@@ -12,21 +12,23 @@ export class DomainExceptionsFilter implements ExceptionFilter {
   }
 
   catch(exception: DomainException, host: ArgumentsHost): void {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
-
-    const status = this.mapToHttpStatus(exception.code);
-
-    if (status >= 500) {
-      this.logger.error(exception, 'catch');
+    if (host.getType() === 'http') {
+      const ctx = host.switchToHttp();
+      const response = ctx.getResponse<Response>();
+      const request = ctx.getRequest<Request>();
+      const status = this.mapToHttpStatus(exception.code);
+      if (status >= 500) {
+        this.logger.error(exception, 'catch');
+      } else {
+        this.logger.warn(exception.message, 'catch');
+      }
+      const responseBody = this.buildResponseBody(exception, request.url);
+      response.status(status).json(responseBody);
     } else {
+      // GraphQL — пробрасываем, NestJS GraphQL сам вернёт ошибку клиенту
       this.logger.warn(exception.message, 'catch');
+      throw exception;
     }
-
-    const responseBody = this.buildResponseBody(exception, request.url);
-
-    response.status(status).json(responseBody);
   }
 
   private mapToHttpStatus(code: DomainExceptionCode): number {

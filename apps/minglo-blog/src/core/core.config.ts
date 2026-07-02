@@ -169,8 +169,6 @@ export class CoreConfig {
       this.configService.get('GRAPHQL_SANDBOX'),
     ) as boolean;
 
-    console.log(`🚀🚀🚀🚀🚀🚀 ${this.graphqlPath}`);
-
     configValidationUtility.validateConfig(this);
   }
 }

@@ -6,7 +6,7 @@ Backend service for a social media platform inspired by Instagram.
 ---
 ## 🎉GraphQL (Admin)
 \`\`\`
-- endpoint: /graphql
+- sandbox: /api/v1/graphql
 - auth: Basic Auth (admin credentials)
 - scope: user management (list, detail, block/unblock, delete), payments, followers/following
 \`\`\`

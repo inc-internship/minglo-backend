@@ -17,6 +17,7 @@ import { CommentsModule } from './modules/comments/comments.module';
 import { LikesModule } from './modules/likes/likes.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { GraphQLModule } from '@nestjs/graphql';
+import { createGraphQLModuleOptions } from './setup/graphql.setup';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 
 @Module({
@@ -34,10 +35,10 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
     FollowsModule,
     CommentsModule,
     LikesModule,
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: true,
-      path: '/admin/graphql',
+      inject: [CoreConfig],
+      useFactory: (config: CoreConfig) => createGraphQLModuleOptions(config),
     }),
     AdminModule,
   ],

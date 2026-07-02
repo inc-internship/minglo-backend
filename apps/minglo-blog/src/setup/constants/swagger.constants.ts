@@ -4,6 +4,13 @@ export const MINGLO_BLOG_SWAGGER_TITLE = 'Minglo Blog API';
 export const MINGLO_BLOG_SWAGGER_DESCRIPTION = `
 Backend service for a social media platform inspired by Instagram.
 ---
+## 🎉GraphQL (Admin)
+\`\`\`
+- endpoint: /graphql
+- auth: Basic Auth (admin credentials)
+- scope: user management (list, detail, block/unblock, delete), payments, followers/following
+\`\`\`
+
 ## 📡 Real-time Notifications
 \`\`\`json
 - ws:socket.io

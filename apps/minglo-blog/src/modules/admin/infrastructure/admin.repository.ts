@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'apps/minglo-blog/src/database/prisma.service';
-import { User } from 'apps/minglo-blog/prisma/generated/prisma/client';
+import { PrismaService } from '../../../database/prisma.service';
+import { User } from '../../../../prisma/generated/prisma/client';
 
 @Injectable()
 export class AdminRepository {

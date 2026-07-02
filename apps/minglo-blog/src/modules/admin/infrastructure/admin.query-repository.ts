@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'apps/minglo-blog/src/database/prisma.service';
+import { PrismaService } from '../../../database/prisma.service';
 import { UserWithProfile } from '../../../../prisma/types';
-import { Prisma, User } from 'apps/minglo-blog/prisma/generated/prisma/client';
+import { Prisma, User } from '../../../../prisma/generated/prisma/client';
 import { AdminUserSortField } from '../api/enums/admin-user-sort.enum';
 import { UsersQueryInput } from '../api/input-dto/users-query.input';
 

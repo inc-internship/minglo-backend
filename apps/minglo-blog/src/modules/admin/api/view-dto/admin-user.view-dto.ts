@@ -1,5 +1,5 @@
 import { Field, ObjectType, Int } from '@nestjs/graphql';
-import { User } from 'apps/minglo-blog/prisma/generated/prisma/client';
+import { User } from '../../../../../prisma/generated/prisma/client';
 
 @ObjectType()
 export class AdminUserType {

@@ -5,7 +5,7 @@ import { UserEntity, UserFactory } from '../domains';
 import { DomainException, DomainExceptionCode, PrismaExceptionMapper } from '@app/exceptions';
 import { PasswordRecoveryEntity } from '../domains/entities/password-recovery.entity';
 import { BatchPayload } from '../../../../prisma/generated/prisma/internal/prismaNamespace';
-import { AccountType } from 'apps/minglo-blog/src/shared/enums';
+import { AccountType } from '../../../../../minglo-blog/src/shared/enums';
 
 @Injectable()
 export class UserRepository {

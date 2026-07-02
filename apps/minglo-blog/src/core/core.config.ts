@@ -110,6 +110,15 @@ export class CoreConfig {
   @IsNotEmpty({ message: 'Set environment variable RABBITMQ_URL' })
   rabbitmqUrl: string;
 
+  @IsString({ message: 'Set environment variable GRAPHQL_PATH' })
+  graphqlPath: string;
+
+  @IsBoolean({ message: 'Set environment variable GRAPHQL_INTROSPECTION' })
+  graphqlIntrospection: boolean;
+
+  @IsBoolean({ message: 'Set environment variable GRAPHQL_SANDBOX' })
+  graphqlSandbox: boolean;
+
   constructor(private configService: ConfigService<any, true>) {
     this.env = this.configService.get('NODE_ENV');
     this.port = Number(this.configService.get('MINGLO_PORT'));
@@ -151,6 +160,14 @@ export class CoreConfig {
     this.paymentsTcpHost = this.configService.get('PAYMENTS_SERVICE_HOST');
     this.paymentsTcpPort = Number(this.configService.get('PAYMENTS_SERVICE_TCP_PORT'));
     this.rabbitmqUrl = this.configService.get('RABBITMQ_URL');
+
+    this.graphqlPath = this.configService.get('GRAPHQL_PATH');
+    this.graphqlIntrospection = configValidationUtility.convertToBoolean(
+      this.configService.get('GRAPHQL_INTROSPECTION'),
+    ) as boolean;
+    this.graphqlSandbox = configValidationUtility.convertToBoolean(
+      this.configService.get('GRAPHQL_SANDBOX'),
+    ) as boolean;
 
     configValidationUtility.validateConfig(this);
   }

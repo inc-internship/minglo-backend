@@ -59,12 +59,21 @@ export class OAuthLoginUseCase implements ICommandHandler<OAuthLoginCommand, Log
               id: true,
               publicId: true,
               deletedAt: true,
+              blockedAt: true,
+              blockReason: true,
             },
           },
         },
       });
 
       if (existingOAuth && existingOAuth.user.deletedAt === null) {
+        if (existingOAuth.user.blockedAt) {
+          throw new DomainException({
+            code: DomainExceptionCode.Forbidden,
+            message: `User is blocked: ${existingOAuth.user.blockReason}`,
+          });
+        }
+
         this.logger.log(`Existing OAuthAccount found, userId: ${existingOAuth.userId}`, 'execute');
         return {
           userId: existingOAuth.user.id,
@@ -82,10 +91,18 @@ export class OAuthLoginUseCase implements ICommandHandler<OAuthLoginCommand, Log
           select: {
             id: true,
             publicId: true,
+            blockedAt: true,
+            blockReason: true,
           },
         });
 
         if (existingUser) {
+          if (existingUser.blockedAt) {
+            throw new DomainException({
+              code: DomainExceptionCode.Forbidden,
+              message: `User is blocked: ${existingUser.blockReason}`,
+            });
+          }
           this.logger.log(
             `Linking OAuthAccount to existing user, userId: ${existingUser.id}`,
             'execute',

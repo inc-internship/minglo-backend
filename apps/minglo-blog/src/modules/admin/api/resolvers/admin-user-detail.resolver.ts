@@ -7,11 +7,9 @@ import {
 } from '../../application/queries';
 import { UseGuards } from '@nestjs/common';
 import { AdminBasicAuthGuard } from '../../guards/admin-basic-auth.guard';
-import { PaginationInput } from '../input-dto/pagination.input';
+import { PaginationInput } from '../input-dto';
 import { GetPaymentHistoryQuery } from '../../../billing/application/queries/get-payment-history.query';
-import { AdminUserDetailType } from '../view-dto/admin-user-detail.view-dto';
-import { PaymentsPageType } from '../view-dto/admin-payment.view-dto';
-import { FollowsPageType } from '../view-dto/admin-follow.view-dto';
+import { AdminUserDetailType, PaymentsPageType, FollowsPageType } from '../view-dto';
 
 @UseGuards(AdminBasicAuthGuard)
 @Resolver()

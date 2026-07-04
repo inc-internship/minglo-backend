@@ -1,30 +1,28 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { User } from '../../../../../prisma/generated/prisma/client';
+import { PaginatedType } from './paginated.view-dto';
 
 @ObjectType()
 export class AdminUserType {
   @Field() id: string;
   @Field() username: string;
   @Field() profileLink: string;
-  @Field() dateAdded: string;
+  @Field() createdAt: string;
   @Field() isBlocked: boolean;
+
   static mapToView(user: User): AdminUserType {
     const dto = new AdminUserType();
     dto.id = user.publicId;
     dto.username = user.login;
     dto.profileLink = `/profile/${user.publicId}`;
-    dto.dateAdded = user.createdAt.toISOString();
+    dto.createdAt = user.createdAt.toISOString();
     dto.isBlocked = !!user.blockedAt;
     return dto;
   }
 }
 
 @ObjectType()
-export class UsersPageType {
-  @Field(() => [AdminUserType]) items: AdminUserType[];
-  @Field(() => Int) totalCount: number;
-  @Field(() => Int) pagesCount: number;
-  @Field(() => Int) page: number;
+export class UsersPageType extends PaginatedType(AdminUserType) {
   static mapToView(
     users: User[],
     totalCount: number,

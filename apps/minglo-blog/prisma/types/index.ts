@@ -81,7 +81,6 @@ export type PostLikeWithUser = Prisma.PostLikeGetPayload<{
     };
   };
 }>;
-
 export type CommentWithAuthor = Prisma.CommentGetPayload<{
   include: {
     author: {
@@ -93,7 +92,10 @@ export type CommentWithAuthor = Prisma.CommentGetPayload<{
         };
       };
     };
-    likes: true;
+    likes: { where: { user: { blockedAt: null } } };
+    _count: {
+      select: { likes: { where: { user: { blockedAt: null } } } };
+    };
   };
 }>;
 
@@ -109,7 +111,13 @@ export type FeedPostWithData = Prisma.PostGetPayload<{
       };
     };
     postsMediaFiles: { orderBy: { order: 'asc' } };
-    likes: true;
+    likes: { where: { user: { blockedAt: null } } };
+    _count: {
+      select: {
+        likes: { where: { user: { blockedAt: null } } };
+        comments: { where: { deletedAt: null; author: { blockedAt: null } } }; // добавили
+      };
+    };
   };
 }>;
 
@@ -184,4 +192,8 @@ export type UserWithProfile = Prisma.UserGetPayload<{
   include: {
     profile: { include: { avatar: { where: { deletedAt: null } } } };
   };
+}>;
+
+export type PostWithUserAndMedia = Prisma.PostGetPayload<{
+  include: { user: true; postsMediaFiles: { where: { deletedAt: null } } };
 }>;

@@ -8,6 +8,21 @@ export function createGraphQLModuleOptions(config: CoreConfig): ApolloDriverConf
     path: config.graphqlPath,
     playground: false,
     introspection: config.graphqlIntrospection,
-    plugins: config.graphqlSandbox ? [ApolloServerPluginLandingPageLocalDefault()] : [],
+    plugins: config.graphqlSandbox
+      ? [ApolloServerPluginLandingPageLocalDefault({ embed: false })]
+      : [],
+    subscriptions: {
+      'graphql-ws': {
+        onConnect: (context: any) => {
+          const { connectionParams, extra } = context;
+          extra.req = {
+            headers: {
+              authorization: connectionParams?.authorization ?? connectionParams?.Authorization,
+            },
+          };
+        },
+      },
+    },
+    context: ({ req, extra }) => ({ req: req ?? extra?.req }),
   };
 }

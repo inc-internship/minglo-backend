@@ -6,3 +6,4 @@ export * from './filters/all-exceptions.filter';
 export * from './filters/domain-exceptions.filter';
 export * from './error-response-body.type';
 export * from './prisma';
+export * from './tcp-call.util';

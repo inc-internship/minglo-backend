@@ -3,11 +3,11 @@ import { UserWithProfile } from '../../../../../prisma/types';
 
 @ObjectType()
 export class AdminUserDetailType {
-  @Field(() => String) id: string;
-  @Field(() => String) username: string;
-  @Field(() => String) profileLink: string;
-  @Field(() => String) dateCreated: string;
-  @Field(() => Boolean) isBlocked: boolean;
+  @Field() id: string;
+  @Field() username: string;
+  @Field() profileLink: string;
+  @Field() createdAt: string;
+  @Field() isBlocked: boolean;
   @Field(() => String, { nullable: true }) avatarUrl: string | null;
   @Field(() => String, { nullable: true }) firstName: string | null;
   @Field(() => String, { nullable: true }) lastName: string | null;
@@ -19,7 +19,7 @@ export class AdminUserDetailType {
     dto.id = user.publicId;
     dto.username = user.login;
     dto.profileLink = `/profile/${user.publicId}`;
-    dto.dateCreated = user.createdAt.toISOString();
+    dto.createdAt = user.createdAt.toISOString();
     dto.isBlocked = !!user.blockedAt;
     dto.avatarUrl = user.profile?.avatar?.urlThumbnail ?? null;
     dto.firstName = user.profile?.firstName ?? null;

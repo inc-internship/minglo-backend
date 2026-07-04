@@ -42,6 +42,8 @@ export class UserFactory {
       publicId: record.user.publicId,
       login: record.user.login,
       email: record.user.email,
+      blockedAt: record.user.blockedAt,
+      blockReason: record.user.blockReason,
       passwordHash: record.user.passwordHash,
       emailConfirmed: record.user.emailConfirmed,
       emailConfirmation: EmailConfirmationEntity.reconstitute({
@@ -81,6 +83,8 @@ export class UserFactory {
       email: record.email,
       passwordHash: record.passwordHash,
       emailConfirmed: record.emailConfirmed,
+      blockedAt: record.blockedAt,
+      blockReason: record.blockReason,
       emailConfirmation: EmailConfirmationEntity.reconstitute({
         ...record.emailConfirmations[0],
       }),

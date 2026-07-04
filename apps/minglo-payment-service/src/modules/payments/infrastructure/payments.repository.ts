@@ -3,12 +3,14 @@ import { DomainException, DomainExceptionCode } from '@app/exceptions';
 import {
   Payment,
   Plan,
+  Prisma,
   StripeCustomer,
   Subscription,
 } from '../../../../prisma/generated/prisma/client';
 import { SubscriptionStatus } from '@app/payments/enums';
 import { PrismaPaymentService } from '../../../database';
 import { ICreatePaymentData, ICreateSubscriptionData } from '../application/interfaces';
+import { PaymentSortField } from '@app/payments';
 
 type SubscriptionWithPlan = Subscription & { plan: Plan };
 
@@ -228,6 +230,57 @@ export class PaymentsRepository {
     return results.filter(
       (s): s is { userId: string; endDate: Date; autoRenewal: boolean } => s.endDate !== null,
     );
+  }
+
+  async findAllPayments(
+    page: number,
+    pageSize: number,
+    sortBy: PaymentSortField,
+    userIds?: string[],
+  ): Promise<{
+    payments: (Payment & { subscription: SubscriptionWithPlan })[];
+    totalCount: number;
+  }> {
+    const where = {
+      ...(userIds?.length ? { userId: { in: userIds } } : {}),
+    };
+    const skip = (page - 1) * pageSize;
+    const [payments, totalCount] = await this.prisma.$transaction([
+      this.prisma.payment.findMany({
+        where,
+        include: {
+          subscription: { include: { plan: true } },
+        },
+        orderBy: this.toOrderBy(sortBy),
+        skip,
+        take: pageSize,
+      }),
+      this.prisma.payment.count({ where }),
+    ]);
+    return {
+      payments: payments as (Payment & { subscription: SubscriptionWithPlan })[],
+      totalCount,
+    };
+  }
+  private toOrderBy(sortBy: PaymentSortField): Prisma.PaymentOrderByWithRelationInput {
+    switch (sortBy) {
+      case PaymentSortField.DATE_ASC:
+        return { createdAt: Prisma.SortOrder.asc };
+      case PaymentSortField.DATE_DESC:
+        return { createdAt: Prisma.SortOrder.desc };
+      case PaymentSortField.AMOUNT_ASC:
+        return { amount: Prisma.SortOrder.asc };
+      case PaymentSortField.AMOUNT_DESC:
+        return { amount: Prisma.SortOrder.desc };
+      case PaymentSortField.PAYMENT_METHOD_ASC:
+        return { paymentSystem: Prisma.SortOrder.asc };
+      case PaymentSortField.PAYMENT_METHOD_DESC:
+        return { paymentSystem: Prisma.SortOrder.desc };
+      case PaymentSortField.USERNAME_ASC:
+      case PaymentSortField.USERNAME_DESC:
+      default:
+        return { createdAt: Prisma.SortOrder.desc };
+    }
   }
 
   async deleteUserData(userId: string): Promise<void> {

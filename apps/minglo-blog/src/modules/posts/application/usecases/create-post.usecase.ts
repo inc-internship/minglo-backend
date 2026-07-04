@@ -1,5 +1,5 @@
 import { CreatePostInputDto } from '../../api/input-dto';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { LoggerService } from '@app/logger';
 import { Inject } from '@nestjs/common';
 import { MEDIA_SERVICE } from '@app/media/constants';
@@ -12,6 +12,7 @@ import { MediaFileMetaDataViewDto } from '@app/media/api/view-dto';
 import { PostEntity } from '../../domains/entities';
 import { UserQueryRepository } from '../../../user-account/infrastructure/queries';
 import { CreatedPostViewDto } from '../../api/view-dto';
+import { PostCreatedEvent } from '../events/post-created.event';
 
 export class CreatePostCommand {
   constructor(
@@ -27,6 +28,7 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand, Cre
     private readonly userQueryRepo: UserQueryRepository,
     private readonly postsRepo: PostsRepository,
     private readonly logger: LoggerService,
+    private readonly eventBus: EventBus,
   ) {
     this.logger.setContext(CreatePostUseCase.name);
   }
@@ -74,6 +76,8 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand, Cre
     this.logger.log(`PostEntity created`, 'execute');
 
     const postPublicId = await this.postsRepo.create(post);
+
+    this.eventBus.publish(new PostCreatedEvent(postPublicId));
 
     this.logger.log(`Post created successfully postId=${postPublicId}`, 'execute');
 

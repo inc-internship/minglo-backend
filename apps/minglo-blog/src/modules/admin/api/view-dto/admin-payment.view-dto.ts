@@ -1,5 +1,6 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { PaymentHistoryViewDto, PaymentItemViewDto } from '@app/payments/view-dto';
+import { PaginatedType } from './paginated.view-dto';
 
 @ObjectType()
 export class AdminPaymentItemType {
@@ -27,12 +28,7 @@ export class AdminPaymentItemType {
 }
 
 @ObjectType()
-export class PaymentsPageType {
-  @Field(() => [AdminPaymentItemType]) items: AdminPaymentItemType[];
-  @Field(() => Int) totalCount: number;
-  @Field(() => Int) pagesCount: number;
-  @Field(() => Int) page: number;
-
+export class PaymentsPageType extends PaginatedType(AdminPaymentItemType) {
   static mapToView(dto: PaymentHistoryViewDto): PaymentsPageType {
     const result = new PaymentsPageType();
     result.items = dto.items.map((i) => AdminPaymentItemType.mapToView(i));

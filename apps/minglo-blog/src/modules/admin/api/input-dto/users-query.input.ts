@@ -1,6 +1,7 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
 import { AdminUserSortField } from '../enums/admin-user-sort.enum';
+import { AdminBlockStatus } from '../enums/admin-block-status.enum';
 
 @InputType()
 export class UsersQueryInput {
@@ -18,6 +19,11 @@ export class UsersQueryInput {
   @IsString()
   @Field({ nullable: true })
   search?: string;
+
+  @IsOptional()
+  @IsEnum(AdminBlockStatus)
+  @Field(() => AdminBlockStatus, { nullable: true })
+  blockStatus?: AdminBlockStatus;
 
   @IsEnum(AdminUserSortField)
   @Field(() => AdminUserSortField, { defaultValue: AdminUserSortField.DATE_DESC })

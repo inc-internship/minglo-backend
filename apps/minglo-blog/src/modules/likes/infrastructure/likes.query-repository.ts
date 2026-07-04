@@ -15,6 +15,7 @@ export class LikesQueryRepository {
     const likes = await this.prisma.postLike.findMany({
       where: {
         post: { publicId: postPublicId, deletedAt: null },
+        user: { blockedAt: null },
       },
       include: {
         user: {

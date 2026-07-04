@@ -29,7 +29,6 @@ async function bootstrap() {
   corsSetup(app, coreConfig.cors, {
     origin: coreConfig.corsOrigins,
     credentials: coreConfig.corsCredentials,
-    allowedHeaders: coreConfig.allowedHeaders,
   });
 
   app.useWebSocketAdapter(new WsAdapter(app));

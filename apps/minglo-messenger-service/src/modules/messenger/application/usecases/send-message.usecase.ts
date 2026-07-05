@@ -2,7 +2,12 @@ import { forwardRef, Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ClientProxy } from '@nestjs/microservices';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
-import { MESSENGER_EVENTS, MESSENGER_RMQ_CLIENT, MessageSentPayload, MessageType } from '@app/messenger';
+import {
+  MESSENGER_EVENTS,
+  MESSENGER_RMQ_CLIENT,
+  MessageSentPayload,
+  MessageType,
+} from '@app/messenger';
 import { MessageRepository } from '../../infrastructure/message.repository';
 import { UserDataService } from '../../infrastructure/user-data.service';
 import { MessengerGateway } from '../../api/messenger.gateway';
@@ -83,7 +88,7 @@ export class SendMessageHandler implements ICommandHandler<SendMessageCommand> {
         text: message.text,
         createdAt: message.createdAt.toISOString(),
       };
-      this.rmqClient.emit(MESSENGER_EVENTS.MESSAGE_SENT, payload);
+      this.rmqClient.emit(MESSENGER_EVENTS.MESSAGE_SENT, payload).subscribe();
     }
   }
 }

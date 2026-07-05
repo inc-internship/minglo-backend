@@ -28,16 +28,16 @@ RUN pnpm install --frozen-lockfile
 COPY --chown=node . .
 
 # Устанавливаем Prisma client
-RUN pnpm run prisma:minglo-messanger-service:generate:prod
+RUN pnpm run prisma:minglo-messenger-service:generate:prod
 
 RUN pnpm run build:${SERVICE}
 
 ## Migrate BD + run app
-RUN sed -i 's/\r$//' ./apps/minglo-messanger-service/docker-entrypoint.sh && \
-      chmod +x ./apps/minglo-messanger-service/docker-entrypoint.sh
+RUN sed -i 's/\r$//' ./apps/minglo-messenger-service/docker-entrypoint.sh && \
+      chmod +x ./apps/minglo-messenger-service/docker-entrypoint.sh
 
 # Bind to all network interfaces so that it can be mapped to the host OS
 EXPOSE ${PORT}
 
-ENTRYPOINT ["./apps/minglo-messanger-service/docker-entrypoint.sh"]
+ENTRYPOINT ["./apps/minglo-messenger-service/docker-entrypoint.sh"]
 

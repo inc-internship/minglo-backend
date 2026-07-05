@@ -41,9 +41,7 @@ export class MessagesController {
     @Body() dto: SendMessageInputDto,
     @CurrentUser() user: ActiveUserDto,
   ): Promise<void> {
-    return this.commandBus.execute(
-      new SendMessageCommand(user.userId, conversationId, dto.text),
-    );
+    return this.commandBus.execute(new SendMessageCommand(user.userId, conversationId, dto.text));
   }
 
   @Post('read')

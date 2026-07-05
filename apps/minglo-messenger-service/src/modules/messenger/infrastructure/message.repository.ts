@@ -16,11 +16,10 @@ export class MessageRepository {
     });
     if (!conversation) return null;
 
-    const participant = await this.prisma.conversationParticipant.findFirst({
+    return this.prisma.conversationParticipant.findFirst({
       select: { conversationId: true },
       where: { conversationId: conversation.id, userPublicId },
     });
-    return participant;
   }
 
   async createMessage(

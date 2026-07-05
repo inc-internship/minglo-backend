@@ -22,14 +22,15 @@ export class ConversationsController {
 
   @Post()
   @ApiOperation({ summary: 'Get or create a DM conversation' })
-  @ApiResponse({ status: 201, schema: { properties: { conversationPublicId: { type: 'string' } } } })
+  @ApiResponse({
+    status: 201,
+    schema: { properties: { conversationPublicId: { type: 'string' } } },
+  })
   async getOrCreateConversation(
     @Body() dto: CreateConversationInputDto,
     @CurrentUser() user: ActiveUserDto,
   ): Promise<{ conversationPublicId: string }> {
-    return this.commandBus.execute(
-      new GetOrCreateDmCommand(user.userId, dto.participantPublicId),
-    );
+    return this.commandBus.execute(new GetOrCreateDmCommand(user.userId, dto.participantPublicId));
   }
 
   @Get()

@@ -3,6 +3,7 @@ import { PrismaMessengerService } from '../../../../database';
 import { MessageViewDto } from '../../api/view-dto/message.view-dto';
 import { MessagesWithCursorViewDto } from '../../api/view-dto/messages-with-cursor.view-dto';
 import { UserDataService } from '../user-data.service';
+import { MessageType } from '@app/messenger';
 
 @Injectable()
 export class MessageQueryRepository {
@@ -55,7 +56,7 @@ export class MessageQueryRepository {
           id: m.publicId,
           conversationId: conversationPublicId,
           text: m.text,
-          type: m.type,
+          type: m.type as unknown as MessageType,
           sender: {
             id: m.senderPublicId,
             login: profile?.login ?? null,

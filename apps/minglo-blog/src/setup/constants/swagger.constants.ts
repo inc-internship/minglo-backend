@@ -9,7 +9,7 @@ Backend service for a social media platform inspired by Instagram.
 \`\`\`
 - sandbox: ${gqlPath}
 - auth: Basic Auth (admin credentials)
-- scope: user management (list, detail, block/unblock, delete), payments, followers/following
+- scope: user management (list, detail, block/unblock, delete), payments (global + per user), followers/following, posts (paginated list, search), postAdded subscription (real-time)
 \`\`\`
 
 ## 📡 Real-time Notifications

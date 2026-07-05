@@ -245,6 +245,11 @@ spec:
                  secretKeyRef:
                    name: minglo-core-backend-production-config-secret
                    key: GRAPHQL_SANDBOX
+             - name: ALLOWED_HEADERS
+               valueFrom:
+                 secretKeyRef:
+                   name: minglo-core-backend-production-config-secret
+                   key: ALLOWED_HEADERS
              - name: MINGLO_PORT
                valueFrom:
                  secretKeyRef:

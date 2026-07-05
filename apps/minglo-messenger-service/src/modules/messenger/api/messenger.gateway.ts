@@ -40,6 +40,9 @@ export class MessengerGateway implements OnGatewayConnection {
 
       client.data.userPublicId = payload.publicId;
 
+      // персональная комната — нужна для joinUserToConversation()
+      void client.join(`user:${payload.publicId}`);
+
       // connect user to conversations
       const conversationIds =
         await this.conversationQueryRepo.findAllUserConversationsIdsByPublicId(payload.publicId);

@@ -51,8 +51,8 @@ export class FeedPostViewDto {
       login: post.user.login,
       avatarUrl: post.user.profile?.avatar?.urlThumbnail ?? null,
     };
-    dto.likesCount = post.likesCount;
-    dto.commentsCount = post.commentsCount;
+    dto.likesCount = post._count.likes;
+    dto.commentsCount = post._count.comments;
     dto.isLiked = post.likes.some((l) => l.userId === currentUserId);
     dto.createdAt = post.createdAt.toISOString();
     dto.updatedAt = post.updatedAt.toISOString();

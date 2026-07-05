@@ -1,5 +1,6 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { FollowWithFollowerData, FollowWithFollowingData } from '../../../../../prisma/types';
+import { PaginatedType } from './paginated.view-dto';
 
 @ObjectType()
 export class FollowUserType {
@@ -25,34 +26,15 @@ export class FollowUserType {
 }
 
 @ObjectType()
-export class FollowsPageType {
-  @Field(() => [FollowUserType]) items: FollowUserType[];
-  @Field(() => Int) totalCount: number;
-  @Field(() => Int) pagesCount: number;
-  @Field(() => Int) page: number;
-
-  static fromFollowers(
-    follows: FollowWithFollowerData[],
+export class FollowsPageType extends PaginatedType(FollowUserType) {
+  static mapToView(
+    items: FollowUserType[],
     totalCount: number,
     page: number,
     pageSize: number,
   ): FollowsPageType {
     const dto = new FollowsPageType();
-    dto.items = follows.map((f) => FollowUserType.fromFollower(f));
-    dto.totalCount = totalCount;
-    dto.pagesCount = Math.ceil(totalCount / pageSize);
-    dto.page = page;
-    return dto;
-  }
-
-  static fromFollowing(
-    follows: FollowWithFollowingData[],
-    totalCount: number,
-    page: number,
-    pageSize: number,
-  ): FollowsPageType {
-    const dto = new FollowsPageType();
-    dto.items = follows.map((f) => FollowUserType.fromFollowing(f));
+    dto.items = items;
     dto.totalCount = totalCount;
     dto.pagesCount = Math.ceil(totalCount / pageSize);
     dto.page = page;

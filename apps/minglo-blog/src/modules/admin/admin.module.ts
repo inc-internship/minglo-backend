@@ -9,9 +9,11 @@ import {
   GetUserDetailQueryHandler,
   GetUserFollowersQueryHandler,
   GetUserFollowingQueryHandler,
+  GetAllPaymentsQueryHandler,
+  GetAllPostsQueryHandler,
 } from './application/queries';
-import { AdminUsersResolver } from './api/resolvers/admin-users.resolver';
-import { AdminUserDetailResolver } from './api/resolvers/admin-user-detail.resolver';
+import { PostCreatedForAdminHandler } from './application/events/post-created.handler';
+import { AdminUsersResolver, AdminUserDetailResolver, AdminPostsResolver } from './api/resolvers';
 import { UserAccountModule } from '../user-account/user-account.module';
 import { AdminConfig } from './admin.config';
 import { AdminBasicAuthGuard } from './guards/admin-basic-auth.guard';
@@ -27,9 +29,13 @@ const queries = [
   GetUserDetailQueryHandler,
   GetUserFollowersQueryHandler,
   GetUserFollowingQueryHandler,
+  GetAllPaymentsQueryHandler,
+  GetAllPostsQueryHandler,
 ];
 
-const resolvers = [AdminUsersResolver, AdminUserDetailResolver];
+const events = [PostCreatedForAdminHandler];
+
+const resolvers = [AdminUsersResolver, AdminUserDetailResolver, AdminPostsResolver];
 
 @Module({
   imports: [UserAccountModule, FollowsModule, BillingModule],
@@ -40,6 +46,7 @@ const resolvers = [AdminUsersResolver, AdminUserDetailResolver];
     AdminRepository,
     ...usecases,
     ...queries,
+    ...events,
     ...resolvers,
   ],
 })

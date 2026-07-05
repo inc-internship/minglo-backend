@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { LoggerService } from '@app/logger';
 import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
-import { GetSubscriptionPlansViewDto } from '@app/payments/view-dto';
+import { AllPaymentsViewDto, GetSubscriptionPlansViewDto } from '@app/payments/view-dto';
 import { PaymentHistoryViewDto, SubscriptionInfoViewDto } from '@app/payments/view-dto';
 import { ExpiringSubscriptionDto } from '@app/payments';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -10,6 +10,7 @@ import {
   GetPaymentHistoryQuery,
   GetCurrentSubscriptionQuery,
   GetExpiringSubscriptionsQuery,
+  GetAllPaymentsQuery,
 } from '../application/queries';
 import { CreateStripeCheckoutInputDto } from './input-dto/create-stripe-checkout.input-dto';
 import { GetPaymentHistoryInputDto } from './input-dto/get-payment-history.input-dto';
@@ -21,6 +22,7 @@ import {
   DeleteUserDataCommand,
 } from '../application/usecases';
 import { PAYMENTS_TCP_PATTERNS } from '@app/payments';
+import { GetAllPaymentsInputDto } from './input-dto/get-all-payments.input-dto';
 
 @Controller()
 export class MingloPaymentsTcpController {
@@ -105,5 +107,16 @@ export class MingloPaymentsTcpController {
   async deleteUserData(@Payload() data: { userId: string }): Promise<void> {
     this.logger.log(`Received DELETE_USER_DATA for userId=${data.userId}`, 'deleteUserData');
     await this.commandBus.execute(new DeleteUserDataCommand(data.userId));
+  }
+
+  @MessagePattern(PAYMENTS_TCP_PATTERNS.GET_ALL_PAYMENTS)
+  async getAllPayments(@Payload() dto: GetAllPaymentsInputDto): Promise<AllPaymentsViewDto> {
+    this.logger.log(
+      `New GET_ALL_PAYMENTS request page=${dto.page} pageSize=${dto.pageSize}`,
+      'getAllPayments',
+    );
+    return this.queryBus.execute(
+      new GetAllPaymentsQuery(dto.page, dto.pageSize, dto.sortBy, dto.userIds),
+    );
   }
 }

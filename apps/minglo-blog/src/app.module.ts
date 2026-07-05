@@ -19,6 +19,7 @@ import { AdminModule } from './modules/admin/admin.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { createGraphQLModuleOptions } from './setup/graphql.setup';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { PubSubModule } from './core/pubsub.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
       inject: [CoreConfig],
       useFactory: (config: CoreConfig) => createGraphQLModuleOptions(config),
     }),
+    PubSubModule,
     AdminModule,
   ],
   controllers: [],

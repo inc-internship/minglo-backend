@@ -43,7 +43,7 @@ export class AdminTestManager {
       `
         query Users($query: UsersQueryInput!) {
           users(query: $query) {
-            items { id username profileLink dateAdded isBlocked }
+            items { id username profileLink createdAt isBlocked }
             totalCount
             pagesCount
             page
@@ -70,7 +70,7 @@ export class AdminTestManager {
             id
             username
             profileLink
-            dateCreated
+            createdAt
             isBlocked
             avatarUrl
             firstName
@@ -161,14 +161,24 @@ export class AdminTestManager {
     );
   }
 
-  blockUser(publicId: string) {
+  blockUser(
+    publicId: string,
+    reason: 'BAD_BEHAVIOR' | 'ADVERTISING_PLACEMENT' | 'ANOTHER_REASON' = 'BAD_BEHAVIOR',
+    customReason?: string,
+  ) {
     return this.gql(
       `
-        mutation BlockUser($publicId: String!) {
-          blockUser(publicId: $publicId)
+        mutation BlockUser($input: BlockUserInput!) {
+          blockUser(input: $input)
         }
       `,
-      { publicId },
+      {
+        input: {
+          publicId,
+          reason,
+          ...(customReason !== undefined ? { customReason } : {}),
+        },
+      },
     );
   }
 

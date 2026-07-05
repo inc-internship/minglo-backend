@@ -20,11 +20,13 @@ import { UserAccountModule } from '../user-account/user-account.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { UserDeletedHandler } from '../user-account/application/events/user-deleted.handler';
 import { NotificationSchedulerService } from './application/services/notification-scheduler.service';
+import { GetAllPaymentsTcpQueryHandler } from './application/queries/get-all-payments-tcp.query';
 
 const queries = [
   GetSubscriptionsPlansQueryHandler,
   GetPaymentHistoryQueryHandler,
   GetCurrentSubscriptionQueryHandler,
+  GetAllPaymentsTcpQueryHandler,
 ];
 
 const commands = [

@@ -93,6 +93,7 @@ export class PostQueryRepository {
     const posts = await this.prisma.post.findMany({
       where: {
         deletedAt: null,
+        user: { blockedAt: null },
       },
       orderBy: {
         createdAt: 'desc',
@@ -140,7 +141,7 @@ export class PostQueryRepository {
     }
 
     const posts = await this.prisma.post.findMany({
-      where: { userId: { in: followingIds }, deletedAt: null },
+      where: { userId: { in: followingIds }, deletedAt: null, user: { blockedAt: null } },
       include: {
         user: {
           include: {
@@ -148,7 +149,13 @@ export class PostQueryRepository {
           },
         },
         postsMediaFiles: { orderBy: { order: 'asc' } },
-        likes: true,
+        likes: { where: { user: { blockedAt: null } } },
+        _count: {
+          select: {
+            likes: { where: { user: { blockedAt: null } } },
+            comments: { where: { deletedAt: null, author: { blockedAt: null } } },
+          },
+        },
       },
       orderBy: { createdAt: 'desc' },
       take: limit + 1,

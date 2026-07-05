@@ -7,4 +7,5 @@ export const PAYMENTS_TCP_PATTERNS = {
   TOGGLE_AUTO_RENEWAL: 'toggle_auto_renewal',
   DELETE_USER_DATA: 'delete_user_data',
   GET_EXPIRING_SUBSCRIPTIONS: 'get_expiring_subscriptions',
+  GET_ALL_PAYMENTS: 'get_all_payments',
 } as const;

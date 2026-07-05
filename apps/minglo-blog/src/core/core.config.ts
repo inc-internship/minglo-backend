@@ -119,6 +119,14 @@ export class CoreConfig {
   @IsBoolean({ message: 'Set environment variable GRAPHQL_SANDBOX' })
   graphqlSandbox: boolean;
 
+  @ValidateIf((o) => o.cors)
+  @IsArray({
+    message:
+      'Set environment variable ALLOWED_HEADERS (comma-separated), example: Content-Type,Authorization,Accept',
+  })
+  @IsString({ each: true })
+  allowedHeaders: string[];
+
   constructor(private configService: ConfigService<any, true>) {
     this.env = this.configService.get('NODE_ENV');
     this.port = Number(this.configService.get('MINGLO_PORT'));
@@ -168,6 +176,11 @@ export class CoreConfig {
     this.graphqlSandbox = configValidationUtility.convertToBoolean(
       this.configService.get('GRAPHQL_SANDBOX'),
     ) as boolean;
+
+    this.allowedHeaders = this.configService
+      .get('ALLOWED_HEADERS')
+      ?.split(',')
+      .map((s: string) => s.trim());
 
     configValidationUtility.validateConfig(this);
   }

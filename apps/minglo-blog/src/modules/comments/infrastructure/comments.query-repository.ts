@@ -4,12 +4,11 @@ import { CommentViewDto, CommentsWithCursorViewDto } from '../api/view-dto';
 import { CommentWithAuthor } from '../../../../prisma/types';
 
 const COMMENT_INCLUDE = {
-  author: {
-    include: {
-      profile: { include: { avatar: { where: { deletedAt: null } } } },
-    },
+  author: { include: { profile: { include: { avatar: { where: { deletedAt: null } } } } } },
+  likes: { where: { user: { blockedAt: null } } },
+  _count: {
+    select: { likes: { where: { user: { blockedAt: null } } } },
   },
-  likes: true,
 } as const;
 
 @Injectable()
@@ -30,6 +29,7 @@ export class CommentsQueryRepository {
           authorId: currentUserId,
           parentCommentId: null,
           deletedAt: null,
+          author: { blockedAt: null },
         },
         include: COMMENT_INCLUDE,
         orderBy: { createdAt: 'desc' },
@@ -40,6 +40,7 @@ export class CommentsQueryRepository {
           authorId: { not: currentUserId },
           parentCommentId: null,
           deletedAt: null,
+          author: { blockedAt: null },
         },
         include: COMMENT_INCLUDE,
         orderBy: { createdAt: 'desc' },
@@ -76,6 +77,7 @@ export class CommentsQueryRepository {
       where: {
         parentCommentId: parentComment?.id,
         deletedAt: null,
+        author: { blockedAt: null },
       },
       include: COMMENT_INCLUDE,
       orderBy: { createdAt: 'asc' },
@@ -103,7 +105,7 @@ export class CommentsQueryRepository {
         login: comment.author.login,
         avatarUrl: comment.author.profile?.avatar?.urlThumbnail ?? null,
       },
-      likesCount: comment.likesCount,
+      likesCount: comment._count.likes,
       repliesCount: comment.repliesCount,
       isLiked: comment.likes.some((l) => l.userId === currentUserId),
       isOwn: comment.authorId === currentUserId,

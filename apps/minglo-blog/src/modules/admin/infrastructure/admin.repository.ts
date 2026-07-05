@@ -13,13 +13,24 @@ export class AdminRepository {
     });
   }
 
-  /* Блокирует пользователя */
-  async blockUser(publicId: string): Promise<void> {
-    await this.prisma.user.update({ where: { publicId }, data: { blockedAt: new Date() } });
+  /* Блокирует пользователя и удаляет все его сессии */
+  async blockUser(publicId: string, blockReason: string): Promise<void> {
+    await this.prisma.$transaction([
+      this.prisma.user.update({
+        where: { publicId },
+        data: { blockedAt: new Date(), blockReason },
+      }),
+      this.prisma.session.deleteMany({
+        where: { user: { publicId } },
+      }),
+    ]);
   }
 
   /* Разблокирует пользователя */
   async unblockUser(publicId: string): Promise<void> {
-    await this.prisma.user.update({ where: { publicId }, data: { blockedAt: null } });
+    await this.prisma.user.update({
+      where: { publicId },
+      data: { blockedAt: null, blockReason: null },
+    });
   }
 }

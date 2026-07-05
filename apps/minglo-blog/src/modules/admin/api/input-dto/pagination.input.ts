@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsInt, Min } from 'class-validator';
+import { IsInt, Max, Min } from 'class-validator';
 
 @InputType()
 export class PaginationInput {
@@ -10,6 +10,7 @@ export class PaginationInput {
 
   @IsInt()
   @Min(1)
+  @Max(50)
   @Field(() => Int, { defaultValue: 8 })
   pageSize: number = 8;
 }

@@ -16,6 +16,7 @@ model User {
   followersCount Int @default(0) @map("followers_count")
   followingCount Int @default(0) @map("following_count")
   blockedAt DateTime? @map("blocked_at") @db.Timestamptz
+  blockReason String? @map("block_reason") @db.VarChar(255)
 
   sessions           Session[]
   emailConfirmations EmailConfirmation[]

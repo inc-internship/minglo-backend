@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateConversationInputDto } from './input-dto/create-conversation.input-dto';
 import { ConversationViewDto } from './view-dto/conversation.view-dto';
 import { ConversationsWithCursorViewDto } from './view-dto/conversations-with-cursor.view-dto';
@@ -10,6 +10,11 @@ import { GetConversationQuery } from '../application/queries/get-conversation.qu
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { ActiveUserDto } from '../decorators/active-user.dto';
+import {
+  ApiGetConversationDecorator,
+  ApiGetConversationsDecorator,
+  ApiGetOrCreateConversationDecorator,
+} from '../../../core/decorators/swagger/conversations';
 
 @ApiTags('Conversations')
 @UseGuards(JwtAuthGuard)
@@ -21,11 +26,7 @@ export class ConversationsController {
   ) {}
 
   @Post()
-  @ApiOperation({ summary: 'Get or create a DM conversation' })
-  @ApiResponse({
-    status: 201,
-    schema: { properties: { conversationPublicId: { type: 'string' } } },
-  })
+  @ApiGetOrCreateConversationDecorator()
   async getOrCreateConversation(
     @Body() dto: CreateConversationInputDto,
     @CurrentUser() user: ActiveUserDto,
@@ -34,8 +35,7 @@ export class ConversationsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get list of conversations (cursor pagination)' })
-  @ApiResponse({ status: 200, type: ConversationsWithCursorViewDto })
+  @ApiGetConversationsDecorator()
   async getConversations(
     @CurrentUser() user: ActiveUserDto,
     @Query('cursor') cursor?: string,
@@ -47,8 +47,7 @@ export class ConversationsController {
   }
 
   @Get(':conversationId')
-  @ApiOperation({ summary: 'Get conversation by id' })
-  @ApiResponse({ status: 200, type: ConversationViewDto })
+  @ApiGetConversationDecorator()
   async getConversation(
     @Param('conversationId') conversationId: string,
     @CurrentUser() user: ActiveUserDto,

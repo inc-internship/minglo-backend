@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { HttpModule } from '@nestjs/axios';
+import { RmqPublisherModule } from '../rmq/rmq-publisher.module';
 import { MessengerGateway } from './api/messenger.gateway';
 import { ConversationsController } from './api/conversations.controller';
 import { MessagesController } from './api/messages.controller';
@@ -21,7 +22,7 @@ const commandHandlers = [GetOrCreateDmHandler, SendMessageHandler, MarkReadHandl
 const queryHandlers = [GetConversationsHandler, GetConversationHandler, GetMessagesHandler];
 
 @Module({
-  imports: [JwtModule.register({}), HttpModule],
+  imports: [JwtModule.register({}), HttpModule, RmqPublisherModule],
   controllers: [ConversationsController, MessagesController],
   providers: [
     MessengerGateway,

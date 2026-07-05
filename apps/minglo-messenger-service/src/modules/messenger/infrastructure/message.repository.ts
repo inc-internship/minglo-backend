@@ -53,6 +53,14 @@ export class MessageRepository {
     });
   }
 
+  async findOtherParticipantIds(conversationId: number, senderPublicId: string): Promise<string[]> {
+    const participants = await this.prisma.conversationParticipant.findMany({
+      select: { userPublicId: true },
+      where: { conversationId, NOT: { userPublicId: senderPublicId } },
+    });
+    return participants.map((p) => p.userPublicId);
+  }
+
   async markRead(conversationPublicId: string, userPublicId: string): Promise<boolean> {
     const conversation = await this.prisma.conversation.findFirst({
       select: { id: true },

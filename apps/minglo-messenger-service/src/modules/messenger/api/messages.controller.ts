@@ -1,6 +1,6 @@
 import { Body, Controller, Get, HttpCode, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { SendMessageInputDto } from './input-dto/send-message.input-dto';
 import { MessagesWithCursorViewDto } from './view-dto/messages-with-cursor.view-dto';
 import { SendMessageCommand } from '../application/usecases/send-message.usecase';
@@ -9,6 +9,11 @@ import { GetMessagesQuery } from '../application/queries/get-messages.query';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { ActiveUserDto } from '../decorators/active-user.dto';
+import {
+  ApiGetMessagesDecorator,
+  ApiMarkReadDecorator,
+  ApiSendMessageDecorator,
+} from '../../../core/decorators/swagger/messages';
 
 @ApiTags('Messages')
 @UseGuards(JwtAuthGuard)
@@ -20,8 +25,7 @@ export class MessagesController {
   ) {}
 
   @Get('messages')
-  @ApiOperation({ summary: 'Get message history (cursor pagination, newest first)' })
-  @ApiResponse({ status: 200, type: MessagesWithCursorViewDto })
+  @ApiGetMessagesDecorator()
   async getMessages(
     @Param('conversationId') conversationId: string,
     @CurrentUser() user: ActiveUserDto,
@@ -34,8 +38,7 @@ export class MessagesController {
   }
 
   @Post('messages')
-  @ApiOperation({ summary: 'Send a message (HTTP fallback)' })
-  @ApiResponse({ status: 201 })
+  @ApiSendMessageDecorator()
   async sendMessage(
     @Param('conversationId') conversationId: string,
     @Body() dto: SendMessageInputDto,
@@ -46,8 +49,7 @@ export class MessagesController {
 
   @Post('read')
   @HttpCode(204)
-  @ApiOperation({ summary: 'Mark conversation as read (reset unread count)' })
-  @ApiResponse({ status: 204 })
+  @ApiMarkReadDecorator()
   async markRead(
     @Param('conversationId') conversationId: string,
     @CurrentUser() user: ActiveUserDto,

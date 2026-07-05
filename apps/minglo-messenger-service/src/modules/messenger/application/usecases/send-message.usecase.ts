@@ -1,10 +1,12 @@
+import { forwardRef, Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { ClientProxy } from '@nestjs/microservices';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
+import { MESSENGER_EVENTS, MESSENGER_RMQ_CLIENT, MessageSentPayload, MessageType } from '@app/messenger';
 import { MessageRepository } from '../../infrastructure/message.repository';
 import { UserDataService } from '../../infrastructure/user-data.service';
 import { MessengerGateway } from '../../api/messenger.gateway';
 import { MessageViewDto } from '../../api/view-dto/message.view-dto';
-import { MessageType } from '@app/messenger';
 
 export class SendMessageCommand {
   constructor(
@@ -19,7 +21,10 @@ export class SendMessageHandler implements ICommandHandler<SendMessageCommand> {
   constructor(
     private readonly messageRepo: MessageRepository,
     private readonly userDataService: UserDataService,
+    @Inject(forwardRef(() => MessengerGateway))
     private readonly gateway: MessengerGateway,
+    @Inject(MESSENGER_RMQ_CLIENT)
+    private readonly rmqClient: ClientProxy,
   ) {}
 
   async execute(command: SendMessageCommand): Promise<void> {
@@ -48,7 +53,10 @@ export class SendMessageHandler implements ICommandHandler<SendMessageCommand> {
       trimmedText,
     );
 
-    const senderProfile = await this.userDataService.getUserProfile(userPublicId);
+    const [senderProfile, recipientPublicIds] = await Promise.all([
+      this.userDataService.getUserProfile(userPublicId),
+      this.messageRepo.findOtherParticipantIds(participant.conversationId, userPublicId),
+    ]);
 
     const messageViewDto: MessageViewDto = {
       id: message.publicId,
@@ -65,6 +73,17 @@ export class SendMessageHandler implements ICommandHandler<SendMessageCommand> {
 
     this.gateway.emitMessage(conversationPublicId, messageViewDto);
 
-    // TODO: Publish RabbitMQ event MESSENGER_EVENTS.MESSAGE_SENT → minglo-blog (Commit 6 RMQ)
+    if (recipientPublicIds.length > 0) {
+      const payload: MessageSentPayload = {
+        conversationId: conversationPublicId,
+        messageId: message.publicId,
+        senderPublicId: userPublicId,
+        senderLogin: senderProfile.login,
+        recipientPublicIds,
+        text: message.text,
+        createdAt: message.createdAt.toISOString(),
+      };
+      this.rmqClient.emit(MESSENGER_EVENTS.MESSAGE_SENT, payload);
+    }
   }
 }

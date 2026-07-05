@@ -24,6 +24,8 @@
     "@app/logger": "<rootDir>/../../../libs/logger/src",
     "@app/media/(.*)": "<rootDir>/../../../libs/media/src/$1",
     "@app/media": "<rootDir>/../../../libs/media/src",
+    "@app/messenger/(.*)": "<rootDir>/../../../libs/messenger/src/$1",
+    "@app/messenger": "<rootDir>/../../../libs/messenger/src",
     "^(\\.{1,2}/.*)\\.js$": "$1"
   }
 }

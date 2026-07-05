@@ -10,6 +10,8 @@ export class UserEntity {
   public emailConfirmation: EmailConfirmationEntity;
   public passwordRecoveries: PasswordRecoveryEntity;
   public session: SessionEntity;
+  public blockedAt: Date | null;
+  public blockReason: string | null;
 
   constructor(
     public login: string,
@@ -32,12 +34,16 @@ export class UserEntity {
     passwordHash: string | null;
     emailConfirmed: boolean;
     emailConfirmation: EmailConfirmationEntity;
+    blockedAt: Date | null;
+    blockReason: string | null;
   }): UserEntity {
     const user = new this(args.login, args.email, args.passwordHash);
     user.id = args.id;
     user.publicId = args.publicId;
     user.emailConfirmed = args.emailConfirmed;
     user.emailConfirmation = args.emailConfirmation;
+    user.blockedAt = args.blockedAt;
+    user.blockReason = args.blockReason;
 
     return user;
   }

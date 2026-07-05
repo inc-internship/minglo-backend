@@ -11,6 +11,16 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { PostsModule } from './modules/posts/posts.module';
 import { BillingModule } from './modules/billing/billing.module';
 import { ProfileModule } from './modules/profile/profile.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { FollowsModule } from './modules/follows/follows.module';
+import { CommentsModule } from './modules/comments/comments.module';
+import { LikesModule } from './modules/likes/likes.module';
+import { AdminModule } from './modules/admin/admin.module';
+import { MessengerConsumerModule } from './modules/messenger-consumer/messenger-consumer.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { createGraphQLModuleOptions } from './setup/graphql.setup';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { PubSubModule } from './core/pubsub.module';
 
 @Module({
   imports: [
@@ -23,6 +33,18 @@ import { ProfileModule } from './modules/profile/profile.module';
     PostsModule,
     ProfileModule,
     BillingModule,
+    NotificationsModule,
+    FollowsModule,
+    CommentsModule,
+    LikesModule,
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      inject: [CoreConfig],
+      useFactory: (config: CoreConfig) => createGraphQLModuleOptions(config),
+    }),
+    PubSubModule,
+    AdminModule,
+    MessengerConsumerModule,
   ],
   controllers: [],
   providers: [AsyncLocalStorageService],

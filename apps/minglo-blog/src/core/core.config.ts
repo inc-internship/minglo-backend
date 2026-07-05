@@ -107,6 +107,26 @@ export class CoreConfig {
   @IsNumber({}, { message: 'Set environment variable PAYMENTS_SERVICE_TCP_PORT' })
   paymentsTcpPort: number;
 
+  @IsNotEmpty({ message: 'Set environment variable RABBITMQ_URL' })
+  rabbitmqUrl: string;
+
+  @IsString({ message: 'Set environment variable GRAPHQL_PATH' })
+  graphqlPath: string;
+
+  @IsBoolean({ message: 'Set environment variable GRAPHQL_INTROSPECTION' })
+  graphqlIntrospection: boolean;
+
+  @IsBoolean({ message: 'Set environment variable GRAPHQL_SANDBOX' })
+  graphqlSandbox: boolean;
+
+  @ValidateIf((o) => o.cors)
+  @IsArray({
+    message:
+      'Set environment variable ALLOWED_HEADERS (comma-separated), example: Content-Type,Authorization,Accept',
+  })
+  @IsString({ each: true })
+  allowedHeaders: string[];
+
   constructor(private configService: ConfigService<any, true>) {
     this.env = this.configService.get('NODE_ENV');
     this.port = Number(this.configService.get('MINGLO_PORT'));
@@ -135,15 +155,32 @@ export class CoreConfig {
     ) as boolean;
     this.throttleTtl = Number(this.configService.get('MINGLO_THROTTLE_TTL'));
     this.throttleLimit = Number(this.configService.get('MINGLO_THROTTLE_LIMIT'));
+
     this.recaptchaSecret = this.configService.get('RECAPTCHA_SECRET');
     this.recaptchaBypassSecret = this.configService.get('RECAPTCHA_BYPASS_SECRET');
+
     this.mediaServiceUrl = this.configService.get('MEDIA_SERVICE_URL');
     this.mediaAccessTokenExpIn = Number(this.configService.get('MEDIA_ACCESS_TOKEN_EXP_IN'));
     this.mediaAccessSecret = this.configService.get('MEDIA_ACCESS_SECRET');
     this.mediaTcpHost = this.configService.get('MEDIA_SERVICE_HOST');
     this.mediaTcpPort = Number(this.configService.get('MEDIA_TCP_PORT'));
+
     this.paymentsTcpHost = this.configService.get('PAYMENTS_SERVICE_HOST');
     this.paymentsTcpPort = Number(this.configService.get('PAYMENTS_SERVICE_TCP_PORT'));
+    this.rabbitmqUrl = this.configService.get('RABBITMQ_URL');
+
+    this.graphqlPath = this.configService.get('GRAPHQL_PATH');
+    this.graphqlIntrospection = configValidationUtility.convertToBoolean(
+      this.configService.get('GRAPHQL_INTROSPECTION'),
+    ) as boolean;
+    this.graphqlSandbox = configValidationUtility.convertToBoolean(
+      this.configService.get('GRAPHQL_SANDBOX'),
+    ) as boolean;
+
+    this.allowedHeaders = this.configService
+      .get('ALLOWED_HEADERS')
+      ?.split(',')
+      .map((s: string) => s.trim());
 
     configValidationUtility.validateConfig(this);
   }

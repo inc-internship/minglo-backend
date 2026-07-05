@@ -80,10 +80,52 @@ services:
     volumes:
       - minglo_payments_test_data:/var/lib/postgresql/data
 
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: minglo-local-rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # Management UI → http://localhost:15672 (guest/guest)
+    environment:
+      RABBITMQ_DEFAULT_USER: minglo-admin
+      RABBITMQ_DEFAULT_PASS: minglo-admin
+    volumes:
+      - minglo_rabbitmq_data:/var/lib/rabbitmq
+
+  postgres-messenger-dev:
+    image: postgres:16
+    container_name: minglo-local-messenger-dev
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: minglo_messenger_dev
+    ports:
+      - "5438:5432"
+    volumes:
+      - minglo_messenger_dev_data:/var/lib/postgresql/data
+
+  postgres-messenger_test:
+    image: postgres:16
+    container_name: minglo-local-messenger_test
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: minglo_messenger_test
+    ports:
+      - "5439:5432"
+    volumes:
+      - minglo_messenger_test_data:/var/lib/postgresql/data
+
 volumes:
   minglo_dev_data:
   minglo_media_dev_data:
   minglo_payments_dev_data:
+  minglo_messenger_dev_data:
   minglo_test_data:
   minglo_media_test_data:
   minglo_payments_test_data:
+  minglo_messenger_test_data:
+  minglo_rabbitmq_data:

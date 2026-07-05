@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ProfileWithUserAndAvatar } from '../../../../../prisma/types';
+import { UserWithProfileForPublicView } from '../../../../../prisma/types';
 import { AccountType } from '../../../../shared/enums';
 
 class AvatarImageDto {
@@ -55,33 +55,51 @@ export class ProfileViewDto {
   @ApiProperty({ type: AvatarDto, nullable: true })
   avatar: AvatarDto | null;
 
-  static mapToView(profile: ProfileWithUserAndAvatar): ProfileViewDto {
+  @ApiProperty({ type: Number })
+  followersCount: number;
+
+  @ApiProperty({ type: Number })
+  followingCount: number;
+
+  @ApiProperty({ type: Number })
+  postsCount: number;
+
+  @ApiProperty({ type: Boolean })
+  isFollowing: boolean;
+
+  static mapToView(user: UserWithProfileForPublicView, isFollowing: boolean): ProfileViewDto {
     const dto = new ProfileViewDto();
+    const profile = user.profile;
 
-    dto.firstName = profile.firstName;
-    dto.lastName = profile.lastName;
-    dto.login = profile.user.login;
-    dto.accountType = profile.user.accountType as AccountType;
-    dto.birthday = profile.birthday ? profile.birthday.toISOString() : null;
-    dto.countryId = profile.countryId;
-    dto.cityId = profile.cityId;
-    dto.aboutMe = profile.aboutMe;
+    dto.firstName = profile?.firstName ?? null;
+    dto.lastName = profile?.lastName ?? null;
+    dto.login = user.login;
+    dto.accountType = user.accountType as AccountType;
+    dto.birthday = profile?.birthday ? profile.birthday.toISOString() : null;
+    dto.countryId = profile?.countryId ?? null;
+    dto.cityId = profile?.cityId ?? null;
+    dto.aboutMe = profile?.aboutMe ?? null;
+    dto.followersCount = user.followersCount;
+    dto.followingCount = user.followingCount;
+    dto.postsCount = user._count.posts;
+    dto.isFollowing = isFollowing;
 
-    dto.avatar = profile.avatar
+    const avatarRecord = profile?.avatar ?? null;
+    dto.avatar = avatarRecord
       ? {
           original: {
-            id: profile.avatar.originalMediaId,
-            url: profile.avatar.urlOriginal,
-            width: profile.avatar.widthOriginal,
-            height: profile.avatar.heightOriginal,
-            fileSize: profile.avatar.fileSizeOriginal,
+            id: avatarRecord.originalMediaId,
+            url: avatarRecord.urlOriginal,
+            width: avatarRecord.widthOriginal,
+            height: avatarRecord.heightOriginal,
+            fileSize: avatarRecord.fileSizeOriginal,
           },
           thumbnail: {
-            id: profile.avatar.thumbnailMediaId,
-            url: profile.avatar.urlThumbnail,
-            width: profile.avatar.widthThumbnail,
-            height: profile.avatar.heightThumbnail,
-            fileSize: profile.avatar.fileSizeThumbnail,
+            id: avatarRecord.thumbnailMediaId,
+            url: avatarRecord.urlThumbnail,
+            width: avatarRecord.widthThumbnail,
+            height: avatarRecord.heightThumbnail,
+            fileSize: avatarRecord.fileSizeThumbnail,
           },
         }
       : null;

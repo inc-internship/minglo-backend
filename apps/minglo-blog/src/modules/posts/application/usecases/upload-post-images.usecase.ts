@@ -35,34 +35,13 @@ export class UploadPostImagesUseCase implements ICommandHandler<
   }
 
   async execute({ files, user }: UploadPostImagesCommand) {
-    const form = new FormData();
-
-    for (const file of files) {
-      form.append('files', file.buffer, {
-        filename: file.originalname,
-        contentType: file.mimetype,
-      });
-    }
-
-    form.append('type', MediaType.POST);
-    form.append('publicUserId', user.userId);
-
     const token = this.jwt.sign({
       service: MediaAuthorizedServices.MINGLO_BLOG,
     });
 
+    let results: UploadImageResultDto[];
     try {
-      const { data } = await firstValueFrom(
-        this.httpService.post(`${this.coreConfig.mediaServiceUrl}/media/upload`, form, {
-          headers: {
-            ...form.getHeaders(),
-            Authorization: `Bearer ${token}`,
-          },
-        }),
-      );
-
-      this.logger.log('New post image(s) uploaded');
-      return data;
+      results = await Promise.all(files.map((file) => this._uploadFile(file, user.userId, token)));
     } catch (error) {
       this.logger.error(error, 'Media Service failed');
 
@@ -71,5 +50,42 @@ export class UploadPostImagesUseCase implements ICommandHandler<
         message: 'Media Service is unavailable',
       });
     }
+
+    this.logger.log(`New post image(s) uploaded: ${files.length} files in parallel`);
+
+    return results.reduce<UploadImageResultDto>(
+      (acc, r) => ({
+        ids: acc.ids.concat(r.ids),
+        failedCount: acc.failedCount + r.failedCount,
+      }),
+      { ids: [], failedCount: 0 },
+    );
+  }
+
+  private async _uploadFile(
+    file: Express.Multer.File,
+    publicUserId: string,
+    token: string,
+  ): Promise<UploadImageResultDto> {
+    const form = new FormData();
+
+    form.append('files', file.buffer, {
+      filename: file.originalname,
+      contentType: file.mimetype,
+    });
+
+    form.append('type', MediaType.POST);
+    form.append('publicUserId', publicUserId);
+
+    const { data } = await firstValueFrom(
+      this.httpService.post(`${this.coreConfig.mediaServiceUrl}/media/upload`, form, {
+        headers: {
+          ...form.getHeaders(),
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+    );
+
+    return data;
   }
 }

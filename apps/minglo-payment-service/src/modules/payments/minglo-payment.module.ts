@@ -1,9 +1,44 @@
 import { Module } from '@nestjs/common';
 import { MingloPaymentsTcpController } from './api/minglo-payments-tcp.controller';
+import {
+  GetPlansQueryHandler,
+  GetPaymentHistoryQueryHandler,
+  GetCurrentSubscriptionQueryHandler,
+  GetExpiringSubscriptionsQueryHandler,
+  GetAllPaymentsQueryHandler,
+} from './application/queries';
+import {
+  CreateStripeCheckoutUseCase,
+  StripeWebhookUseCase,
+  ToggleAutoRenewalUseCase,
+  DeleteUserDataUseCase,
+} from './application/usecases';
+import { PrismaPaymentsModule } from '../../database';
+import { StripeModule } from '../stripe/stripe.module';
+import { PaymentsRepository } from './infrastructure';
+import { SubscriptionActivatedHandler, SubscriptionPendingHandler } from './application/events';
+import { RmqPublisherModule } from '../rmq/rmq-publisher.module';
+import { SubscriptionsJob } from './application/jobs/subscriptions.job';
+
+const queries = [
+  GetPlansQueryHandler,
+  GetPaymentHistoryQueryHandler,
+  GetCurrentSubscriptionQueryHandler,
+  GetExpiringSubscriptionsQueryHandler,
+  GetAllPaymentsQueryHandler,
+];
+const commands = [
+  CreateStripeCheckoutUseCase,
+  StripeWebhookUseCase,
+  ToggleAutoRenewalUseCase,
+  DeleteUserDataUseCase,
+];
+const events = [SubscriptionActivatedHandler, SubscriptionPendingHandler];
+const jobs = [SubscriptionsJob];
 
 @Module({
-  imports: [],
+  imports: [StripeModule, PrismaPaymentsModule, RmqPublisherModule],
   controllers: [MingloPaymentsTcpController],
-  providers: [],
+  providers: [...queries, ...commands, ...events, ...jobs, PaymentsRepository],
 })
 export class MingloPaymentModule {}

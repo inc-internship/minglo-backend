@@ -14,6 +14,7 @@ import {
 import { type Request } from 'express';
 import { LoggerService } from '@app/logger';
 import { AccessGuard } from '../../user-account/guards/access.guard';
+import { OptionalAccessGuard } from '../../user-account/guards/optional-access.guard';
 import { CurrentUser } from '../../../core/decorators/auth/current-user.decorator';
 import { ActiveUserDto } from '../../../core/decorators/auth/dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -59,7 +60,7 @@ export class ProfileController {
     );
 
     try {
-      const { stream, filename } = await extractFileStream(req);
+      const { stream, filename } = await extractFileStream(req, { fileSizeLimit: 3 * 1024 * 1024 });
 
       return await this.commandBus.execute<UploadAvatarImagesCommand, UploadImageProfileDto>(
         new UploadAvatarImagesCommand(stream, filename, user),
@@ -90,12 +91,15 @@ export class ProfileController {
 
   @Get(':userId')
   @ApiViewProfileDecorator()
-  @UseGuards(AccessGuard)
+  @UseGuards(OptionalAccessGuard)
   @HttpCode(HttpStatus.OK)
-  async viewProfile(@Param('userId') userId: string) {
+  async viewProfile(
+    @Param('userId') userId: string,
+    @CurrentUser() currentUser: ActiveUserDto | null,
+  ) {
     this.logger.log(`Check profile: ${userId}`, 'viewProfile');
     return await this.queryBus.execute<ViewProfileQuery, ProfileViewDto>(
-      new ViewProfileQuery(userId),
+      new ViewProfileQuery(userId, currentUser ?? null),
     );
   }
 

@@ -13,12 +13,23 @@ model User {
 
   emailConfirmed Boolean @default(false) @map("email_confirmed")
 
+  followersCount Int @default(0) @map("followers_count")
+  followingCount Int @default(0) @map("following_count")
+  blockedAt DateTime? @map("blocked_at") @db.Timestamptz
+  blockReason String? @map("block_reason") @db.VarChar(255)
+
   sessions           Session[]
   emailConfirmations EmailConfirmation[]
   passwordRecoveries PasswordRecovery[]
   posts              Post[]
   oauthAccounts      OAuthAccount[]
   profile            Profile?
+  notifications      Notification[]
+  followers          Follow[]       @relation("UserFollowers")
+  following          Follow[]       @relation("UserFollowing")
+  comments           Comment[]
+  postLikes          PostLike[]
+  commentLikes       CommentLike[]
 
   @@index([deletedAt])
   @@map("users")

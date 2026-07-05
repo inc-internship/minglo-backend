@@ -49,17 +49,32 @@ export class ConsumeMediaFilesUseCase implements ICommandHandler<
 
         this.logger.debug(`consume-media fetched=${files.length} requested=${uploadIds.length}`);
 
-        // 2. Проверка целостности
+        // 2. Проверка что все запрошенные ID существуют и принадлежат пользователю
+        const foundIds = new Set(files.map((f) => f.publicId));
+        const invalidIds = uploadIds.filter((id) => !foundIds.has(id));
+        if (invalidIds.length > 0) {
+          throw new DomainException({
+            code: DomainExceptionCode.BadRequest,
+            message: `Invalid or inaccessible upload IDs: ${invalidIds.join(', ')}`,
+            extensions: invalidIds.map((id) => ({
+              field: 'uploadIds',
+              message: `ID ${id} not found`,
+            })),
+          });
+        }
+
+        // 3. Проверка что файлы ещё не использованы
         for (const file of files) {
           if (file.usedAt !== null) {
             throw new DomainException({
               code: DomainExceptionCode.Conflict,
-              message: `File with uploadId ${file.publicId} can't be used twice!`,
+              message: `File with uploadId ${file.publicId} has already been used`,
+              extensions: [{ field: 'uploadIds', message: `ID ${file.publicId} is already used` }],
             });
           }
         }
 
-        // 3. Помечаем файлы как использованные
+        // 4. Помечаем файлы как использованные
         const updateResult = await tx.mediaFile.updateMany({
           where: {
             publicId: { in: uploadIds },
@@ -74,14 +89,6 @@ export class ConsumeMediaFilesUseCase implements ICommandHandler<
         this.logger.debug(
           `consume-media updated=${updateResult.count} expected=${uploadIds.length}`,
         );
-
-        // 4. страховка от гонок
-        if (updateResult.count !== uploadIds.length) {
-          throw new DomainException({
-            code: DomainExceptionCode.Conflict,
-            message: 'Race condition detected',
-          });
-        }
 
         this.logger.log(`consume-media success user=${publicUserId}`);
 

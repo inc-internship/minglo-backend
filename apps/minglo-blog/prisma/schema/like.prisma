@@ -1,0 +1,31 @@
+model PostLike {
+  id        Int      @id @default(autoincrement())
+  publicId  String   @unique @default(cuid()) @map("public_id")
+  postId    Int      @map("post_id")
+  userId    Int      @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
+  @@map("post_likes")
+}
+
+model CommentLike {
+  id        Int      @id @default(autoincrement())
+  publicId  String   @unique @default(cuid()) @map("public_id")
+  commentId Int      @map("comment_id")
+  userId    Int      @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
+  @@index([commentId])
+  @@index([userId])
+  @@map("comment_likes")
+}

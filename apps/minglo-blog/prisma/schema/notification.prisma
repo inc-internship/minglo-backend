@@ -1,0 +1,23 @@
+model Notification {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  type    NotificationType
+  message String
+  isRead  Boolean @default(false) @map("is_read")
+
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  SUBSCRIPTION_ACTIVATED
+  SUBSCRIPTION_PENDING
+  PAYMENT_REMINDER
+  SUBSCRIPTION_EXPIRING_7_DAYS
+  SUBSCRIPTION_EXPIRING_1_DAY
+  NEW_MESSAGE
+}

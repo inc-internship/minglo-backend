@@ -1,4 +1,4 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { LoggerService } from '@app/logger';
 import { UserMetadata } from '../../../../../core/decorators/auth/user-agent.decorator';
 import { LoginResult } from '../../../api/types/login-result';
@@ -7,6 +7,7 @@ import { TokenService } from '../../services/token.service';
 import { SessionFactory } from '../../../domains/factories/session.factory';
 import { SessionRepository } from '../../../infrastructure/session.repository';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
+import { OAuthUserRegisteredEvent } from '../../events';
 
 export class OAuthLoginCommand {
   constructor(
@@ -25,6 +26,7 @@ export class OAuthLoginUseCase implements ICommandHandler<OAuthLoginCommand, Log
     private readonly tokenService: TokenService,
     private readonly sessionFactory: SessionFactory,
     private readonly sessionRepo: SessionRepository,
+    private readonly eventBus: EventBus,
     private readonly logger: LoggerService,
   ) {
     this.logger.setContext(OAuthLoginUseCase.name);
@@ -40,6 +42,8 @@ export class OAuthLoginUseCase implements ICommandHandler<OAuthLoginCommand, Log
     const normalizedEmail = email ? email.toLowerCase() : null;
     this.logger.log(`OAuth login attempt via ${provider}, email: ${normalizedEmail}`, 'execute');
 
+    let isNewUser = false;
+
     const { userId, publicId } = await this.prisma.$transaction(async (tx) => {
       // Шаг 1: ищем уже существующий OAuth аккаунт (повторный вход)
       const existingOAuth = await tx.oAuthAccount.findUnique({
@@ -54,12 +58,22 @@ export class OAuthLoginUseCase implements ICommandHandler<OAuthLoginCommand, Log
             select: {
               id: true,
               publicId: true,
+              deletedAt: true,
+              blockedAt: true,
+              blockReason: true,
             },
           },
         },
       });
 
-      if (existingOAuth) {
+      if (existingOAuth && existingOAuth.user.deletedAt === null) {
+        if (existingOAuth.user.blockedAt) {
+          throw new DomainException({
+            code: DomainExceptionCode.Forbidden,
+            message: `User is blocked: ${existingOAuth.user.blockReason}`,
+          });
+        }
+
         this.logger.log(`Existing OAuthAccount found, userId: ${existingOAuth.userId}`, 'execute');
         return {
           userId: existingOAuth.user.id,
@@ -77,10 +91,18 @@ export class OAuthLoginUseCase implements ICommandHandler<OAuthLoginCommand, Log
           select: {
             id: true,
             publicId: true,
+            blockedAt: true,
+            blockReason: true,
           },
         });
 
         if (existingUser) {
+          if (existingUser.blockedAt) {
+            throw new DomainException({
+              code: DomainExceptionCode.Forbidden,
+              message: `User is blocked: ${existingUser.blockReason}`,
+            });
+          }
           this.logger.log(
             `Linking OAuthAccount to existing user, userId: ${existingUser.id}`,
             'execute',
@@ -110,6 +132,7 @@ export class OAuthLoginUseCase implements ICommandHandler<OAuthLoginCommand, Log
         });
       }
 
+      isNewUser = true;
       this.logger.log(`Creating new user for ${provider} OAuth`, 'execute');
 
       const login = await this.generateUniqueLogin(displayName, tx);
@@ -144,6 +167,11 @@ export class OAuthLoginUseCase implements ICommandHandler<OAuthLoginCommand, Log
         publicId: newUser.publicId,
       };
     });
+
+    if (isNewUser) {
+      this.eventBus.publish(new OAuthUserRegisteredEvent(normalizedEmail!));
+      this.logger.log(`OAuthUserRegisteredEvent published for ${normalizedEmail}`, 'execute');
+    }
 
     // Шаг 4: создаём сессию и токены
     const deviceId = crypto.randomUUID();

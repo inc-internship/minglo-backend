@@ -57,4 +57,18 @@ export class UserQueryRepository {
       },
     });
   }
+
+  async getAccountType(publicId: string): Promise<string> {
+    const user = await this.prisma.user.findUnique({
+      where: { publicId, deletedAt: null },
+      select: { accountType: true },
+    });
+    if (!user) {
+      throw new DomainException({
+        code: DomainExceptionCode.Unauthorized,
+        message: 'User not found',
+      });
+    }
+    return user.accountType;
+  }
 }

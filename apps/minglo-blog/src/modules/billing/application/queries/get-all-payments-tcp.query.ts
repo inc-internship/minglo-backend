@@ -1,11 +1,12 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 import { PaymentSortField } from '@app/payments/enums';
 import { PAYMENT_SERVICE } from '@app/payments';
 import { AllPaymentsViewDto } from '@app/payments/view-dto';
 import { PAYMENTS_TCP_PATTERNS } from '@app/payments/constants';
-import { tcpCall } from '@app/exceptions';
+import { DomainException, DomainExceptionCode } from '@app/exceptions';
 
 export class GetAllPaymentsTcpQuery {
   constructor(
@@ -23,10 +24,19 @@ export class GetAllPaymentsTcpQueryHandler implements IQueryHandler<
 > {
   constructor(@Inject(PAYMENT_SERVICE) private readonly paymentClient: ClientProxy) {}
 
-  execute(query: GetAllPaymentsTcpQuery): Promise<AllPaymentsViewDto> {
-    return tcpCall(
-      this.paymentClient.send(PAYMENTS_TCP_PATTERNS.GET_ALL_PAYMENTS, query),
-      'Payment Service is unavailable',
-    );
+  async execute(query: GetAllPaymentsTcpQuery): Promise<AllPaymentsViewDto> {
+    try {
+      return await firstValueFrom(
+        this.paymentClient.send<AllPaymentsViewDto>(PAYMENTS_TCP_PATTERNS.GET_ALL_PAYMENTS, query),
+      );
+    } catch (error) {
+      // временно — увидеть реальную причину без искажений
+      console.error('🔥 RAW TCP ERROR:', error);
+      throw new DomainException({
+        code: error?.code ?? DomainExceptionCode.InternalServerError,
+        message: error?.message ?? 'Payment Service is unavailable',
+        extensions: error?.extensions ?? [],
+      });
+    }
   }
 }

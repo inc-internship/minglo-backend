@@ -113,6 +113,7 @@ export class ConversationQueryRepository {
     const lastMessage: MessageViewDto | null = lastMsg
       ? {
           id: lastMsg.publicId,
+          conversationId: conversation.publicId,
           text: lastMsg.text,
           type: lastMsg.type,
           sender: {

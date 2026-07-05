@@ -16,6 +16,9 @@ export class MessageViewDto {
   @ApiProperty({ type: String })
   id: string;
 
+  @ApiProperty({ type: String })
+  conversationId: string;
+
   @ApiProperty({ type: String, nullable: true })
   text: string | null;
 
@@ -25,6 +28,6 @@ export class MessageViewDto {
   @ApiProperty({ type: ParticipantViewDto })
   sender: ParticipantViewDto;
 
-  @ApiProperty({ type: Date })
+  @ApiProperty({ type: String })
   createdAt: string;
 }

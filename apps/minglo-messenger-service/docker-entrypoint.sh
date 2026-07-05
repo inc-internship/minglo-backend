@@ -2,7 +2,7 @@
 set -e
 
 echo "Running migrations..."
-pnpm run migrate:minglo-messanger-service:deploy
+pnpm run migrate:minglo-messenger-service:deploy
 
 echo "Starting application..."
-exec pnpm run start:minglo-messanger-service:prod
+exec pnpm run start:minglo-messenger-service:prod

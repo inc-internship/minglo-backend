@@ -190,6 +190,7 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "@apollo/protobufjs",
       "@datadog/pprof",
       "@nestjs/core",
       "@newrelic/fn-inspect",

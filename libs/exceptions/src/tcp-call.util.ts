@@ -19,3 +19,5 @@ export async function tcpCall<T>(source: Observable<T>, unavailableMessage: stri
     });
   }
 }
+
+// TODO УДалить после деплоя fix payments 8 спринта

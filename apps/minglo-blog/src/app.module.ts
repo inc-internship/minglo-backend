@@ -16,6 +16,7 @@ import { FollowsModule } from './modules/follows/follows.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { LikesModule } from './modules/likes/likes.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { MessengerConsumerModule } from './modules/messenger-consumer/messenger-consumer.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { createGraphQLModuleOptions } from './setup/graphql.setup';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
@@ -43,6 +44,7 @@ import { PubSubModule } from './core/pubsub.module';
     }),
     PubSubModule,
     AdminModule,
+    MessengerConsumerModule,
   ],
   controllers: [],
   providers: [AsyncLocalStorageService],

@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import { pipesSetup, swaggerSetup } from 'libs/setup/src';
+import { globalPrefixSetup, pipesSetup, swaggerSetup } from 'libs/setup/src';
 import {
   MESSENGER_SWAGGER_VERSION,
   MESSENGER_SWAGGER_PREFIX,
@@ -8,6 +8,7 @@ import {
 } from '@app/messenger';
 
 export function appSetup(app: INestApplication, isSwaggerEnabled: boolean) {
+  globalPrefixSetup(app);
   pipesSetup(app);
   swaggerSetup(app, {
     isEnabled: isSwaggerEnabled,

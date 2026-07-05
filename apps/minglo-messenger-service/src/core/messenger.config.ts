@@ -51,6 +51,19 @@ export class MessengerConfig {
   @IsNotEmpty({ message: 'Set environment variable RABBITMQ_URL' })
   rabbitmqUrl: string;
 
+  // CORS
+  @IsBoolean({ message: 'Set environment variable MINGLO_CORS (boolean), example: true' })
+  cors: boolean;
+
+  @ValidateIf((o) => o.cors === true)
+  @IsNotEmpty({ message: 'Set environment variable MINGLO_CORS_ORIGINS (comma-separated)' })
+  corsOrigins: string[];
+
+  @IsBoolean({
+    message: 'Set environment variable MINGLO_CORS_CREDENTIALS (boolean), example: true',
+  })
+  corsCredentials: boolean;
+
   constructor(
     private readonly configService: ConfigService<any, true>,
     private readonly logger: LoggerService,
@@ -84,6 +97,20 @@ export class MessengerConfig {
 
     this.rabbitmqUrl = this.configService.get('RABBITMQ_URL');
     this.logger.log(`RABBITMQ_URL is ${this.rabbitmqUrl}`, 'constructor');
+
+    this.cors = configValidationUtility.convertToBoolean(
+      this.configService.get('MINGLO_CORS'),
+    ) as boolean;
+
+    const rawOrigins = this.configService.get<string>('MINGLO_CORS_ORIGINS') ?? '';
+    this.corsOrigins = rawOrigins
+      .split(',')
+      .map((o) => o.trim())
+      .filter(Boolean);
+
+    this.corsCredentials = configValidationUtility.convertToBoolean(
+      this.configService.get('MINGLO_CORS_CREDENTIALS'),
+    ) as boolean;
 
     configValidationUtility.validateConfig(this);
     this.logger.log(`MessengerServiceConfig successfully validated`, 'constructor');

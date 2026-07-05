@@ -9,6 +9,7 @@ import { corsSetup } from './setup/cors.setup';
 import { loggerSetup } from '@app/logger/logger.setup';
 import { WsAdapter } from './setup/ws.adapter';
 import { RABBITMQ_QUEUES } from '@app/payments';
+import { RABBITMQ_MESSENGER_QUEUES } from '@app/messenger';
 import { Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
@@ -47,9 +48,17 @@ async function bootstrap() {
     options: {
       urls: [coreConfig.rabbitmqUrl],
       queue: RABBITMQ_QUEUES.SUBSCRIPTION_ACTIVATED,
-      queueOptions: {
-        durable: true,
-      },
+      queueOptions: { durable: true },
+      noAck: false,
+    },
+  });
+
+  app.connectMicroservice({
+    transport: Transport.RMQ,
+    options: {
+      urls: [coreConfig.rabbitmqUrl],
+      queue: RABBITMQ_MESSENGER_QUEUES.MESSAGE_SENT,
+      queueOptions: { durable: true },
       noAck: false,
     },
   });

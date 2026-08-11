@@ -8,4 +8,5 @@ export const PAYMENTS_TCP_PATTERNS = {
   DELETE_USER_DATA: 'delete_user_data',
   GET_EXPIRING_SUBSCRIPTIONS: 'get_expiring_subscriptions',
   GET_ALL_PAYMENTS: 'get_all_payments',
+  GET_PAYMENTS_ANALYTICS: 'get_payments_analytics',
 } as const;

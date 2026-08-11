@@ -5,3 +5,4 @@ export * from './admin-follow.view-dto';
 export * from './admin-payment.view-dto';
 export * from './admin-global-payments.view-dto';
 export * from './admin-post.view-dto';
+export * from './analytics-result.view-dto';

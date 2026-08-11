@@ -4,3 +4,4 @@ export * from './get-user-following.query';
 export * from './get-users-list.query';
 export * from './get-all-payments.query';
 export * from './get-all-posts.query';
+export * from './get-analytics.query';

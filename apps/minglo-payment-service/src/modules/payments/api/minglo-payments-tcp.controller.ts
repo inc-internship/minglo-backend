@@ -11,6 +11,7 @@ import {
   GetCurrentSubscriptionQuery,
   GetExpiringSubscriptionsQuery,
   GetAllPaymentsQuery,
+  GetPaymentsAnalyticsQuery,
 } from '../application/queries';
 import { CreateStripeCheckoutInputDto } from './input-dto/create-stripe-checkout.input-dto';
 import { GetPaymentHistoryInputDto } from './input-dto/get-payment-history.input-dto';
@@ -22,7 +23,9 @@ import {
   DeleteUserDataCommand,
 } from '../application/usecases';
 import { PAYMENTS_TCP_PATTERNS } from '@app/payments';
+import { PaymentsAnalyticsItemViewDto } from '@app/payments/view-dto';
 import { GetAllPaymentsInputDto } from './input-dto/get-all-payments.input-dto';
+import { GetPaymentsAnalyticsInputDto } from './input-dto/get-payments-analytics.input-dto';
 
 @Controller()
 export class MingloPaymentsTcpController {
@@ -118,5 +121,16 @@ export class MingloPaymentsTcpController {
     return this.queryBus.execute(
       new GetAllPaymentsQuery(dto.page, dto.pageSize, dto.sortBy, dto.userIds),
     );
+  }
+
+  @MessagePattern(PAYMENTS_TCP_PATTERNS.GET_PAYMENTS_ANALYTICS)
+  async getPaymentsAnalytics(
+    @Payload() dto: GetPaymentsAnalyticsInputDto,
+  ): Promise<PaymentsAnalyticsItemViewDto[]> {
+    this.logger.log(
+      `New GET_PAYMENTS_ANALYTICS request dateFrom=${dto.dateFrom} dateTo=${dto.dateTo}`,
+      'getPaymentsAnalytics',
+    );
+    return this.queryBus.execute(new GetPaymentsAnalyticsQuery(dto.dateFrom, dto.dateTo));
   }
 }

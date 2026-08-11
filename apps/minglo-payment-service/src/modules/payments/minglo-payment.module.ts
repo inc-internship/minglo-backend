@@ -6,6 +6,7 @@ import {
   GetCurrentSubscriptionQueryHandler,
   GetExpiringSubscriptionsQueryHandler,
   GetAllPaymentsQueryHandler,
+  GetPaymentsAnalyticsQueryHandler,
 } from './application/queries';
 import {
   CreateStripeCheckoutUseCase,
@@ -26,6 +27,7 @@ const queries = [
   GetCurrentSubscriptionQueryHandler,
   GetExpiringSubscriptionsQueryHandler,
   GetAllPaymentsQueryHandler,
+  GetPaymentsAnalyticsQueryHandler,
 ];
 const commands = [
   CreateStripeCheckoutUseCase,

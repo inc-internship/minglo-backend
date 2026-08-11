@@ -6,6 +6,7 @@ import { AdminUserSortField } from '../api/enums/admin-user-sort.enum';
 import { UsersQueryInput } from '../api/input-dto/users-query.input';
 import { AdminBlockStatus } from '../api/enums/admin-block-status.enum';
 import { PostsQueryInput } from '../api/input-dto/posts-query.input';
+import { AnalyticsRawPoint } from '../api/view-dto/analytics-result.view-dto';
 
 @Injectable()
 export class AdminQueryRepository {
@@ -95,6 +96,38 @@ export class AdminQueryRepository {
       where: { publicId },
       include: { user: true, postsMediaFiles: { where: { deletedAt: null } } },
     });
+  }
+
+  async countNewUsersByDay(dateFrom: string, dateTo: string): Promise<AnalyticsRawPoint[]> {
+    const rows = await this.prisma.$queryRaw<{ date: Date; count: bigint }[]>`
+      SELECT date_trunc('day', "created_at")::date AS date, COUNT(*)::bigint AS count
+      FROM "users"
+      WHERE "deleted_at" IS NULL
+        AND "created_at" >= ${new Date(`${dateFrom}T00:00:00.000Z`)}::timestamptz
+        AND "created_at" < ${new Date(`${dateTo}T00:00:00.000Z`)}::timestamptz + interval '1 day'
+      GROUP BY date
+      ORDER BY date;
+    `;
+    return rows.map((row) => ({
+      date: row.date.toISOString().slice(0, 10),
+      count: Number(row.count),
+    }));
+  }
+
+  async sumUploadedPhotosSizeByDay(dateFrom: string, dateTo: string): Promise<AnalyticsRawPoint[]> {
+    const rows = await this.prisma.$queryRaw<{ date: Date; count: bigint }[]>`
+      SELECT date_trunc('day', "created_at")::date AS date, COALESCE(SUM("fileSize"), 0)::bigint AS count
+      FROM "posts_media_files"
+      WHERE "deleted_at" IS NULL
+        AND "created_at" >= ${new Date(`${dateFrom}T00:00:00.000Z`)}::timestamptz
+        AND "created_at" < ${new Date(`${dateTo}T00:00:00.000Z`)}::timestamptz + interval '1 day'
+      GROUP BY date
+      ORDER BY date;
+    `;
+    return rows.map((row) => ({
+      date: row.date.toISOString().slice(0, 10),
+      count: Number(row.count),
+    }));
   }
 
   private toOrderBy(sortBy: AdminUserSortField) {

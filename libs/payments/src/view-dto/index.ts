@@ -3,3 +3,4 @@ export * from './create-stripe-checkout.view-dto';
 export * from './payment-history.view-dto';
 export * from './current-subscription.view-dto';
 export * from './all-payments.view-dto';
+export * from './payments-analytics.view-dto';

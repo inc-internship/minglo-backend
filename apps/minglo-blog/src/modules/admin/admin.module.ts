@@ -11,9 +11,16 @@ import {
   GetUserFollowingQueryHandler,
   GetAllPaymentsQueryHandler,
   GetAllPostsQueryHandler,
+  GetAnalyticsQueryHandler,
 } from './application/queries';
 import { PostCreatedForAdminHandler } from './application/events/post-created.handler';
-import { AdminUsersResolver, AdminUserDetailResolver, AdminPostsResolver } from './api/resolvers';
+import {
+  AdminUsersResolver,
+  AdminUserDetailResolver,
+  AdminPostsResolver,
+  AdminAnalyticsResolver,
+  PublicAnalyticsResolver,
+} from './api/resolvers';
 import { UserAccountModule } from '../user-account/user-account.module';
 import { AdminConfig } from './admin.config';
 import { AdminBasicAuthGuard } from './guards/admin-basic-auth.guard';
@@ -31,11 +38,18 @@ const queries = [
   GetUserFollowingQueryHandler,
   GetAllPaymentsQueryHandler,
   GetAllPostsQueryHandler,
+  GetAnalyticsQueryHandler,
 ];
 
 const events = [PostCreatedForAdminHandler];
 
-const resolvers = [AdminUsersResolver, AdminUserDetailResolver, AdminPostsResolver];
+const resolvers = [
+  AdminUsersResolver,
+  AdminUserDetailResolver,
+  AdminPostsResolver,
+  AdminAnalyticsResolver,
+  PublicAnalyticsResolver,
+];
 
 @Module({
   imports: [UserAccountModule, FollowsModule, BillingModule],

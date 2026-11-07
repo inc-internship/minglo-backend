@@ -283,6 +283,22 @@ export class PaymentsRepository {
     }
   }
 
+  async countPaidAccountsByDay(
+    dateFrom: string,
+    dateTo: string,
+  ): Promise<{ date: string; count: number }[]> {
+    const rows = await this.prisma.$queryRaw<{ date: Date; count: bigint }[]>`
+      SELECT date_trunc('day', "created_at")::date AS date, COUNT(*)::bigint AS count
+      FROM "payments"
+      WHERE "status" = 'SUCCESS'
+        AND "created_at" >= ${new Date(`${dateFrom}T00:00:00.000Z`)}::timestamptz
+        AND "created_at" < ${new Date(`${dateTo}T00:00:00.000Z`)}::timestamptz + interval '1 day'
+      GROUP BY date
+      ORDER BY date;
+    `;
+    return rows.map((row) => ({ date: row.date.toISOString().slice(0, 10), count: Number(row.count) }));
+  }
+
   async deleteUserData(userId: string): Promise<void> {
     await this.prisma.$transaction([
       this.prisma.payment.deleteMany({ where: { userId } }),

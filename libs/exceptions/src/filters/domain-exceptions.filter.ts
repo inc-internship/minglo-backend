@@ -4,6 +4,8 @@ import { Response } from 'express';
 import { DomainExceptionCode } from '../domain-exception-codes.enum';
 import { ErrorResponseBody } from '../error-response-body.type';
 import { LoggerService } from '@app/logger';
+import { GqlArgumentsHost, GqlContextType } from '@nestjs/graphql';
+import { GraphQLError } from 'graphql';
 
 @Catch(DomainException)
 export class DomainExceptionsFilter implements ExceptionFilter {
@@ -11,22 +13,27 @@ export class DomainExceptionsFilter implements ExceptionFilter {
     this.logger.setContext(DomainExceptionsFilter.name);
   }
 
-  catch(exception: DomainException, host: ArgumentsHost): void {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
-
+  catch(exception: DomainException, host: ArgumentsHost): any {
     const status = this.mapToHttpStatus(exception.code);
-
     if (status >= 500) {
       this.logger.error(exception, 'catch');
     } else {
       this.logger.warn(exception.message, 'catch');
     }
-
-    const responseBody = this.buildResponseBody(exception, request.url);
-
-    response.status(status).json(responseBody);
+    if (host.getType<GqlContextType>() === 'graphql') {
+      const gqlHost = GqlArgumentsHost.create(host);
+      const info = gqlHost.getInfo();
+      return new GraphQLError(exception.message, {
+        extensions: {
+          ...this.buildResponseBody(exception, info?.fieldName ?? 'graphql'),
+          status,
+        },
+      });
+    }
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
+    response.status(status).json(this.buildResponseBody(exception, request.url));
   }
 
   private mapToHttpStatus(code: DomainExceptionCode): number {

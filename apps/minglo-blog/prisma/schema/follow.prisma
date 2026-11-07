@@ -1,0 +1,15 @@
+model Follow {
+  id         Int      @id @default(autoincrement())
+  publicId   String   @unique @default(cuid()) @map("public_id")
+  followerId  Int      @map("follower_id")
+  followingId Int      @map("following_id")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  follower  User @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+  @@map("follows")
+}

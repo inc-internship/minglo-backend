@@ -108,25 +108,44 @@ export class ProfileRepository {
     return ProfileEntity.reconstruct(profile);
   }
 
+  /* Проверяет, занят ли логин другим пользователем */
+  async isLoginTaken(login: string, excludePublicId: string): Promise<boolean> {
+    const existing = await this.prisma.user.findFirst({
+      where: {
+        login,
+        deletedAt: null,
+        publicId: { not: excludePublicId },
+      },
+      select: { id: true },
+    });
+
+    return existing !== null;
+  }
+
+  /* Обновляет login пользователя */
+  async updateUserLogin(publicId: string, login: string): Promise<void> {
+    await this.prisma.user.update({
+      where: { publicId },
+      data: { login },
+    });
+  }
+
   /* Обновление профиля */
   async updateProfile(user: ActiveUserDto, dto: UpdateProfileInputDto): Promise<void> {
+    const profileData = {
+      ...(dto.firstName !== undefined && { firstName: dto.firstName }),
+      ...(dto.lastName !== undefined && { lastName: dto.lastName }),
+      ...(dto.aboutMe !== undefined && { aboutMe: dto.aboutMe }),
+      ...(dto.countryId !== undefined && { countryId: dto.countryId }),
+      ...(dto.cityId !== undefined && { cityId: dto.cityId }),
+      ...(dto.birthday !== undefined && { birthday: dto.birthday ? new Date(dto.birthday) : null }),
+    };
+
     await this.prisma.user.update({
       where: { publicId: user.userId },
       data: {
         profile: {
-          update: {
-            firstName: dto.firstName,
-            lastName: dto.lastName,
-            aboutMe: dto.aboutMe,
-            countryId: dto.countryId,
-            cityId: dto.cityId,
-            birthday:
-              dto.birthday !== undefined
-                ? dto.birthday
-                  ? new Date(dto.birthday)
-                  : null
-                : undefined,
-          },
+          update: profileData,
         },
       },
     });

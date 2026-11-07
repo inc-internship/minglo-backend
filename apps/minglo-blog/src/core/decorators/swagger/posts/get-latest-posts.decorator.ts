@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiTooManyRequestsResponse } from '@nestjs/swagger';
 import { PostViewDto } from '../../../../modules/posts/api/view-dto';
 
 export function ApiGetLatestPostsDecorator() {
@@ -12,6 +12,12 @@ export function ApiGetLatestPostsDecorator() {
       description: 'Latest posts successfully retrieved',
       type: PostViewDto,
       isArray: true,
+    }),
+    ApiTooManyRequestsResponse({
+      description: 'Too many attempts from the same IP address. Please try again later.',
+    }),
+    ApiTooManyRequestsResponse({
+      description: 'Too many attempts from the same IP address. Please try again later.',
     }),
   );
 }

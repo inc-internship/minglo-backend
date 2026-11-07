@@ -1,16 +1,18 @@
 import { CreatePostInputDto } from '../../api/input-dto';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { LoggerService } from '@app/logger';
 import { Inject } from '@nestjs/common';
 import { MEDIA_SERVICE } from '@app/media/constants';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
+import { DomainException, DomainExceptionCode } from '@app/exceptions';
 import { PostsRepository } from '../../infrastructure/posts.repository';
 import { MediaFileMetaDataMapper } from '../../mappers/media-file-metadata.mapper';
 import { MediaFileMetaDataViewDto } from '@app/media/api/view-dto';
 import { PostEntity } from '../../domains/entities';
-import { UserQueryRepository } from '../../../user-account/infrastructure/queries/user.query.repository';
+import { UserQueryRepository } from '../../../user-account/infrastructure/queries';
 import { CreatedPostViewDto } from '../../api/view-dto';
+import { PostCreatedEvent } from '../events/post-created.event';
 
 export class CreatePostCommand {
   constructor(
@@ -26,6 +28,7 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand, Cre
     private readonly userQueryRepo: UserQueryRepository,
     private readonly postsRepo: PostsRepository,
     private readonly logger: LoggerService,
+    private readonly eventBus: EventBus,
   ) {
     this.logger.setContext(CreatePostUseCase.name);
   }
@@ -40,9 +43,23 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand, Cre
     // Запрашиваем метаданные у media-service и помечаем файлы как использованные
     this.logger.log(`Calling media-service consume_media_files`, 'execute');
 
-    const imagesMetadata = await firstValueFrom<MediaFileMetaDataViewDto[]>(
-      this.mediaClient.send({ cmd: 'consume_media_files' }, { uploadIds, publicUserId }),
-    );
+    let imagesMetadata: MediaFileMetaDataViewDto[];
+    try {
+      imagesMetadata = await firstValueFrom<MediaFileMetaDataViewDto[]>(
+        this.mediaClient.send({ cmd: 'consume_media_files' }, { uploadIds, publicUserId }),
+      );
+    } catch (error) {
+      const code = error?.code ?? error?.response?.code;
+      const message = error?.message ?? error?.response?.message;
+      if (code && message) {
+        throw new DomainException({ code, message, extensions: error?.extensions ?? [] });
+      }
+      this.logger.error(`Media service call failed: ${error?.message}`, 'execute');
+      throw new DomainException({
+        code: DomainExceptionCode.InternalServerError,
+        message: 'Media Service is unavailable',
+      });
+    }
 
     this.logger.log(`Media consumed count=${imagesMetadata.length}`, 'execute');
 
@@ -59,6 +76,8 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand, Cre
     this.logger.log(`PostEntity created`, 'execute');
 
     const postPublicId = await this.postsRepo.create(post);
+
+    this.eventBus.publish(new PostCreatedEvent(postPublicId));
 
     this.logger.log(`Post created successfully postId=${postPublicId}`, 'execute');
 

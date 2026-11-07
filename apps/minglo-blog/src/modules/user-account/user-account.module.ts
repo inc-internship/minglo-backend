@@ -18,7 +18,11 @@ import {
 } from './application/usecases';
 import { UserFactory } from './domains';
 import { EmailConfirmationRepository, UserRepository } from './infrastructure';
-import { PasswordRecoveryHandler, UserRegisteredHandler } from './application/events';
+import {
+  OAuthUserRegisteredHandler,
+  PasswordRecoveryHandler,
+  UserRegisteredHandler,
+} from './application/events';
 import { EmailModule } from '@app/notifications';
 import { SessionRepository } from './infrastructure/session.repository';
 import { TokenService } from './application/services/token.service';
@@ -63,11 +67,9 @@ const usecases = [
   LoginUserUseCase,
   ConfirmEmailUseCase,
   ResendConfirmEmailUseCase,
-  LoginUserUseCase,
   RefreshTokenUseCase,
   LogoutUseCase,
   PasswordRecoveryUseCase,
-  NewPasswordUseCase,
   DeleteSessionUseCase,
   TerminateAllOtherSessionsUseCase,
   OAuthLoginUseCase,
@@ -100,12 +102,13 @@ const strategies = [AccessStrategy, RefreshStrategy, GoogleStrategy, GithubStrat
     RecaptchaGuard,
     SessionFactory,
     UserRegisteredHandler,
+    OAuthUserRegisteredHandler,
     MeHandler,
     GetDevicesHandler,
     PasswordRecoveryHandler,
     ...jobs,
   ],
-  exports: [UserQueryRepository],
+  exports: [UserQueryRepository, UserRepository, SessionRepository],
 })
 export class UserAccountModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

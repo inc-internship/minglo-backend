@@ -3,6 +3,7 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
+  ApiConflictResponse,
   ApiNoContentResponse,
   ApiOperation,
   ApiUnauthorizedResponse,
@@ -15,7 +16,8 @@ export function ApiUpdateMyProfileDecorator() {
     ApiOperation({
       summary: 'Update user profile',
       description:
-        'Updates personal information like name, birthday, and location. All fields are optional.',
+        'Updates personal information like name, birthday, location and login. All fields are optional. ' +
+        'Login must be unique across the system.',
     }),
     ApiBody({
       type: UpdateProfileInputDto,
@@ -28,6 +30,9 @@ export function ApiUpdateMyProfileDecorator() {
     }),
     ApiUnauthorizedResponse({
       description: 'Unauthorized - Access token is missing or invalid.',
+    }),
+    ApiConflictResponse({
+      description: 'Login is already taken by another user.',
     }),
   );
 }

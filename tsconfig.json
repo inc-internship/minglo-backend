@@ -52,6 +52,12 @@
       "@app/media/*": [
         "libs/media/src/*"
       ],
+      "@app/messenger": [
+        "libs/messenger/src"
+      ],
+      "@app/messenger/*": [
+        "libs/messenger/src/*"
+      ],
       "@app/notifications": [
         "libs/notifications/src"
       ],

@@ -1,0 +1,40 @@
+model Conversation {
+  id        Int              @id @default(autoincrement())
+  publicId  String           @unique @default(cuid()) @map("public_id")
+  type      ConversationType @default(DIRECT)
+  name      String?          @db.VarChar(255) // for CHANNEL (future enh)
+  createdAt DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+
+  participants ConversationParticipant[]
+  messages     Message[]
+
+  @@map("conversations")
+}
+
+model ConversationParticipant {
+  id             Int             @id @default(autoincrement())
+  conversationId Int             @map("conversation_id")
+  userPublicId   String          @map("user_public_id") @db.VarChar(255)
+  role           ParticipantRole @default(MEMBER)
+  unreadCount    Int             @default(0) @map("unread_count")
+  lastReadAt     DateTime?       @map("last_read_at") @db.Timestamptz
+  joinedAt       DateTime        @default(now()) @map("joined_at") @db.Timestamptz
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userPublicId])
+  @@index([userPublicId])
+  @@index([conversationId])
+  @@map("conversation_participants")
+}
+
+enum ConversationType {
+  DIRECT
+  CHANNEL
+}
+
+enum ParticipantRole {
+  MEMBER
+  ADMIN
+}

@@ -1,0 +1,23 @@
+model Message {
+  id             Int         @id @default(autoincrement())
+  publicId       String      @unique @default(cuid()) @map("public_id")
+  conversationId Int         @map("conversation_id")
+  senderPublicId String      @map("sender_public_id") @db.VarChar(255)
+  text           String?     @db.VarChar(3000)
+  type           MessageType @default(TEXT)
+  deletedAt      DateTime?   @map("deleted_at") @db.Timestamptz
+  createdAt      DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime    @updatedAt @map("updated_at") @db.Timestamptz
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+  @@index([senderPublicId])
+  @@map("messages")
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VOICE
+}

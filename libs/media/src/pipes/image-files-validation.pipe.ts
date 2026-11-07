@@ -48,6 +48,14 @@ export class ImageFilesValidationPipe implements PipeTransform {
   }
 
   transform(value: Express.Multer.File[]): Promise<Express.Multer.File[]> {
+    if (!value || !Array.isArray(value) || value.length === 0) {
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: 'At least one image file is required.',
+        extensions: [{ field: 'files', message: 'files field is required and must not be empty.' }],
+      });
+    }
+
     return this.parseFilePipe.transform(value);
   }
 }

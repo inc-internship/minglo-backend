@@ -5,6 +5,7 @@ import { UserEntity, UserFactory } from '../domains';
 import { DomainException, DomainExceptionCode, PrismaExceptionMapper } from '@app/exceptions';
 import { PasswordRecoveryEntity } from '../domains/entities/password-recovery.entity';
 import { BatchPayload } from '../../../../prisma/generated/prisma/internal/prismaNamespace';
+import { AccountType } from '../../../../../minglo-blog/src/shared/enums';
 
 @Injectable()
 export class UserRepository {
@@ -99,19 +100,26 @@ export class UserRepository {
     return this.userFactory.fromUserWithEmailConfirmations(dbUser);
   }
 
-  /* Возвращает массив id пользователей с протухшим проверочным кодом */
+  /* Возвращает массив id пользователей с протухшим проверочным кодом или soft-deleted */
   async findAllExpired(): Promise<number[]> {
     const expiredUsers = await this.prisma.user.findMany({
       where: {
-        emailConfirmed: false,
-        deletedAt: null,
-        emailConfirmations: {
-          some: {
-            expiresAt: { lt: new Date() },
-            confirmedAt: null,
+        OR: [
+          {
+            emailConfirmed: false,
             deletedAt: null,
+            emailConfirmations: {
+              some: {
+                expiresAt: { lt: new Date() },
+                confirmedAt: null,
+                deletedAt: null,
+              },
+            },
           },
-        },
+          {
+            deletedAt: { not: null },
+          },
+        ],
       },
       select: { id: true },
     });
@@ -224,6 +232,13 @@ export class UserRepository {
     });
   }
 
+  /* Hard-deletes user by publicId */
+  async hardDeleteUser(publicId: string): Promise<void> {
+    await this.prisma.user.delete({
+      where: { publicId },
+    });
+  }
+
   /* Подтверждает смену пароля */
   async confirmPasswordRecovery(user: UserEntity): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
@@ -235,6 +250,17 @@ export class UserRepository {
         where: { id: user.passwordRecoveries.id },
         data: { usedAt: new Date() },
       });
+    });
+  }
+
+  /* Устанавливает тип аккаунта пользователя */
+  async updateAccountType(publicId: string, accountType: AccountType): Promise<void> {
+    await this.prisma.user.update({
+      where: {
+        publicId,
+        deletedAt: null,
+      },
+      data: { accountType },
     });
   }
 }

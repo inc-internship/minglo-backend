@@ -3,3 +3,5 @@ export * from './post.view-dto';
 export * from './post-media-file.view-dto';
 export * from './post-owner.view-dto';
 export * from './posts-with-cursor.view-dto';
+export * from './feed-post.view-dto';
+export * from './feed-posts-with-cursor.view-dto';

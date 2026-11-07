@@ -30,6 +30,11 @@ jobs:
       MAX_AGE_ACCESS_TOKEN: 10
       REFRESH_SECRET: refresh-token-secret
       MAX_AGE_REFRESH_TOKEN: 20
+      ADMIN_EMAIL: admin@test.com
+      ADMIN_PASSWORD: AdminPass123
+      GRAPHQL_PATH: /graphql
+      GRAPHQL_INTROSPECTION: false
+      GRAPHQL_SANDBOX: false
 
     steps:
       - name: Checkout code

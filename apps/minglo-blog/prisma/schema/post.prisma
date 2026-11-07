@@ -10,7 +10,12 @@ model Post {
   userId Int  @map("user_id")
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  likesCount    Int @default(0) @map("likes_count")
+  commentsCount Int @default(0) @map("comments_count")
+
   postsMediaFiles PostMediaFile[]
+  comments        Comment[]
+  likes           PostLike[]
 
   @@index([userId])
   @@index([deletedAt])

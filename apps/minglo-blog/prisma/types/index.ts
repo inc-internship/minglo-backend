@@ -68,6 +68,102 @@ export type PostOwner = Prisma.UserGetPayload<{
 }>;
 export type PostMediaFile = Prisma.PostMediaFileGetPayload<object>;
 
+export type PostLikeWithUser = Prisma.PostLikeGetPayload<{
+  include: {
+    user: {
+      include: {
+        profile: {
+          include: {
+            avatar: { where: { deletedAt: null } };
+          };
+        };
+      };
+    };
+  };
+}>;
+export type CommentWithAuthor = Prisma.CommentGetPayload<{
+  include: {
+    author: {
+      include: {
+        profile: {
+          include: {
+            avatar: { where: { deletedAt: null } };
+          };
+        };
+      };
+    };
+    likes: { where: { user: { blockedAt: null } } };
+    _count: {
+      select: { likes: { where: { user: { blockedAt: null } } } };
+    };
+  };
+}>;
+
+export type FeedPostWithData = Prisma.PostGetPayload<{
+  include: {
+    user: {
+      include: {
+        profile: {
+          include: {
+            avatar: { where: { deletedAt: null } };
+          };
+        };
+      };
+    };
+    postsMediaFiles: { orderBy: { order: 'asc' } };
+    likes: { where: { user: { blockedAt: null } } };
+    _count: {
+      select: {
+        likes: { where: { user: { blockedAt: null } } };
+        comments: { where: { deletedAt: null; author: { blockedAt: null } } }; // добавили
+      };
+    };
+  };
+}>;
+
+export type UserWithProfileForPublicView = Prisma.UserGetPayload<{
+  include: {
+    profile: {
+      include: {
+        avatar: { where: { deletedAt: null } };
+      };
+    };
+    _count: {
+      select: {
+        posts: { where: { deletedAt: null } };
+      };
+    };
+  };
+}>;
+
+export type FollowWithFollowerData = Prisma.FollowGetPayload<{
+  include: {
+    follower: {
+      include: {
+        profile: {
+          include: {
+            avatar: { where: { deletedAt: null } };
+          };
+        };
+      };
+    };
+  };
+}>;
+
+export type FollowWithFollowingData = Prisma.FollowGetPayload<{
+  include: {
+    following: {
+      include: {
+        profile: {
+          include: {
+            avatar: { where: { deletedAt: null } };
+          };
+        };
+      };
+    };
+  };
+}>;
+
 export type PostForUpdate = Prisma.PostGetPayload<{
   select: {
     id: true;
@@ -90,4 +186,14 @@ export type ProfileWithUserAndAvatar = Prisma.ProfileGetPayload<{
       };
     };
   };
+}>;
+
+export type UserWithProfile = Prisma.UserGetPayload<{
+  include: {
+    profile: { include: { avatar: { where: { deletedAt: null } } } };
+  };
+}>;
+
+export type PostWithUserAndMedia = Prisma.PostGetPayload<{
+  include: { user: true; postsMediaFiles: { where: { deletedAt: null } } };
 }>;

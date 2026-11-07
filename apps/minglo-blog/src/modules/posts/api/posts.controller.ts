@@ -22,6 +22,7 @@ import { ImageFilesValidationPipe } from '@app/media/pipes';
 import {
   ApiCreatePostDecorator,
   ApiDeletePostDecorator,
+  ApiGetFeedDecorator,
   ApiGetLatestPostsDecorator,
   ApiGetPostByIdDecorator,
   ApiGetUserPostsPaginatedDecorator,
@@ -37,8 +38,14 @@ import {
   UploadPostImagesCommand,
 } from '../application/usecases';
 import { CreatePostInputDto, GetUserPostsQueryInputDto, UpdatePostInputDto } from './input-dto';
-import { CreatedPostViewDto, PostsWithCursorViewDto, PostViewDto } from './view-dto';
 import {
+  CreatedPostViewDto,
+  FeedPostsWithCursorViewDto,
+  PostsWithCursorViewDto,
+  PostViewDto,
+} from './view-dto';
+import {
+  GetFeedQuery,
   GetLatestPostsQuery,
   GetPostByIdQuery,
   GetUserPostsPaginatedQuery,
@@ -88,6 +95,20 @@ export class PostsController {
     this.logger.log(`New post creation request received from user: ${user.userId}`, 'create');
     return this.commandBus.execute<CreatePostCommand, CreatedPostViewDto>(
       new CreatePostCommand(body, user.userId),
+    );
+  }
+
+  @Get('feed')
+  @ApiGetFeedDecorator()
+  @UseGuards(AccessGuard)
+  @HttpCode(HttpStatus.OK)
+  async getFeed(
+    @CurrentUser() user: ActiveUserDto,
+    @Query() query: GetUserPostsQueryInputDto,
+  ): Promise<FeedPostsWithCursorViewDto> {
+    this.logger.log(`GetFeed user=${user.userId}`, 'getFeed');
+    return this.queryBus.execute<GetFeedQuery, FeedPostsWithCursorViewDto>(
+      new GetFeedQuery(user.userId, query.cursor),
     );
   }
 

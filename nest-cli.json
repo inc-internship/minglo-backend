@@ -58,6 +58,15 @@
         "tsConfigPath": "libs/media/tsconfig.lib.json"
       }
     },
+    "messenger": {
+      "type": "library",
+      "root": "libs/messenger",
+      "entryFile": "index",
+      "sourceRoot": "libs/messenger/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/messenger/tsconfig.lib.json"
+      }
+    },
     "minglo-blog": {
       "type": "application",
       "root": "apps/minglo-blog",
@@ -74,6 +83,15 @@
       "sourceRoot": "apps/minglo-media-service/src",
       "compilerOptions": {
         "tsConfigPath": "apps/minglo-media-service/tsconfig.app.json"
+      }
+    },
+    "minglo-messenger-service": {
+      "type": "application",
+      "root": "apps/minglo-messenger-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/minglo-messenger-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/minglo-messenger-service/tsconfig.app.json"
       }
     },
     "minglo-payment-service": {

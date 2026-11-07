@@ -1,5 +1,5 @@
 import type { Request } from 'express';
-import { Readable } from 'node:stream';
+import { Readable, Transform } from 'node:stream';
 import Busboy from 'busboy';
 import { DomainException, DomainExceptionCode } from '@app/exceptions';
 
@@ -14,23 +14,34 @@ export async function extractFileStream(
   return new Promise((resolve, reject) => {
     const busboy = Busboy({
       headers: req.headers as any,
-      limits: { fileSize: options.fileSizeLimit },
     });
 
     let resolved = false;
 
     busboy.on('file', (name, stream, info) => {
-      stream.on('limit', () => {
-        stream.destroy(
-          new DomainException({
-            code: DomainExceptionCode.BadRequest,
-            message: 'Image is too large (max 3 MB)',
-          }),
-        );
+      const limit = options.fileSizeLimit;
+      let bytes = 0;
+
+      const guard = new Transform({
+        transform(chunk: Buffer, _enc, cb) {
+          bytes += chunk.length;
+          if (limit && bytes > limit) {
+            stream.resume();
+            return cb(
+              new DomainException({
+                code: DomainExceptionCode.BadRequest,
+                message: 'Image is too large (max 3 MB)',
+              }),
+            );
+          }
+          cb(null, chunk);
+        },
       });
 
+      stream.pipe(guard);
+
       resolved = true;
-      resolve({ stream, filename: info.filename });
+      resolve({ stream: guard, filename: info.filename });
     });
 
     busboy.on('error', (err: any) => {

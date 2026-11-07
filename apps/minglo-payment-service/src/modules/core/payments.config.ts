@@ -57,6 +57,9 @@ export class PaymentsConfig {
   })
   swagger: boolean;
 
+  @IsNotEmpty({ message: 'Set environment variable RABBITMQ_URL' })
+  rabbitmqUrl: string;
+
   constructor(
     private readonly configService: ConfigService<any, true>,
     private readonly logger: LoggerService,
@@ -92,6 +95,9 @@ export class PaymentsConfig {
     this.swagger = configValidationUtility.convertToBoolean(
       this.configService.get('PAYMENTS_SWAGGER'),
     ) as boolean;
+
+    this.rabbitmqUrl = this.configService.get('RABBITMQ_URL');
+    this.logger.log(`RABBITMQ_URL is ${this.rabbitmqUrl}`, 'constructor');
 
     configValidationUtility.validateConfig(this);
     this.logger.log(`PaymentsServiceConfig successfully validated`, 'constructor');

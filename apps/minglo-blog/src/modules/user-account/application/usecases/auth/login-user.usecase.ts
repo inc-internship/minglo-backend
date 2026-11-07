@@ -44,6 +44,13 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand, Login
       });
     }
 
+    if (user.blockedAt) {
+      throw new DomainException({
+        code: DomainExceptionCode.Forbidden,
+        message: `User is blocked: ${user.blockReason}`,
+      });
+    }
+
     // OAuth пользователи не имеют пароля — вход через email/password для них недоступен
     if (!user.passwordHash) {
       throw new DomainException({

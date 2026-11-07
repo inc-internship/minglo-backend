@@ -29,8 +29,9 @@ async function bootstrap() {
 
   const { logger } = await loggerSetup(app);
 
+  await app.init();
   await app.startAllMicroservices();
 
-  logger.log(`Media Service started: TCP: ${tcpPort} | env: ${env}`, 'bootstrap');
+  logger.log(`Payments Service started: TCP: ${tcpPort} | env: ${env}`, 'bootstrap');
 }
 bootstrap();

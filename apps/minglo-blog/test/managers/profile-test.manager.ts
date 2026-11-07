@@ -15,6 +15,25 @@ export class ProfileTestManager {
       .expect(expectedStatus);
   }
 
+  async getProfilePublic(
+    id: string,
+    expectedStatus: number = HttpStatus.OK,
+  ): Promise<request.Response> {
+    return request(this.app.getHttpServer()).get(`/api/v1/profile/${id}`).expect(expectedStatus);
+  }
+
+  async updateProfile(
+    token: string,
+    body: Record<string, unknown>,
+    expectedStatus: number = HttpStatus.NO_CONTENT,
+  ): Promise<request.Response> {
+    return request(this.app.getHttpServer())
+      .put('/api/v1/profile')
+      .set('Authorization', `Bearer ${token}`)
+      .send(body)
+      .expect(expectedStatus);
+  }
+
   async deleteMe(
     token: string,
     expectedStatus: number = HttpStatus.NO_CONTENT,

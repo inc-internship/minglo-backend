@@ -3,9 +3,10 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { CoreConfig } from './core.config';
 import { MingloDataBaseConfig } from '../database/database.config';
 import { PrismaModule } from '../database/prisma.module';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { UserConfig } from './user.config';
+import { AppThrottlerGuard } from './app-throttler.guard';
 
 //глобальный модуль для провайдеров и модулей необходимых во всех частях приложения (например LoggerService, CqrsModule, etc...)
 @Global()
@@ -28,7 +29,7 @@ import { UserConfig } from './user.config';
     UserConfig,
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      useClass: AppThrottlerGuard,
     },
     MingloDataBaseConfig,
   ],

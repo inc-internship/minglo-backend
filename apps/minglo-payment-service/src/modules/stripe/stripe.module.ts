@@ -5,6 +5,6 @@ import { StripeService } from './stripe.service';
   imports: [],
   controllers: [],
   providers: [StripeService],
-  exports: [],
+  exports: [StripeService],
 })
 export class StripeModule {}

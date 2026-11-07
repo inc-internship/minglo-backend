@@ -19,7 +19,7 @@ export function appSetup(app: INestApplication, isSwaggerEnabled: boolean) {
   swaggerSetup(app, {
     isEnabled: isSwaggerEnabled,
     title: MINGLO_BLOG_SWAGGER_TITLE,
-    description: MINGLO_BLOG_SWAGGER_DESCRIPTION,
+    description: MINGLO_BLOG_SWAGGER_DESCRIPTION(coreConfig.graphqlPath),
     prefix: MINGLO_BLOG_SWAGGER_PREFIX,
     version: MINGLO_BLOG_SWAGGER_VERSION,
   });

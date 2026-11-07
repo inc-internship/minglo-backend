@@ -10,6 +10,7 @@ import {
 import { PostsRepository } from '../../../src/modules/posts/infrastructure/posts.repository';
 import { UserQueryRepository } from '../../../src/modules/user-account/infrastructure/queries/user.query.repository';
 import { LoggerService } from '@app/logger';
+import { EventBus } from '@nestjs/cqrs';
 
 const mockMediaFile: MediaFileMetaDataViewDto = {
   publicId: 'pub-media-1',
@@ -43,6 +44,7 @@ describe('CreatePostUseCase', () => {
           provide: LoggerService,
           useValue: { setContext: jest.fn(), log: jest.fn(), error: jest.fn(), warn: jest.fn() },
         },
+        { provide: EventBus, useValue: { publish: jest.fn() } },
       ],
     }).compile();
 
